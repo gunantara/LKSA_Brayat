@@ -1,4 +1,3 @@
-
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
@@ -23,7 +22,11 @@ const store = new Vuex.Store(
 //Vue.component('pagination', require('laravel-vue-pagination'));
 
 //Using VForm library
-import { Form, HasError, AlertError } from 'vform';
+import {
+    Form,
+    HasError,
+    AlertError
+} from 'vform';
 window.Form = Form;
 Vue.component(HasError.name, HasError)
 Vue.component(AlertError.name, AlertError)
@@ -35,7 +38,9 @@ Vue.prototype.$gate = new Gate(window.user);
 //importing vue Router globally for webroute
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)
-import { routes } from './routes';
+import {
+    routes
+} from './routes';
 
 //importing moment.js
 import moment from 'moment';
@@ -94,6 +99,22 @@ window.Fire = new Vue();
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+
+Vue.component(
+    'passport-clients',
+    require('./components/passport/Clients.vue').default
+);
+
+Vue.component(
+    'passport-authorized-clients',
+    require('./components/passport/AuthorizedClients.vue').default
+);
+
+Vue.component(
+    'passport-personal-access-tokens',
+    require('./components/passport/PersonalAccessTokens.vue').default
+);
+
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

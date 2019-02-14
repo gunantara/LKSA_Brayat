@@ -9,7 +9,8 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
   <title>LKSA | BRAYAT PINUJI </title>
-
+  <!-- Favicons -->
+  <link href="img/logo.jpg" rel="icon">
   <link rel="stylesheet" href="/css/app.css">
 
 </head>
@@ -119,19 +120,24 @@
               </p>
             </a>
             <ul class="nav nav-treeview">
-            <li class="nav-item">
-            <router-link to="/profile" class="nav-link">
-              <i class="nav-icon fas fa-user yellow"></i>
+              <li class="nav-item">
+              <router-link to="/profile" class="nav-link">
+                <i class="nav-icon fas fa-user yellow"></i>
+                <p>
+                  Profile
+                </p>
+              </router-link>
+              </li>
+              <li class="nav-item">
+              <router-link to="/developer" class="nav-link">
+              <i class="nav-icon fas fa-cogs"></i>
               <p>
-                Profile
+                Developer 
               </p>
             </router-link>
             </li>
             </ul>
           </li>
-          
-          
-          
           <li class="nav-item">
               <a class="nav-link" href="{{ route('logout') }}"
                 onclick="event.preventDefault();
@@ -143,7 +149,7 @@
                   </a>
                   <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                     @csrf
-                  </form>
+              </form>
           </li>
           </li>
         </ul>

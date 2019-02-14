@@ -23,6 +23,7 @@
   <link href="lib/ionicons/css/ionicons.min.css" rel="stylesheet">
   <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
   <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+  
 
   <!-- Main Stylesheet File -->
   <link href="css/style.css" rel="stylesheet">
@@ -88,13 +89,13 @@
   <main id="main">
 
     <!--==========================
-      About Us Section
+      Tentang Kami Section
     ============================-->
     <section id="about">
       <div class="container">
 
         <header class="section-header">
-          <h3>About Us</h3>
+          <h3>Tentang Kami</h3>
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
         </header>
 
@@ -175,7 +176,7 @@
       <div class="container">
 
         <header class="section-header">
-          <h3>Services</h3>
+          <h3>Program</h3>
           <p>Laudem latine persequeris id sed, ex fabulas delectus quo. No vel partiendo abhorreant vituperatoribus.</p>
         </header>
 
@@ -471,7 +472,7 @@
             <h4>Useful Links</h4>
             <ul>
               <li><a href="#">Home</a></li>
-              <li><a href="#about">About us</a></li>
+              <li><a href="#about">Tentang Kami</a></li>
               <li><a href="#">Program</a></li>
               <li><a href="#">Terms of service</a></li>
               <li><a href="#">Privacy policy</a></li>
