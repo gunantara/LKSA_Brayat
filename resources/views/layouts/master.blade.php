@@ -103,15 +103,13 @@
             </ul>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <router-link to="/users" class="nav-link">
+                <router-link to="/pengguna" class="nav-link">
                   <i class="fas fa-users-cog nav-icon"></i>
                   <p>Data Pengguna</p>
                 </router-link>
               </li>
             </ul>
           </li>
-
-
           <li class="nav-item has-treeview menu-open">
             <a href="#" class="nav-link ">
               <i class="nav-icon fas fa-sliders-h"></i>
@@ -128,17 +126,7 @@
                 Profile
               </p>
             </router-link>
-          </li>
-            </ul>
-            <ul class="nav nav-treeview">
-            <li class="nav-item">
-            <router-link to="/role" class="nav-link">
-              <i class="nav-icon fas fa-user-circle"></i>
-              <p>
-                Role 
-              </p>
-            </router-link>
-          </li>
+            </li>
             </ul>
           </li>
           

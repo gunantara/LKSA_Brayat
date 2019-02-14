@@ -15,7 +15,6 @@ class CreateUsersTable extends Migration {
 		Schema::create('users', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->integer('id_role')->unsigned()->nullable();
 			$table->integer('id_employee')->unsigned()->nullable()->index('id_employee');
 			$table->string('name', 191);
 			$table->string('email', 191)->unique();
@@ -25,7 +24,6 @@ class CreateUsersTable extends Migration {
 			$table->string('photo', 191)->nullable()->default('profile.png');
 			$table->string('remember_token', 100)->nullable();
 			$table->timestamps();
-			$table->index(['id_role','id_employee'], 'id_role');
 		});
 	}
 
