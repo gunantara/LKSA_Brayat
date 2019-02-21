@@ -57,7 +57,18 @@
           <li><a href="#services">Program</a></li>
           <li><a href="#portfolio">Galery</a></li>
           <li><a href="#contact">Contact Us</a></li>
-          <li><a href="{{ route('login') }}">Login</a></li>
+          <li>
+          <div class="flex-center position-ref full-height">
+            @if (Route::has('login'))
+                <div class="top-right links">
+                    @auth
+                        <a href="{{ url('/home') }}">Dashboard</a>
+                    @else
+                        <a href="{{ route('login') }}">Login</a>
+                    @endauth
+                </div>
+            @endif
+          </li>
 
         </ul>
       </nav><!-- .main-nav -->
@@ -87,6 +98,7 @@
   </section><!-- #intro -->
 
   <main id="main">
+
 
     <!--==========================
       Tentang Kami Section

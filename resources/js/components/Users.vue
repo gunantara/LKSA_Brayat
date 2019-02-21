@@ -22,7 +22,7 @@
               <tbody>
                 <tr>
                   <th>ID</th>
-                  <th>Name</th>
+                  <th>Username</th>
                   <th>Email</th>
                   <th>Type</th>
                   <th>Register at</th>
@@ -65,7 +65,7 @@
       aria-labelledby="addNewLabel"
       aria-hidden="true"
     >
-      <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
             <h5 v-show="!editmode" class="modal-title" id="addNewLabel">Add New User</h5>
@@ -76,6 +76,44 @@
           </div>
           <form @submit.prevent="editmode ? updateUser() :createUser()">
             <div class="modal-body">
+              <div class="form-row">
+                <div class="col">
+                  <div class="form-group">
+                    <select
+                      name="id_employee"
+                      v-model="form.id_employee"
+                      id="id_employee"
+                      class="form-control"
+                      :class="{ 'is-invalid': form.errors.has('id_employee') }"
+                    >
+                      <option value>Select Karyawan</option>
+                      <option
+                        :value="employees.id"
+                        v-for="employees in getEmployee"
+                        :key="employees.id"
+                      >ID Karyawan {{employees.id}} --> {{employees.Nama_lengkap}}</option>
+                    </select>
+                    <has-error :form="form" field="id_employee"></has-error>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                    <select
+                      name="type"
+                      v-model="form.type"
+                      id="type"
+                      class="form-control"
+                      :class="{ 'is-invalid': form.errors.has('type') }"
+                    >
+                      <option value>Select User Role</option>
+                      <option value="admin">Admin</option>
+                      <option value="user">Standard User</option>
+                      <option value="author">Author</option>
+                    </select>
+                    <has-error :form="form" field="type"></has-error>
+                  </div>
+                </div>
+              </div>
               <div class="form-group">
                 <input
                   v-model="form.name"
@@ -110,21 +148,6 @@
                 <has-error :form="form" field="bio"></has-error>
               </div>
               <div class="form-group">
-                <select
-                  name="type"
-                  v-model="form.type"
-                  id="type"
-                  class="form-control"
-                  :class="{ 'is-invalid': form.errors.has('type') }"
-                >
-                  <option value>Select User Role</option>
-                  <!--<option value="admin">Admin</option>-->
-                  <option value="user">Standard User</option>
-                  <option value="author">Author</option>
-                </select>
-                <has-error :form="form" field="type"></has-error>
-              </div>
-              <div class="form-group">
                 <input
                   v-model="form.password"
                   type="password"
@@ -157,6 +180,7 @@ export default {
       editmode: false,
       users: {},
       form: new Form({
+        id_employee: "",
         id: "",
         name: "",
         email: "",
@@ -167,7 +191,21 @@ export default {
       })
     };
   },
+  mounted() {
+    this.$store.dispatch("allEmployee");
+  },
+  computed: {
+    getEmployee() {
+      return this.$store.getters.getEmployee;
+    }
+  },
   methods: {
+    loadUser() {
+      if (this.$gate.isAdmin()) {
+        axios.get("api/user").then(({ data }) => (this.users = data));
+        this.$store.dispatch("allEmployee");
+      }
+    },
     getResults(page = 1) {
       axios.get("api/user?page=" + page).then(response => {
         this.users = response.data;
@@ -203,7 +241,7 @@ export default {
     deleteUser(id) {
       swal
         .fire({
-          title: "Are you sure?",
+          title: "Anda yakin Menghapus Data ini?",
           text: "You won't be able to revert this!",
           type: "warning",
           showCancelButton: true,
@@ -226,11 +264,6 @@ export default {
           }
         });
     },
-    loadUser() {
-      if (this.$gate.isAdmin()) {
-        axios.get("api/user").then(({ data }) => (this.users = data));
-      }
-    },
     createUser() {
       this.$Progress.start();
       this.form
@@ -238,14 +271,14 @@ export default {
         .then(() => {
           Fire.$emit("AfterCreated");
           $("#addNew").modal("hide");
-          toast({
+          toast.fire({
             type: "success",
             title: "User created successfully"
           });
           this.$Progress.finish();
         })
         .catch(() => {
-          toast({
+          toast.fire({
             type: "error",
             title: "Something wrong"
           });

@@ -2,8 +2,8 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Passport\HasApiTokens;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -22,7 +22,7 @@ class Employee extends Model
     {
         return $this->hasMany(User::class, 'id_employee')->withTrashed();
     }
-
 }
+
 
 

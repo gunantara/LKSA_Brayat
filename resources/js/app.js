@@ -5,12 +5,26 @@
  */
 
 require('./bootstrap');
+import Vuex from 'vuex'
+import storeData from "./store/index"
+import {
+    Form,
+    HasError,
+    AlertError
+} from 'vform';
+//importing the Gate of User Access
+import Gate from "./Gate";
+import VueRouter from 'vue-router'
+import {
+    routes
+} from './routes';
+import moment from 'moment';
+import VueProgressBar from 'vue-progressbar'
+import swal from 'sweetalert2'
 
 window.Vue = require('vue');
 //support vuex
-import Vuex from 'vuex'
 Vue.use(Vuex)
-import storeData from "./store/index"
 const store = new Vuex.Store(
     storeData
 )
@@ -22,31 +36,18 @@ const store = new Vuex.Store(
 //Vue.component('pagination', require('laravel-vue-pagination'));
 
 //Using VForm library
-import {
-    Form,
-    HasError,
-    AlertError
-} from 'vform';
 window.Form = Form;
 Vue.component(HasError.name, HasError)
 Vue.component(AlertError.name, AlertError)
 
-//importing the Gate of User Access
-import Gate from "./Gate";
 Vue.prototype.$gate = new Gate(window.user);
 
 //importing vue Router globally for webroute
-import VueRouter from 'vue-router'
 Vue.use(VueRouter)
-import {
-    routes
-} from './routes';
 
 //importing moment.js
-import moment from 'moment';
 
 //importing progress bar
-import VueProgressBar from 'vue-progressbar'
 //and used it 
 Vue.use(VueProgressBar, {
     color: 'rgb(143, 255, 199)',
@@ -55,7 +56,6 @@ Vue.use(VueProgressBar, {
 })
 
 //importing sweatalert notification
-import swal from 'sweetalert2'
 window.swal = swal;
 //and used it
 const toast = swal.mixin({

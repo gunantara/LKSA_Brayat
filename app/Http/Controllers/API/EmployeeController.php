@@ -6,7 +6,7 @@ use App\Employee;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Hash;
 
 class EmployeeController extends Controller
 {
@@ -23,7 +23,12 @@ class EmployeeController extends Controller
     public function index()
     {
         $this->authorize('isAdmin');
-        return $users = DB::table('employees')->get();
+        $employee = Employee::all();
+        return response()->json([
+            'employees' => $employee
+        ], 200);
+
+        //return $users = DB::table('employees')->get();
 
     }
 
