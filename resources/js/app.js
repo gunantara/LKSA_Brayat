@@ -21,6 +21,9 @@ import {
 import moment from 'moment';
 import VueProgressBar from 'vue-progressbar'
 import swal from 'sweetalert2'
+import datePicker from 'vue-bootstrap-datetimepicker';
+import 'pc-bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css';
+
 
 window.Vue = require('vue');
 //support vuex
@@ -73,18 +76,23 @@ const router = new VueRouter({
 })
 
 //adding filter for uppercase each word 
-Vue.filter('Uptext', function (text) {
-    return text.charAt(0).toUpperCase() + text.slice(1);
-});
+Vue.filter('Uptext', function (value) {
+    if (!value) return ''
+    value = value.toString()
+    return value.charAt(0).toUpperCase() + value.slice(1)
+})
+
 
 //adding filter for timestamp
 Vue.filter('myDate', function (date) {
-    return moment(date).format('MMMM Do YYYY');
+    return moment(date).locale('id').format('LL');
 });
 
 //create custom even for http request
 window.Fire = new Vue();
 
+//bootstrap for datepicker
+Vue.use(datePicker);
 
 
 /**
