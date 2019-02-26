@@ -6,7 +6,7 @@
           <div class="card-header">
             <h3 class="card-title">
               <i class="fas fa-users"></i>
-              Users Data
+              Data Pengguna
             </h3>
 
             <div class="card-tools">
@@ -79,6 +79,7 @@
               <div class="form-row">
                 <div class="col">
                   <div class="form-group">
+                    <label for="selectemployee">Pilih Karyawan</label>
                     <select
                       name="id_employee"
                       v-model="form.id_employee"
@@ -98,6 +99,7 @@
                 </div>
                 <div class="col">
                   <div class="form-group">
+                    <label for="selectrole">Pilih Role</label>
                     <select
                       name="type"
                       v-model="form.type"
@@ -107,14 +109,15 @@
                     >
                       <option value>Select User Role</option>
                       <option value="admin">Admin</option>
-                      <option value="user">Standard User</option>
-                      <option value="author">Author</option>
+                      <option value="Pengelola">Pengelola</option>
+                      <option value="Kepala LKSA">Kepala LKSA</option>
                     </select>
                     <has-error :form="form" field="type"></has-error>
                   </div>
                 </div>
               </div>
               <div class="form-group">
+                <label for="inputnama">Username</label>
                 <input
                   v-model="form.name"
                   type="text"
@@ -126,6 +129,7 @@
                 <has-error :form="form" field="name"></has-error>
               </div>
               <div class="form-group">
+                <label for="inputemail">Email</label>
                 <input
                   v-model="form.email"
                   type="email"
@@ -137,6 +141,7 @@
                 <has-error :form="form" field="email"></has-error>
               </div>
               <div class="form-group">
+                <label for="inputbio">Bio</label>
                 <textarea
                   v-model="form.bio"
                   name="bio"
@@ -148,6 +153,7 @@
                 <has-error :form="form" field="bio"></has-error>
               </div>
               <div class="form-group">
+                <label for="inoutpassword">Password</label>
                 <input
                   v-model="form.password"
                   type="password"

@@ -21,7 +21,7 @@ class CreateUsersTable extends Migration
 			$table->string('password', 191);
 			$table->string('type', 191)->default('user');
 			$table->text('bio', 65535)->nullable();
-			$table->string('photo', 191)->nullable()->default('profile.png');
+			$table->string('photo', 191)->nullable()->default('.profile/profile.png');
 			$table->string('remember_token', 100)->nullable();
 			$table->timestamps();
 			$table->softDeletes()->index();

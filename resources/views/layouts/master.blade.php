@@ -45,9 +45,9 @@
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <!-- Brand Logo -->
             <div class="brand-link">
-                <img src="./img/logo.jpg" alt="AdminLTE Logo" class="brand-image img-circle elevation-6" style="opacity: .8">
+                <img src="./img/logo.jpg" alt="AdminLTE Logo" class="brand-image img-circle elevation-elevation-5" style="opacity: .8">
                 <span class="brand-text font-weight-light">LKSA</span>
-                <span class="brand-text">Brayat Pinuji</span>
+                <h6 class="brand-text">BRAYAT PINUJI</h6>
             </div>
 
             <!-- Sidebar -->
@@ -72,7 +72,7 @@
 
                         <li class="nav-item">
                             <router-link to="/dashboard" class="nav-link">
-                                <i class="nav-icon fas fa-tachometer-alt "></i>
+                                <i class="nav-icon fas fa-tachometer-alt"></i>
                                 <p>
                                     Dashboard
                                 </p>
@@ -193,5 +193,6 @@
     <script src="/js/app.js"></script>
 
 </body>
+
 
 </html> 

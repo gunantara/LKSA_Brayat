@@ -29,7 +29,6 @@ class EmployeeController extends Controller
         ], 200);
 
         //return $users = DB::table('employees')->get();
-
     }
 
     /**
@@ -50,7 +49,19 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return Employee::create([
+            'Nama_lengkap' => $request['Nama_lengkap'],
+            'NIK' => $request['NIK'],
+            'Jenis_Kelamin' => $request['Jenis_Kelamin'],
+            'Tempat_lahir' => $request['Tempat_lahir'],
+            'Tgl_lahir' => $request['Tgl_lahir'],
+            'Mulai_Bekerja' => $request['Mulai_Bekerja'],
+            'Jabatan' => $request['Jabatan'],
+            'Status_Kepegawaian' => $request['Status_Kepegawaian'],
+            'Pendidikan_Terakhir' => $request['Pendidikan_Terakhir'],
+            'Pelatihan_yg_diikuti' => $request['Pelatihan_yg_diikuti'],
+        ]);
+        return ['message' => 'employee created'];
     }
 
     /**
@@ -84,7 +95,9 @@ class EmployeeController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $employee = Employee::FindOrFail($id);
+        $employee->update($request->all());
+        return ['message' => 'employee updated'];
     }
 
     /**
@@ -95,6 +108,9 @@ class EmployeeController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $employee = Employee::FindOrFail($id);
+        //delete the user
+        $employee->delete();
+        return ['message' => 'user deleted'];
     }
 }

@@ -12,7 +12,6 @@ import {
     HasError,
     AlertError
 } from 'vform';
-//importing the Gate of User Access
 import Gate from "./Gate";
 import VueRouter from 'vue-router'
 import {
@@ -48,9 +47,7 @@ Vue.prototype.$gate = new Gate(window.user);
 //importing vue Router globally for webroute
 Vue.use(VueRouter)
 
-//importing moment.js
 
-//importing progress bar
 //and used it 
 Vue.use(VueProgressBar, {
     color: 'rgb(143, 255, 199)',
