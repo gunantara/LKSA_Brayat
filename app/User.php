@@ -51,4 +51,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Employee::class, 'id_employee')->withTrashed();
     }
+
+    public function children()
+    {
+        return $this->hasMany(Children::class, 'id_user')->withTrashed();
+    }
 }

@@ -3,7 +3,11 @@ import AdminHome from './components/Dashboard.vue'
 import Dashboard from './components/Dashboard.vue'
 import User from './components/Users.vue'
 import Karyawan from './components/Karyawan.vue'
-import Data_Anak from './components/Data_Anak.vue'
+import Data_Anak from './components/Data_Anak/Data_Anak.vue'
+import Detail_Anak from './components/Data_Anak/Detail_Anak.vue'
+import Tambah_Anak from './components/Data_Anak/Tambah_Anak.vue'
+import Edit_Anak from './components/Data_Anak/Edit_Anak.vue'
+import Inventaris from './components/Inventories.vue'
 import Profile from './components/Profile.vue'
 import Developer from './components/Developer.vue'
 
@@ -30,6 +34,24 @@ export const routes = [{
     {
         path: '/data-anak',
         component: Data_Anak
+    },
+    {
+        path: '/detail-anak',
+        component: Detail_Anak
+    },
+    {
+        path: '/tambah-anak',
+        component: Tambah_Anak
+    },
+
+    {
+        path: '/edit-anak:idanak',
+        name: 'edit_anak',
+        component: Edit_Anak
+    },
+    {
+        path: '/inventaris',
+        component: Inventaris
     },
     {
         path: '/profile',

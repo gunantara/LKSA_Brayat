@@ -11,7 +11,18 @@ class Employee extends Model
 {
     use HasApiTokens, Notifiable, SoftDeletes;
 
-    protected $fillable = ['Nama_lengkap', 'NIK', 'Jenis_Kelamin', 'Tempat_lahir', 'Tgl_lahir', 'Mulai_Bekerja', 'Jabatan', 'Status_Kepegawaian', 'Pendidikan_Terakhir', 'Pelatihan_yg_diikuti'];
+    protected $fillable = [
+        'Nama_lengkap',
+        'NIK',
+        'Jenis_Kelamin',
+        'Tempat_lahir',
+        'Tgl_lahir',
+        'Mulai_Bekerja',
+        'Jabatan',
+        'Status_Kepegawaian',
+        'Pendidikan_Terakhir',
+        'Pelatihan_yg_diikuti'
+    ];
 
     public static function boot()
     {
