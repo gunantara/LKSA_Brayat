@@ -33,7 +33,7 @@ class Children_Detail extends Model
         'Perumahan',
         'Latar_Belakang_Permasalahan',
         'Alamat_yg_menitipkan',
-        'Alasan_yg_menitipka',
+        'Alasan_yg_menitipkan',
     ];
 
     public static function boot()

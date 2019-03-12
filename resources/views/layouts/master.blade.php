@@ -58,7 +58,7 @@
                         <img src="./img/profile/{{Auth::user()->photo}}" class="img-circle elevation-2" alt="User Image">
                     </div>
                     <div class="info">
-                        <a href="#" class="d-block">
+                        <a href="/profile" class="d-block">
                             {{Auth::user()->name}}
                             <p>{{Auth::user()->type}}</p>
                         </a>
@@ -78,7 +78,23 @@
                                 </p>
                             </router-link>
                         </li>
-
+                        <li class="nav-item has-treeview menu-close">
+                            <a href="#" class="nav-link ">
+                                <i class="nav-icon fas fa-cogs"></i>
+                                <p>
+                                    Pengelolaan Profile
+                                    <i class="right fa fa-angle-left "></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <router-link to="/profile-lksa" class="nav-link">
+                                        <i class="fas fa-building nav-icon"></i>
+                                        <p>Profile LKSA</p>
+                                    </router-link>
+                                </li>
+                            </ul>
+                        </li>
                         <li class="nav-item has-treeview menu-open">
                             <a href="#" class="nav-link ">
                                 <i class="nav-icon fas fa-cog"></i>

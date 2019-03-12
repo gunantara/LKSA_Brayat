@@ -2,105 +2,95 @@
   <section class="content">
     <div class="container-fluid">
       <div class="row mt-3">
-        <div class="col-md-3">
-          <!-- Profile Image -->
+        <div class="col-md-4">
+          <!-- Profile of Child Image -->
           <div class="card card-primary card-outline">
             <div class="card-body box-profile">
               <div class="text-center">
-                <!-- <img
+                <img
                   class="profile-user-img img-fluid img-circle"
-                  src="../../dist/img/user4-128x128.jpg"
+                  :src="getProfilePhoto()"
                   alt="User profile picture"
-                >-->
+                >
               </div>
-
-              <h3 class="profile-username text-center">Nina Mcintire</h3>
-
-              <p class="text-muted text-center">Software Engineer</p>
-
+              <h3 class="profile-username text-center">{{this.form.Nama_Lengkap}}</h3>
+              <p class="text-muted text-center">Nomor Induk : {{this.form.No_induk}}</p>
               <ul class="list-group list-group-unbordered mb-3">
                 <li class="list-group-item">
-                  <b>Followers</b>
-                  <a class="float-right">1,322</a>
+                  <b>Tempat Lahir</b>
+                  <a class="float-right">{{this.form.Tempat_lahir | Uptext}}</a>
                 </li>
                 <li class="list-group-item">
-                  <b>Following</b>
-                  <a class="float-right">543</a>
+                  <b>Tanggal Lahir</b>
+                  <a class="float-right">{{this.form.Tgl_lahir | myDate}}</a>
                 </li>
                 <li class="list-group-item">
-                  <b>Friends</b>
-                  <a class="float-right">13,287</a>
+                  <b>Agama</b>
+                  <a class="float-right">{{this.form.Agama | Uptext}}</a>
+                </li>
+                <li class="list-group-item">
+                  <b>Masuk Panti Asuhan</b>
+                  <a class="float-right">{{this.form.Tgl_masuk_PA | myDate}}</a>
                 </li>
               </ul>
-
-              <a href="#" class="btn btn-primary btn-block">
-                <b>Follow</b>
-              </a>
             </div>
             <!-- /.card-body -->
           </div>
           <!-- /.card -->
-          <!-- About Me Box -->
-          <div class="card card-primary">
+          <!-- Tentang Anak Box -->
+          <div class="card card-success">
             <div class="card-header">
-              <h3 class="card-title">About Me</h3>
+              <h3 class="card-title">Tentang Anak</h3>
             </div>
             <!-- /.card-header -->
             <div class="card-body">
               <strong>
-                <i class="fa fa-book mr-1"></i> Education
+                <i class="fas fa-map mr-1"></i> Alamat Anak
               </strong>
-
-              <p
-                class="text-muted"
-              >B.S. in Computer Science from the University of Tennessee at Knoxville</p>
-
+              <p class="text-muted">{{this.form.Alamat | Uptext}}</p>
               <hr>
-
               <strong>
-                <i class="fa fa-map-marker mr-1"></i> Location
+                <i class="fas fa-school mr-1"></i>
+                <span>Sekolah</span>
               </strong>
-
-              <p class="text-muted">Malibu, California</p>
-
-              <hr>
-
-              <strong>
-                <i class="fas fa-pencil-alt"></i> Skills
-              </strong>
-
               <p class="text-muted">
-                <span class="tag tag-danger">UI Design</span>
-                <span class="tag tag-success">Coding</span>
-                <span class="tag tag-info">Javascript</span>
-                <span class="tag tag-warning">PHP</span>
-                <span class="tag tag-primary">Node.js</span>
+                <b>Tanggal Mulai Sekolah :</b>
+                <span class="float-right">{{this.form.Mulai_masuk_sekolah | myDate}}</span>
+                <br>
+                <b>Nama Sekolah :</b>
+                <span class="float-right">{{this.form.Nama_sekolah | Uptext}}</span>
+                <br>
+                <b>Kelas :</b>
+                <span class="float-right">{{this.form.Kelas | Uptext}}</span>
               </p>
-
               <hr>
-
               <strong>
-                <i class="fas fa-file-alt"></i> Notes
+                <i class="fa fa-map-marker mr-1"></i> Sebab masuk Panti Asuhan
               </strong>
-
-              <p
-                class="text-muted"
-              >Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fermentum enim neque.</p>
+              <p class="text-muted">{{this.form.Sebab_masuk_PA | Uptext}}</p>
+              <hr>
+              <strong>
+                <i class="fas fa-file-alt"></i> Keterangan Anak
+              </strong>
+              <p class="text-muted">{{this.form.Keterangan_anak | Uptext}}</p>
             </div>
             <!-- /.card-body -->
           </div>
           <!-- /.card -->
         </div>
         <!-- /.col -->
-        <div class="col-md-9">
+        <div class="col-md-8">
           <div class="card">
             <div class="card-header p-2">
               <ul class="nav nav-pills">
                 <li class="nav-item">
-                  <a class="nav-link active" href="#timeline" data-toggle="tab">Timeline</a>
+                  <a class="nav-link active" href="#Data_Detail_Ayah" data-toggle="tab">Detail Ayah</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="#settings" data-toggle="tab">Settings</a>
+                  <a class="nav-link" href="#Data_Detail_Ibu" data-toggle="tab">Detail Ibu</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#Data_Permasalahan" data-toggle="tab">Masalah Anak</a>
                 </li>
               </ul>
             </div>
@@ -108,104 +98,101 @@
             <div class="card-body">
               <div class="tab-content">
                 <!-- /.tab-pane -->
-                <div class="active tab-pane" id="timeline">
+                <div class="active tab-pane" id="Data_Detail_Ayah">
                   <!-- The timeline -->
                   <ul class="timeline timeline-inverse">
                     <!-- timeline time label -->
                     <li class="time-label">
-                      <span class="bg-danger">10 Feb. 2014</span>
+                      <span class="bg-success">Diupdate : {{this.form.updated_at | myDate}}</span>
                     </li>
                     <!-- /.timeline-label -->
                     <!-- timeline item -->
                     <li>
-                      <i class="fa fa-envelope bg-primary"></i>
-
+                      <i class="fa fa-user bg-primary"></i>
                       <div class="timeline-item">
-                        <span class="time">
-                          <i class="fa fa-clock-o"></i> 12:05
-                        </span>
-
                         <h3 class="timeline-header">
-                          <a href="#">Support Team</a> sent you an email
+                          <strong>Nama Lengkap</strong>
                         </h3>
-
-                        <div class="timeline-body">
-                          Etsy doostang zoodles disqus groupon greplin oooj voxy zoodles,
-                          weebly ning heekya handango imeem plugg dopplr jibjab, movity
-                          jajah plickers sifteo edmodo ifttt zimbra. Babblely odeo kaboodle
-                          quora plaxo ideeli hulu weebly balihoo...
-                        </div>
-                        <div class="timeline-footer">
-                          <a href="#" class="btn btn-primary btn-sm">Read more</a>
-                          <a href="#" class="btn btn-danger btn-sm">Delete</a>
-                        </div>
+                        <div class="timeline-body">{{this.form.Nama_Ayah | Uptext}}</div>
                       </div>
-                    </li>
-                    <!-- END timeline item -->
-                    <!-- timeline item -->
-                    <li>
-                      <i class="fa fa-user bg-info"></i>
-
-                      <div class="timeline-item">
-                        <span class="time">
-                          <i class="fa fa-clock-o"></i> 5 mins ago
-                        </span>
-
-                        <h3 class="timeline-header no-border">
-                          <a href="#">Sarah Young</a> accepted your friend request
-                        </h3>
-                      </div>
-                    </li>
-                    <!-- END timeline item -->
-                    <!-- timeline item -->
-                    <li>
-                      <i class="fa fa-comments bg-warning"></i>
-
-                      <div class="timeline-item">
-                        <span class="time">
-                          <i class="fa fa-clock-o"></i> 27 mins ago
-                        </span>
-
-                        <h3 class="timeline-header">
-                          <a href="#">Jay White</a> commented on your post
-                        </h3>
-
-                        <div class="timeline-body">
-                          Take me to your leader!
-                          Switzerland is small and neutral!
-                          We are more like Germany, ambitious and misunderstood!
-                        </div>
-                        <div class="timeline-footer">
-                          <a href="#" class="btn btn-warning btn-flat btn-sm">View comment</a>
-                        </div>
-                      </div>
-                    </li>
-                    <!-- END timeline item -->
-                    <!-- timeline time label -->
-                    <li class="time-label">
-                      <span class="bg-success">3 Jan. 2014</span>
                     </li>
                     <!-- /.timeline-label -->
                     <!-- timeline item -->
                     <li>
-                      <i class="fa fa-camera bg-purple"></i>
-
+                      <i class="fa fa-map bg-primary"></i>
                       <div class="timeline-item">
-                        <span class="time">
-                          <i class="fa fa-clock-o"></i> 2 days ago
-                        </span>
-
                         <h3 class="timeline-header">
-                          <a href="#">Mina Lee</a> uploaded new photos
+                          <strong>Alamat</strong>
                         </h3>
+                        <div class="timeline-body">{{this.form.Alamat_Ayah | Uptext}}</div>
+                      </div>
+                    </li>
+                    <!-- /.timeline-label -->
+                    <!-- timeline item -->
+                    <li>
+                      <i class="fa fa-church bg-danger"></i>
+                      <div class="timeline-item">
+                        <h3 class="timeline-header">
+                          <strong>Agama</strong>
+                        </h3>
+                        <div class="timeline-body">{{this.form.Agama_Ayah | Uptext}}</div>
+                      </div>
+                    </li>
+                    <!-- END timeline item -->
+                    <!-- timeline item -->
+                    <li>
+                      <i class="fa fa-user-graduate bg-info"></i>
+                      <div class="timeline-item">
+                        <h3 class="timeline-header">
+                          <strong>Pendidikan Terakhir</strong>
+                        </h3>
+                        <div class="timeline-body">{{this.form.Pendidikan_Ayah| Uptext}}</div>
+                      </div>
+                    </li>
+                    <!-- END timeline item -->
+                    <!-- timeline item -->
+                    <li>
+                      <i class="fa fa-briefcase bg-warning"></i>
+                      <div class="timeline-item">
+                        <h3 class="timeline-header">
+                          <strong>Pekerjaan Ayah</strong>
+                        </h3>
+                        <div class="timeline-body">{{this.form.Pekerjaan_Ayah| Uptext}}</div>
+                      </div>
+                    </li>
+                    <!-- END timeline item -->
+                    <!-- timeline item -->
+                    <li>
+                      <i class="fa bg-success">Rp.</i>
+                      <div class="timeline-item">
+                        <h3 class="timeline-header">Penghasilan Ayah</h3>
 
                         <div class="timeline-body">
-                          <!--
-                          <img src="http://placehold.it/150x100" alt="..." class="margin">
-                          <img src="http://placehold.it/150x100" alt="..." class="margin">
-                          <img src="http://placehold.it/150x100" alt="..." class="margin">
-                          <img src="http://placehold.it/150x100" alt="..." class="margin">
-                          -->
+                          <div class="timeline-body">{{this.form.Penghasilan_Ayah| Uptext}}/perbulan</div>
+                        </div>
+                      </div>
+                    </li>
+                    <!-- END timeline item -->
+                    <!-- timeline item -->
+                    <li>
+                      <i class="fa fa-child bg-primary"></i>
+                      <div class="timeline-item">
+                        <h3 class="timeline-header">Tanggungan Anak</h3>
+
+                        <div class="timeline-body">
+                          <div class="timeline-body">{{this.form.Tanggungan| Uptext}}</div>
+                        </div>
+                      </div>
+                    </li>
+                    <!-- END timeline item -->
+                    <!-- timeline item -->
+                    <li>
+                      <i class="fa fa-home bg-success"></i>
+                      <div class="timeline-item">
+                        <h3 class="timeline-header">Perumahan</h3>
+
+                        <div class="timeline-body">
+                          <div class="timeline-body">{{this.form.Perumahan| Uptext}}</div>
                         </div>
                       </div>
                     </li>
@@ -216,73 +203,123 @@
                   </ul>
                 </div>
                 <!-- /.tab-pane -->
-                <div class="tab-pane" id="settings">
-                  <form class="form-horizontal">
-                    <div class="form-group">
-                      <label for="inputName" class="col-sm-2 control-label">Name</label>
-
-                      <div class="col-sm-10">
-                        <input type="email" class="form-control" id="inputName" placeholder="Name">
+                <div class="tab-pane" id="Data_Detail_Ibu">
+                  <!-- The timeline -->
+                  <ul class="timeline timeline-inverse">
+                    <!-- timeline time label -->
+                    <li class="time-label">
+                      <span class="bg-success">Diupdate : {{this.form.updated_at | myDate}}</span>
+                    </li>
+                    <!-- /.timeline-label -->
+                    <!-- timeline item -->
+                    <li>
+                      <i class="fa fa-user bg-primary"></i>
+                      <div class="timeline-item">
+                        <h3 class="timeline-header">
+                          <strong>Nama Lengkap</strong>
+                        </h3>
+                        <div class="timeline-body">{{this.form.Nama_Ibu | Uptext}}</div>
                       </div>
-                    </div>
-                    <div class="form-group">
-                      <label for="inputEmail" class="col-sm-2 control-label">Email</label>
-
-                      <div class="col-sm-10">
-                        <input
-                          type="email"
-                          class="form-control"
-                          id="inputEmail"
-                          placeholder="Email"
-                        >
+                    </li>
+                    <!-- END timeline item -->
+                    <!-- timeline item -->
+                    <li>
+                      <i class="fa fa-map bg-primary"></i>
+                      <div class="timeline-item">
+                        <h3 class="timeline-header">
+                          <strong>Alamat</strong>
+                        </h3>
+                        <div class="timeline-body">{{this.form.Alamat_Ibu | Uptext}}</div>
                       </div>
-                    </div>
-                    <div class="form-group">
-                      <label for="inputName2" class="col-sm-2 control-label">Name</label>
-
-                      <div class="col-sm-10">
-                        <input type="text" class="form-control" id="inputName2" placeholder="Name">
+                    </li>
+                    <!-- /.timeline-label -->
+                    <!-- timeline item -->
+                    <li>
+                      <i class="fa fa-church bg-danger"></i>
+                      <div class="timeline-item">
+                        <h3 class="timeline-header">
+                          <strong>Agama</strong>
+                        </h3>
+                        <div class="timeline-body">{{this.form.Agama_Ibu | Uptext}}</div>
                       </div>
-                    </div>
-                    <div class="form-group">
-                      <label for="inputExperience" class="col-sm-2 control-label">Experience</label>
-
-                      <div class="col-sm-10">
-                        <textarea
-                          class="form-control"
-                          id="inputExperience"
-                          placeholder="Experience"
-                        ></textarea>
+                    </li>
+                    <!-- END timeline item -->
+                    <!-- timeline item -->
+                    <li>
+                      <i class="fa fa-user-graduate bg-info"></i>
+                      <div class="timeline-item">
+                        <h3 class="timeline-header">
+                          <strong>Pendidikan Terakhir</strong>
+                        </h3>
+                        <div class="timeline-body">{{this.form.Pendidikan_Ibu| Uptext}}</div>
                       </div>
-                    </div>
-                    <div class="form-group">
-                      <label for="inputSkills" class="col-sm-2 control-label">Skills</label>
-
-                      <div class="col-sm-10">
-                        <input
-                          type="text"
-                          class="form-control"
-                          id="inputSkills"
-                          placeholder="Skills"
-                        >
+                    </li>
+                    <!-- END timeline item -->
+                    <!-- timeline item -->
+                    <li>
+                      <i class="fa fa-briefcase bg-warning"></i>
+                      <div class="timeline-item">
+                        <h3 class="timeline-header">
+                          <strong>Pekerjaan Ibu</strong>
+                        </h3>
+                        <div class="timeline-body">{{this.form.Pekerjaan_Ibu| Uptext}}</div>
                       </div>
-                    </div>
-                    <div class="form-group">
-                      <div class="col-sm-offset-2 col-sm-10">
-                        <div class="checkbox">
-                          <label>
-                            <input type="checkbox"> I agree to the
-                            <a href="#">terms and conditions</a>
-                          </label>
+                    </li>
+                    <!-- END timeline item -->
+                    <!-- timeline item -->
+                    <li>
+                      <i class="fa bg-success">Rp.</i>
+                      <div class="timeline-item">
+                        <h3 class="timeline-header">Penghasilan Ibu</h3>
+
+                        <div class="timeline-body">
+                          <div class="timeline-body">{{this.form.Penghasilan_Ibu| Uptext}}/perbulan</div>
                         </div>
                       </div>
-                    </div>
-                    <div class="form-group">
-                      <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-danger">Submit</button>
+                    </li>
+                    <!-- END timeline item -->
+                    <li>
+                      <i class="fa fa-clock-o bg-gray"></i>
+                    </li>
+                  </ul>
+                </div>
+                <!-- /.tab-pane -->
+                <!-- /.tab-pane -->
+                <div class="tab-pane" id="Data_Permasalahan">
+                  <!-- The timeline -->
+                  <ul class="timeline timeline-inverse">
+                    <!-- timeline time label -->
+                    <li class="time-label">
+                      <span class="bg-success">Diupdate : {{this.form.updated_at | myDate}}</span>
+                    </li>
+                    <!-- /.timeline-label -->
+                    <!-- timeline item -->
+                    <li>
+                      <i class="fa fa-map-pin bg-danger"></i>
+                      <div class="timeline-item">
+                        <h3 class="timeline-header">
+                          <strong>Latar Belakang Permasalahan Anak</strong>
+                        </h3>
+                        <div
+                          class="timeline-body"
+                        >{{this.form.Latar_Belakang_Permasalahan | Uptext}}</div>
                       </div>
-                    </div>
-                  </form>
+                    </li>
+                    <!-- /.timeline-label -->
+                    <li>
+                      <i class="fa fa-map-pin bg-danger"></i>
+                      <div class="timeline-item">
+                        <h3 class="timeline-header">
+                          <strong>Alasan Menitipkan Anak di Panti</strong>
+                        </h3>
+                        <div class="timeline-body">{{this.form.Alasan_yg_menitipkan| Uptext}}</div>
+                      </div>
+                    </li>
+                    <!-- /.timeline-label -->
+                    <li>
+                      <i class="fa fa-clock-o bg-gray"></i>
+                    </li>
+                  </ul>
                 </div>
                 <!-- /.tab-pane -->
               </div>
@@ -303,8 +340,97 @@
 
 <script>
 export default {
+  data() {
+    return {
+      userauth: new Form({
+        id: "",
+        name: ""
+      }),
+      children: {},
+      form: new Form({
+        //Detail Anak
+        id: "",
+        id_user: "",
+        No_induk: "",
+        Nama_Lengkap: "",
+        Agama: "",
+        Tempat_lahir: "",
+        Tgl_lahir: new Date(),
+        Surat_Kelahiran_Akta: "",
+        Alamat: "",
+        Mulai_masuk_sekolah: new Date(),
+        Nama_sekolah: "",
+        Kelas: "",
+        Tgl_masuk_PA: new Date(),
+        Administrasi_sekolah: "",
+        Sebab_masuk_PA: "",
+        Keterangan_anak: "",
+        Nama_Wali: "",
+        Nomor_telp_wali: "",
+        Photo_anak: "",
+        updated_at: "",
+
+        // Detail Ortu
+        id_children: "",
+        Nama_Ayah: "",
+        Alamat_Ayah: "",
+        Agama_Ayah: "",
+        Status_Ayah: "",
+        Pendidikan_Ayah: "",
+        Pekerjaan_Ayah: "",
+        Penghasilan_Ayah: "",
+        Nama_Ibu: "",
+        Alamat_Ibu: "",
+        Agama_Ibu: "",
+        Status_Ibu: "",
+        Pendidikan_Ibu: "",
+        Pekerjaan_Ibu: "",
+        Penghasilan_Ibu: "",
+        Tanggungan: "",
+        Perumahan: "",
+        Latar_Belakang_Permasalahan: "",
+        Alamat_yg_menitipkan: "",
+        Alasan_yg_menitipkan: ""
+      }),
+      options: {
+        format: "YYYY/MM/DD",
+        useCurrent: false
+      }
+    };
+  },
   mounted() {
     console.log("Component mounted.");
+  },
+  methods: {
+    getProfilePhoto() {
+      let photo =
+        this.form.Photo_anak.length > 200
+          ? this.form.Photo_anak
+          : "img/photo_anak/" + this.form.Photo_anak;
+      return photo;
+    },
+    updateProfile(e) {
+      let file = e.target.files[0];
+      let reader = new FileReader();
+      let limit = 1024 * 1024 * 2;
+      if (file["size"] > limit) {
+        swal.fire({
+          type: "error",
+          title: "Oops...",
+          text: "You are uploading a large file"
+        });
+        return false;
+      }
+      reader.onloadend = file => {
+        this.form.Photo_anak = reader.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  },
+  created() {
+    axios.get(`api/edit-anak/${this.$route.params.idanak}`).then(response => {
+      this.form.fill(response.data.children[0]);
+    });
   }
 };
 </script>

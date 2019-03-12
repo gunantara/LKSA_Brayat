@@ -1,7 +1,7 @@
 <template>
   <section class="content">
     <div class="container-fluid">
-      <div class="row mt-2" v-if="$gate.isAdmin()">
+      <div class="row mt-3" v-if="$gate.isAdmin()">
         <div class="col md-12">
           <div class="card">
             <div class="card-header">

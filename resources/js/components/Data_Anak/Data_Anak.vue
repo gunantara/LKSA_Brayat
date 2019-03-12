@@ -1,6 +1,6 @@
 <template>
   <section class="content">
-    <div class="row mt-2" v-if="$gate.isAdmin()">
+    <div class="row mt-3" v-if="$gate.isAdmin()">
       <div class="col md-12">
         <div class="card">
           <div class="card-header">
@@ -25,9 +25,7 @@
                   <th>No. Induk</th>
                   <th>Nama Lengkap</th>
                   <th>Tempat/Tanggal Lahir</th>
-                  <th>Agama</th>
                   <th>Alamat</th>
-                  <th>Kelengkapan Surat</th>
                   <th>Detail</th>
                   <th>Modify</th>
                 </tr>
@@ -35,11 +33,9 @@
                   <td>{{child.No_induk }}</td>
                   <td>{{child.Nama_Lengkap | Uptext}}</td>
                   <td>{{child.Tempat_lahir | Uptext}} , {{child.Tgl_lahir | myDate}}</td>
-                  <td>{{child.Agama | Uptext}}</td>
                   <td>{{child.Alamat | Uptext}}</td>
-                  <td>{{child.Surat_Kelahiran_Akta | Uptext}}</td>
                   <td>
-                    <router-link to="/detail-anak">
+                    <router-link :to="`detail-anak${child.id_children}`">
                       <button type="button" class="btn btn-outline-warning btn-sm">Lihat Detail</button>
                     </router-link>
                   </td>
@@ -52,7 +48,7 @@
                     <button
                       type="button"
                       class="btn btn-danger btn-sm"
-                      @click="deleteEmployee(employee.id)"
+                      @click="deleteChildren(child.id)"
                     >
                       <i class="fa fa-trash"></i>
                     </button>
@@ -133,6 +129,32 @@ export default {
           .get("api/children")
           .then(({ data }) => (this.childrens = data.childrens));
       }
+    },
+    deleteChildren(id) {
+      swal
+        .fire({
+          title: "Anda yakin Menghapus Data ini?",
+          text: "You won't be able to revert this!",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, delete it!"
+        })
+        .then(result => {
+          //send request to the server
+          if (result.value) {
+            this.form
+              .delete("api/children/" + id)
+              .then(() => {
+                swal.fire("Deleted!", "Your file has been deleted.", "success");
+                Fire.$emit("AfterCreated");
+              })
+              .catch(() => {
+                swal.fire("Fail!", "Something Wrong", "warning");
+              });
+          }
+        });
     }
   },
   created() {

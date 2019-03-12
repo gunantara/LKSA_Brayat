@@ -1,7 +1,7 @@
 <template>
   <section class="content">
     <div class="container-fluid">
-      <div class="row mt-2" v-if="$gate.isAdmin()">
+      <div class="row mt-3" v-if="$gate.isAdmin()">
         <div class="col md-12">
           <div class="card">
             <div class="card-header">
@@ -121,7 +121,7 @@
                           class="form-control"
                           :class="{ 'is-invalid': form.errors.has('type') }"
                         >
-                          <option value>Select User Role</option>
+                          <option value disabled selected>Select User Role</option>
                           <option value="admin">Admin</option>
                           <option value="Pengelola">Pengelola</option>
                           <option value="Kepala LKSA">Kepala LKSA</option>

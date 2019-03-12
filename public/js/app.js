@@ -1862,10 +1862,39 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   mounted: function mounted() {
-    console.log("Component mounted.");
+    this.$store.dispatch("AllJumlah_Users");
+    this.$store.dispatch("AllJumlah_Employees");
+    this.$store.dispatch("AllJumlah_Childrens");
+  },
+  methods: {
+    loadJumlah: function loadJumlah() {
+      if (this.$gate.isAdmin()) {
+        this.$store.dispatch("AllJumlah_Users");
+        this.$store.dispatch("AllJumlah_Employees");
+        this.$store.dispatch("AllJumlah_Childrens");
+      }
+    }
+  },
+  computed: {
+    getJumlahUser: function getJumlahUser() {
+      return this.$store.getters.getJumlahUser;
+    },
+    getJumlahEmployee: function getJumlahEmployee() {
+      return this.$store.getters.getJumlahEmployee;
+    },
+    getJumlahChildren: function getJumlahChildren() {
+      return this.$store.getters.getJumlahChildren;
+    }
+  },
+  created: function created() {
+    var _this = this;
+
+    this.loadJumlah();
+    Fire.$on("AfterCreated", function () {
+      _this.loadJumlah();
+    });
   }
 });
 
@@ -1880,10 +1909,6 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-//
-//
-//
-//
 //
 //
 //
@@ -2017,14 +2042,37 @@ __webpack_require__.r(__webpack_exports__);
           return _this.childrens = data.childrens;
         });
       }
+    },
+    deleteChildren: function deleteChildren(id) {
+      var _this2 = this;
+
+      swal.fire({
+        title: "Anda yakin Menghapus Data ini?",
+        text: "You won't be able to revert this!",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+      }).then(function (result) {
+        //send request to the server
+        if (result.value) {
+          _this2.form.delete("api/children/" + id).then(function () {
+            swal.fire("Deleted!", "Your file has been deleted.", "success");
+            Fire.$emit("AfterCreated");
+          }).catch(function () {
+            swal.fire("Fail!", "Something Wrong", "warning");
+          });
+        }
+      });
     }
   },
   created: function created() {
-    var _this2 = this;
+    var _this3 = this;
 
     this.LoadChildren();
     Fire.$on("AfterCreated", function () {
-      _this2.LoadChildren();
+      _this3.LoadChildren();
     });
   }
 });
@@ -2343,9 +2391,138 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      userauth: new Form({
+        id: "",
+        name: ""
+      }),
+      children: {},
+      form: new Form({
+        //Detail Anak
+        id: "",
+        id_user: "",
+        No_induk: "",
+        Nama_Lengkap: "",
+        Agama: "",
+        Tempat_lahir: "",
+        Tgl_lahir: new Date(),
+        Surat_Kelahiran_Akta: "",
+        Alamat: "",
+        Mulai_masuk_sekolah: new Date(),
+        Nama_sekolah: "",
+        Kelas: "",
+        Tgl_masuk_PA: new Date(),
+        Administrasi_sekolah: "",
+        Sebab_masuk_PA: "",
+        Keterangan_anak: "",
+        Nama_Wali: "",
+        Nomor_telp_wali: "",
+        Photo_anak: "",
+        updated_at: "",
+        // Detail Ortu
+        id_children: "",
+        Nama_Ayah: "",
+        Alamat_Ayah: "",
+        Agama_Ayah: "",
+        Status_Ayah: "",
+        Pendidikan_Ayah: "",
+        Pekerjaan_Ayah: "",
+        Penghasilan_Ayah: "",
+        Nama_Ibu: "",
+        Alamat_Ibu: "",
+        Agama_Ibu: "",
+        Status_Ibu: "",
+        Pendidikan_Ibu: "",
+        Pekerjaan_Ibu: "",
+        Penghasilan_Ibu: "",
+        Tanggungan: "",
+        Perumahan: "",
+        Latar_Belakang_Permasalahan: "",
+        Alamat_yg_menitipkan: "",
+        Alasan_yg_menitipkan: ""
+      }),
+      options: {
+        format: "YYYY/MM/DD",
+        useCurrent: false
+      }
+    };
+  },
   mounted: function mounted() {
     console.log("Component mounted.");
+  },
+  methods: {
+    getProfilePhoto: function getProfilePhoto() {
+      var photo = this.form.Photo_anak.length > 200 ? this.form.Photo_anak : "img/photo_anak/" + this.form.Photo_anak;
+      return photo;
+    },
+    updateProfile: function updateProfile(e) {
+      var _this = this;
+
+      var file = e.target.files[0];
+      var reader = new FileReader();
+      var limit = 1024 * 1024 * 2;
+
+      if (file["size"] > limit) {
+        swal.fire({
+          type: "error",
+          title: "Oops...",
+          text: "You are uploading a large file"
+        });
+        return false;
+      }
+
+      reader.onloadend = function (file) {
+        _this.form.Photo_anak = reader.result;
+      };
+
+      reader.readAsDataURL(file);
+    }
+  },
+  created: function created() {
+    var _this2 = this;
+
+    axios.get("api/edit-anak/".concat(this.$route.params.idanak)).then(function (response) {
+      _this2.form.fill(response.data.children[0]);
+    });
   }
 });
 
@@ -2360,6 +2537,52 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -3107,6 +3330,7 @@ __webpack_require__.r(__webpack_exports__);
         Keterangan_anak: "",
         Nama_Wali: "",
         Nomor_telp_wali: "",
+        Photo_anak: "",
         // Detail Ortu
         id_children: "",
         Nama_Ayah: "",
@@ -3142,8 +3366,6 @@ __webpack_require__.r(__webpack_exports__);
     var _this = this;
 
     axios.get("api/edit-anak/".concat(this.$route.params.idanak)).then(function (response) {
-      console.log(response.data);
-
       _this.form.fill(response.data.children[0]);
     });
   },
@@ -3165,6 +3387,32 @@ __webpack_require__.r(__webpack_exports__);
           title: "Something wrong when update Data Anak"
         });
       });
+    },
+    getProfilePhoto: function getProfilePhoto() {
+      var photo = this.form.Photo_anak.length > 200 ? this.form.Photo_anak : "img/photo_anak/" + this.form.Photo_anak;
+      return photo;
+    },
+    updateProfile: function updateProfile(e) {
+      var _this3 = this;
+
+      var file = e.target.files[0];
+      var reader = new FileReader();
+      var limit = 1024 * 1024 * 2;
+
+      if (file["size"] > limit) {
+        swal.fire({
+          type: "error",
+          title: "Oops...",
+          text: "You are uploading a large file"
+        });
+        return false;
+      }
+
+      reader.onloadend = function (file) {
+        _this3.form.Photo_anak = reader.result;
+      };
+
+      reader.readAsDataURL(file);
     }
   }
 });
@@ -3180,6 +3428,53 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -3928,6 +4223,7 @@ __webpack_require__.r(__webpack_exports__);
         Keterangan_anak: "",
         Nama_Wali: "",
         Nomor_telp_wali: "",
+        Photo_anak: "",
         // Detail Ortu
         id_children: "",
         Nama_Ayah: "",
@@ -3987,14 +4283,40 @@ __webpack_require__.r(__webpack_exports__);
           title: "Something wrong when create a Data Anak"
         });
       });
+    },
+    getProfilePhoto: function getProfilePhoto() {
+      var photo = this.form.Photo_anak.length > 200 ? this.form.Photo_anak : "img/photo_anak/" + this.form.Photo_anak;
+      return photo;
+    },
+    updateProfile: function updateProfile(e) {
+      var _this3 = this;
+
+      var file = e.target.files[0];
+      var reader = new FileReader();
+      var limit = 1024 * 1024 * 2;
+
+      if (file["size"] > limit) {
+        swal.fire({
+          type: "error",
+          title: "Oops...",
+          text: "You are uploading a large file"
+        });
+        return false;
+      }
+
+      reader.onloadend = function (file) {
+        _this3.form.Photo_anak = reader.result;
+      };
+
+      reader.readAsDataURL(file);
     }
   },
   created: function created() {
-    var _this3 = this;
+    var _this4 = this;
 
     this.loaduserAuth();
     Fire.$on("AfterCreated", function () {
-      _this3.loaduserAuth();
+      _this4.loaduserAuth();
     });
   }
 });
@@ -4801,6 +5123,37 @@ __webpack_require__.r(__webpack_exports__);
       var data = _ref.data;
       return _this3.form.fill(data);
     });
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Profile_LKSA.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Profile_LKSA.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  mounted: function mounted() {
+    console.log("Component mounted.");
   }
 });
 
@@ -68666,15 +69019,19 @@ var render = function() {
                 "div",
                 { staticClass: "small-box bg-info" },
                 [
-                  _vm._m(0),
+                  _c("div", { staticClass: "inner" }, [
+                    _c("h3", [_vm._v(_vm._s(_vm.getJumlahUser))]),
+                    _vm._v(" "),
+                    _c("p", [_vm._v("Data Pengguna")])
+                  ]),
                   _vm._v(" "),
-                  _vm._m(1),
+                  _vm._m(0),
                   _vm._v(" "),
                   _c(
                     "router-link",
                     {
                       staticClass: "small-box-footer",
-                      attrs: { to: "/users" }
+                      attrs: { to: "/pengguna" }
                     },
                     [
                       _vm._v("\n            More info\n            "),
@@ -68691,40 +69048,19 @@ var render = function() {
                 "div",
                 { staticClass: "small-box bg-warning" },
                 [
-                  _vm._m(2),
+                  _c("div", { staticClass: "inner" }, [
+                    _c("h3", [_vm._v(_vm._s(_vm.getJumlahEmployee))]),
+                    _vm._v(" "),
+                    _c("p", [_vm._v("Data Karyawan")])
+                  ]),
                   _vm._v(" "),
-                  _vm._m(3),
-                  _vm._v(" "),
-                  _c(
-                    "router-link",
-                    {
-                      staticClass: "small-box-footer",
-                      attrs: { to: "/users" }
-                    },
-                    [
-                      _vm._v("\n            More info\n            "),
-                      _c("i", { staticClass: "fa fa-arrow-circle-right" })
-                    ]
-                  )
-                ],
-                1
-              )
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "col-lg-3 col-6" }, [
-              _c(
-                "div",
-                { staticClass: "small-box bg-danger" },
-                [
-                  _vm._m(4),
-                  _vm._v(" "),
-                  _vm._m(5),
+                  _vm._m(1),
                   _vm._v(" "),
                   _c(
                     "router-link",
                     {
                       staticClass: "small-box-footer",
-                      attrs: { to: "/topic" }
+                      attrs: { to: "/data-karyawan" }
                     },
                     [
                       _vm._v("\n            More info\n            "),
@@ -68741,15 +69077,44 @@ var render = function() {
                 "div",
                 { staticClass: "small-box bg-success" },
                 [
-                  _vm._m(6),
+                  _c("div", { staticClass: "inner" }, [
+                    _c("h3", [_vm._v(_vm._s(_vm.getJumlahChildren))]),
+                    _vm._v(" "),
+                    _c("p", [_vm._v("Data Anak")])
+                  ]),
                   _vm._v(" "),
-                  _vm._m(7),
+                  _vm._m(2),
                   _vm._v(" "),
                   _c(
                     "router-link",
                     {
                       staticClass: "small-box-footer",
-                      attrs: { to: "/option" }
+                      attrs: { to: "/data-anak" }
+                    },
+                    [
+                      _vm._v("\n            More info\n            "),
+                      _c("i", { staticClass: "fa fa-arrow-circle-right" })
+                    ]
+                  )
+                ],
+                1
+              )
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-lg-3 col-6" }, [
+              _c(
+                "div",
+                { staticClass: "small-box bg-danger" },
+                [
+                  _vm._m(3),
+                  _vm._v(" "),
+                  _vm._m(4),
+                  _vm._v(" "),
+                  _c(
+                    "router-link",
+                    {
+                      staticClass: "small-box-footer",
+                      attrs: { to: "/inventaris" }
                     },
                     [
                       _vm._v("\n            More info\n            "),
@@ -68772,10 +69137,8 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "inner" }, [
-      _c("h3", [_vm._v("7")]),
-      _vm._v(" "),
-      _c("p", [_vm._v("Data Pengguna")])
+    return _c("div", { staticClass: "icon" }, [
+      _c("i", { staticClass: "fa fa-users" })
     ])
   },
   function() {
@@ -68783,17 +69146,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "icon" }, [
-      _c("i", { staticClass: "fa fa-user-plus" })
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "inner" }, [
-      _c("h3", [_vm._v("5")]),
-      _vm._v(" "),
-      _c("p", [_vm._v("Data Karyawan")])
+      _c("i", { staticClass: "fa fa-user-tie" })
     ])
   },
   function() {
@@ -68801,25 +69154,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "icon" }, [
-      _c("i", { staticClass: "fa fa-user-plus" })
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "inner" }, [
-      _c("h3", [_vm._v("10")]),
-      _vm._v(" "),
-      _c("p", [_vm._v("Data Anak")])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "icon" }, [
-      _c("i", { staticClass: "fas fa-scroll" })
+      _c("i", { staticClass: "fas fa-child" })
     ])
   },
   function() {
@@ -68837,7 +69172,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "icon" }, [
-      _c("i", { staticClass: "fas fa-chart-bar" })
+      _c("i", { staticClass: "fas fa-warehouse" })
     ])
   }
 ]
@@ -68864,7 +69199,7 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("section", { staticClass: "content" }, [
     _vm.$gate.isAdmin()
-      ? _c("div", { staticClass: "row mt-2" }, [
+      ? _c("div", { staticClass: "row mt-3" }, [
           _c("div", { staticClass: "col md-12" }, [
             _c("div", { staticClass: "card" }, [
               _c("div", { staticClass: "card-header" }, [
@@ -68916,19 +69251,7 @@ var render = function() {
                           ]),
                           _vm._v(" "),
                           _c("td", [
-                            _vm._v(_vm._s(_vm._f("Uptext")(child.Agama)))
-                          ]),
-                          _vm._v(" "),
-                          _c("td", [
                             _vm._v(_vm._s(_vm._f("Uptext")(child.Alamat)))
-                          ]),
-                          _vm._v(" "),
-                          _c("td", [
-                            _vm._v(
-                              _vm._s(
-                                _vm._f("Uptext")(child.Surat_Kelahiran_Akta)
-                              )
-                            )
                           ]),
                           _vm._v(" "),
                           _c(
@@ -68936,7 +69259,11 @@ var render = function() {
                             [
                               _c(
                                 "router-link",
-                                { attrs: { to: "/detail-anak" } },
+                                {
+                                  attrs: {
+                                    to: "detail-anak" + child.id_children
+                                  }
+                                },
                                 [
                                   _c(
                                     "button",
@@ -68980,7 +69307,7 @@ var render = function() {
                                   attrs: { type: "button" },
                                   on: {
                                     click: function($event) {
-                                      return _vm.deleteEmployee(_vm.employee.id)
+                                      return _vm.deleteChildren(child.id)
                                     }
                                   }
                                 },
@@ -69023,11 +69350,7 @@ var staticRenderFns = [
       _vm._v(" "),
       _c("th", [_vm._v("Tempat/Tanggal Lahir")]),
       _vm._v(" "),
-      _c("th", [_vm._v("Agama")]),
-      _vm._v(" "),
       _c("th", [_vm._v("Alamat")]),
-      _vm._v(" "),
-      _c("th", [_vm._v("Kelengkapan Surat")]),
       _vm._v(" "),
       _c("th", [_vm._v("Detail")]),
       _vm._v(" "),
@@ -69056,486 +69379,659 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("section", { staticClass: "content" }, [
-      _c("div", { staticClass: "container-fluid" }, [
-        _c("div", { staticClass: "row mt-3" }, [
-          _c("div", { staticClass: "col-md-3" }, [
-            _c("div", { staticClass: "card card-primary card-outline" }, [
-              _c("div", { staticClass: "card-body box-profile" }, [
-                _c("div", { staticClass: "text-center" }),
+  return _c("section", { staticClass: "content" }, [
+    _c("div", { staticClass: "container-fluid" }, [
+      _c("div", { staticClass: "row mt-3" }, [
+        _c("div", { staticClass: "col-md-4" }, [
+          _c("div", { staticClass: "card card-primary card-outline" }, [
+            _c("div", { staticClass: "card-body box-profile" }, [
+              _c("div", { staticClass: "text-center" }, [
+                _c("img", {
+                  staticClass: "profile-user-img img-fluid img-circle",
+                  attrs: {
+                    src: _vm.getProfilePhoto(),
+                    alt: "User profile picture"
+                  }
+                })
+              ]),
+              _vm._v(" "),
+              _c("h3", { staticClass: "profile-username text-center" }, [
+                _vm._v(_vm._s(this.form.Nama_Lengkap))
+              ]),
+              _vm._v(" "),
+              _c("p", { staticClass: "text-muted text-center" }, [
+                _vm._v("Nomor Induk : " + _vm._s(this.form.No_induk))
+              ]),
+              _vm._v(" "),
+              _c(
+                "ul",
+                { staticClass: "list-group list-group-unbordered mb-3" },
+                [
+                  _c("li", { staticClass: "list-group-item" }, [
+                    _c("b", [_vm._v("Tempat Lahir")]),
+                    _vm._v(" "),
+                    _c("a", { staticClass: "float-right" }, [
+                      _vm._v(_vm._s(_vm._f("Uptext")(this.form.Tempat_lahir)))
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("li", { staticClass: "list-group-item" }, [
+                    _c("b", [_vm._v("Tanggal Lahir")]),
+                    _vm._v(" "),
+                    _c("a", { staticClass: "float-right" }, [
+                      _vm._v(_vm._s(_vm._f("myDate")(this.form.Tgl_lahir)))
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("li", { staticClass: "list-group-item" }, [
+                    _c("b", [_vm._v("Agama")]),
+                    _vm._v(" "),
+                    _c("a", { staticClass: "float-right" }, [
+                      _vm._v(_vm._s(_vm._f("Uptext")(this.form.Agama)))
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("li", { staticClass: "list-group-item" }, [
+                    _c("b", [_vm._v("Masuk Panti Asuhan")]),
+                    _vm._v(" "),
+                    _c("a", { staticClass: "float-right" }, [
+                      _vm._v(_vm._s(_vm._f("myDate")(this.form.Tgl_masuk_PA)))
+                    ])
+                  ])
+                ]
+              )
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "card card-success" }, [
+            _vm._m(0),
+            _vm._v(" "),
+            _c("div", { staticClass: "card-body" }, [
+              _vm._m(1),
+              _vm._v(" "),
+              _c("p", { staticClass: "text-muted" }, [
+                _vm._v(_vm._s(_vm._f("Uptext")(this.form.Alamat)))
+              ]),
+              _vm._v(" "),
+              _c("hr"),
+              _vm._v(" "),
+              _vm._m(2),
+              _vm._v(" "),
+              _c("p", { staticClass: "text-muted" }, [
+                _c("b", [_vm._v("Tanggal Mulai Sekolah :")]),
                 _vm._v(" "),
-                _c("h3", { staticClass: "profile-username text-center" }, [
-                  _vm._v("Nina Mcintire")
+                _c("span", { staticClass: "float-right" }, [
+                  _vm._v(
+                    _vm._s(_vm._f("myDate")(this.form.Mulai_masuk_sekolah))
+                  )
                 ]),
                 _vm._v(" "),
-                _c("p", { staticClass: "text-muted text-center" }, [
-                  _vm._v("Software Engineer")
+                _c("br"),
+                _vm._v(" "),
+                _c("b", [_vm._v("Nama Sekolah :")]),
+                _vm._v(" "),
+                _c("span", { staticClass: "float-right" }, [
+                  _vm._v(_vm._s(_vm._f("Uptext")(this.form.Nama_sekolah)))
                 ]),
                 _vm._v(" "),
+                _c("br"),
+                _vm._v(" "),
+                _c("b", [_vm._v("Kelas :")]),
+                _vm._v(" "),
+                _c("span", { staticClass: "float-right" }, [
+                  _vm._v(_vm._s(_vm._f("Uptext")(this.form.Kelas)))
+                ])
+              ]),
+              _vm._v(" "),
+              _c("hr"),
+              _vm._v(" "),
+              _vm._m(3),
+              _vm._v(" "),
+              _c("p", { staticClass: "text-muted" }, [
+                _vm._v(_vm._s(_vm._f("Uptext")(this.form.Sebab_masuk_PA)))
+              ]),
+              _vm._v(" "),
+              _c("hr"),
+              _vm._v(" "),
+              _vm._m(4),
+              _vm._v(" "),
+              _c("p", { staticClass: "text-muted" }, [
+                _vm._v(_vm._s(_vm._f("Uptext")(this.form.Keterangan_anak)))
+              ])
+            ])
+          ])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "col-md-8" }, [
+          _c("div", { staticClass: "card" }, [
+            _vm._m(5),
+            _vm._v(" "),
+            _c("div", { staticClass: "card-body" }, [
+              _c("div", { staticClass: "tab-content" }, [
                 _c(
-                  "ul",
-                  { staticClass: "list-group list-group-unbordered mb-3" },
+                  "div",
+                  {
+                    staticClass: "active tab-pane",
+                    attrs: { id: "Data_Detail_Ayah" }
+                  },
                   [
-                    _c("li", { staticClass: "list-group-item" }, [
-                      _c("b", [_vm._v("Followers")]),
+                    _c("ul", { staticClass: "timeline timeline-inverse" }, [
+                      _c("li", { staticClass: "time-label" }, [
+                        _c("span", { staticClass: "bg-success" }, [
+                          _vm._v(
+                            "Diupdate : " +
+                              _vm._s(_vm._f("myDate")(this.form.updated_at))
+                          )
+                        ])
+                      ]),
                       _vm._v(" "),
-                      _c("a", { staticClass: "float-right" }, [_vm._v("1,322")])
-                    ]),
-                    _vm._v(" "),
-                    _c("li", { staticClass: "list-group-item" }, [
-                      _c("b", [_vm._v("Following")]),
+                      _c("li", [
+                        _c("i", { staticClass: "fa fa-user bg-primary" }),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "timeline-item" }, [
+                          _vm._m(6),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "timeline-body" }, [
+                            _vm._v(
+                              _vm._s(_vm._f("Uptext")(this.form.Nama_Ayah))
+                            )
+                          ])
+                        ])
+                      ]),
                       _vm._v(" "),
-                      _c("a", { staticClass: "float-right" }, [_vm._v("543")])
-                    ]),
-                    _vm._v(" "),
-                    _c("li", { staticClass: "list-group-item" }, [
-                      _c("b", [_vm._v("Friends")]),
+                      _c("li", [
+                        _c("i", { staticClass: "fa fa-map bg-primary" }),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "timeline-item" }, [
+                          _vm._m(7),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "timeline-body" }, [
+                            _vm._v(
+                              _vm._s(_vm._f("Uptext")(this.form.Alamat_Ayah))
+                            )
+                          ])
+                        ])
+                      ]),
                       _vm._v(" "),
-                      _c("a", { staticClass: "float-right" }, [
-                        _vm._v("13,287")
-                      ])
+                      _c("li", [
+                        _c("i", { staticClass: "fa fa-church bg-danger" }),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "timeline-item" }, [
+                          _vm._m(8),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "timeline-body" }, [
+                            _vm._v(
+                              _vm._s(_vm._f("Uptext")(this.form.Agama_Ayah))
+                            )
+                          ])
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("li", [
+                        _c("i", { staticClass: "fa fa-user-graduate bg-info" }),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "timeline-item" }, [
+                          _vm._m(9),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "timeline-body" }, [
+                            _vm._v(
+                              _vm._s(
+                                _vm._f("Uptext")(this.form.Pendidikan_Ayah)
+                              )
+                            )
+                          ])
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("li", [
+                        _c("i", { staticClass: "fa fa-briefcase bg-warning" }),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "timeline-item" }, [
+                          _vm._m(10),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "timeline-body" }, [
+                            _vm._v(
+                              _vm._s(_vm._f("Uptext")(this.form.Pekerjaan_Ayah))
+                            )
+                          ])
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("li", [
+                        _c("i", { staticClass: "fa bg-success" }, [
+                          _vm._v("Rp.")
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "timeline-item" }, [
+                          _c("h3", { staticClass: "timeline-header" }, [
+                            _vm._v("Penghasilan Ayah")
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "timeline-body" }, [
+                            _c("div", { staticClass: "timeline-body" }, [
+                              _vm._v(
+                                _vm._s(
+                                  _vm._f("Uptext")(this.form.Penghasilan_Ayah)
+                                ) + "/perbulan"
+                              )
+                            ])
+                          ])
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("li", [
+                        _c("i", { staticClass: "fa fa-child bg-primary" }),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "timeline-item" }, [
+                          _c("h3", { staticClass: "timeline-header" }, [
+                            _vm._v("Tanggungan Anak")
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "timeline-body" }, [
+                            _c("div", { staticClass: "timeline-body" }, [
+                              _vm._v(
+                                _vm._s(_vm._f("Uptext")(this.form.Tanggungan))
+                              )
+                            ])
+                          ])
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("li", [
+                        _c("i", { staticClass: "fa fa-home bg-success" }),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "timeline-item" }, [
+                          _c("h3", { staticClass: "timeline-header" }, [
+                            _vm._v("Perumahan")
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "timeline-body" }, [
+                            _c("div", { staticClass: "timeline-body" }, [
+                              _vm._v(
+                                _vm._s(_vm._f("Uptext")(this.form.Perumahan))
+                              )
+                            ])
+                          ])
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _vm._m(11)
                     ])
                   ]
                 ),
                 _vm._v(" "),
                 _c(
-                  "a",
-                  {
-                    staticClass: "btn btn-primary btn-block",
-                    attrs: { href: "#" }
-                  },
-                  [_c("b", [_vm._v("Follow")])]
-                )
-              ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "card card-primary" }, [
-              _c("div", { staticClass: "card-header" }, [
-                _c("h3", { staticClass: "card-title" }, [_vm._v("About Me")])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "card-body" }, [
-                _c("strong", [
-                  _c("i", { staticClass: "fa fa-book mr-1" }),
-                  _vm._v(" Education\n            ")
-                ]),
-                _vm._v(" "),
-                _c("p", { staticClass: "text-muted" }, [
-                  _vm._v(
-                    "B.S. in Computer Science from the University of Tennessee at Knoxville"
-                  )
-                ]),
-                _vm._v(" "),
-                _c("hr"),
-                _vm._v(" "),
-                _c("strong", [
-                  _c("i", { staticClass: "fa fa-map-marker mr-1" }),
-                  _vm._v(" Location\n            ")
-                ]),
-                _vm._v(" "),
-                _c("p", { staticClass: "text-muted" }, [
-                  _vm._v("Malibu, California")
-                ]),
-                _vm._v(" "),
-                _c("hr"),
-                _vm._v(" "),
-                _c("strong", [
-                  _c("i", { staticClass: "fas fa-pencil-alt" }),
-                  _vm._v(" Skills\n            ")
-                ]),
-                _vm._v(" "),
-                _c("p", { staticClass: "text-muted" }, [
-                  _c("span", { staticClass: "tag tag-danger" }, [
-                    _vm._v("UI Design")
-                  ]),
-                  _vm._v(" "),
-                  _c("span", { staticClass: "tag tag-success" }, [
-                    _vm._v("Coding")
-                  ]),
-                  _vm._v(" "),
-                  _c("span", { staticClass: "tag tag-info" }, [
-                    _vm._v("Javascript")
-                  ]),
-                  _vm._v(" "),
-                  _c("span", { staticClass: "tag tag-warning" }, [
-                    _vm._v("PHP")
-                  ]),
-                  _vm._v(" "),
-                  _c("span", { staticClass: "tag tag-primary" }, [
-                    _vm._v("Node.js")
-                  ])
-                ]),
-                _vm._v(" "),
-                _c("hr"),
-                _vm._v(" "),
-                _c("strong", [
-                  _c("i", { staticClass: "fas fa-file-alt" }),
-                  _vm._v(" Notes\n            ")
-                ]),
-                _vm._v(" "),
-                _c("p", { staticClass: "text-muted" }, [
-                  _vm._v(
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fermentum enim neque."
-                  )
-                ])
-              ])
-            ])
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-md-9" }, [
-            _c("div", { staticClass: "card" }, [
-              _c("div", { staticClass: "card-header p-2" }, [
-                _c("ul", { staticClass: "nav nav-pills" }, [
-                  _c("li", { staticClass: "nav-item" }, [
-                    _c(
-                      "a",
-                      {
-                        staticClass: "nav-link active",
-                        attrs: { href: "#timeline", "data-toggle": "tab" }
-                      },
-                      [_vm._v("Timeline")]
-                    )
-                  ]),
-                  _vm._v(" "),
-                  _c("li", { staticClass: "nav-item" }, [
-                    _c(
-                      "a",
-                      {
-                        staticClass: "nav-link",
-                        attrs: { href: "#settings", "data-toggle": "tab" }
-                      },
-                      [_vm._v("Settings")]
-                    )
-                  ])
-                ])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "card-body" }, [
-                _c("div", { staticClass: "tab-content" }, [
-                  _c(
-                    "div",
-                    {
-                      staticClass: "active tab-pane",
-                      attrs: { id: "timeline" }
-                    },
-                    [
-                      _c("ul", { staticClass: "timeline timeline-inverse" }, [
-                        _c("li", { staticClass: "time-label" }, [
-                          _c("span", { staticClass: "bg-danger" }, [
-                            _vm._v("10 Feb. 2014")
-                          ])
-                        ]),
+                  "div",
+                  { staticClass: "tab-pane", attrs: { id: "Data_Detail_Ibu" } },
+                  [
+                    _c("ul", { staticClass: "timeline timeline-inverse" }, [
+                      _c("li", { staticClass: "time-label" }, [
+                        _c("span", { staticClass: "bg-success" }, [
+                          _vm._v(
+                            "Diupdate : " +
+                              _vm._s(_vm._f("myDate")(this.form.updated_at))
+                          )
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("li", [
+                        _c("i", { staticClass: "fa fa-user bg-primary" }),
                         _vm._v(" "),
-                        _c("li", [
-                          _c("i", { staticClass: "fa fa-envelope bg-primary" }),
+                        _c("div", { staticClass: "timeline-item" }, [
+                          _vm._m(12),
                           _vm._v(" "),
-                          _c("div", { staticClass: "timeline-item" }, [
-                            _c("span", { staticClass: "time" }, [
-                              _c("i", { staticClass: "fa fa-clock-o" }),
-                              _vm._v(" 12:05\n                      ")
-                            ]),
-                            _vm._v(" "),
-                            _c("h3", { staticClass: "timeline-header" }, [
-                              _c("a", { attrs: { href: "#" } }, [
-                                _vm._v("Support Team")
-                              ]),
-                              _vm._v(
-                                " sent you an email\n                      "
-                              )
-                            ]),
-                            _vm._v(" "),
-                            _c("div", { staticClass: "timeline-body" }, [
-                              _vm._v(
-                                "\n                        Etsy doostang zoodles disqus groupon greplin oooj voxy zoodles,\n                        weebly ning heekya handango imeem plugg dopplr jibjab, movity\n                        jajah plickers sifteo edmodo ifttt zimbra. Babblely odeo kaboodle\n                        quora plaxo ideeli hulu weebly balihoo...\n                      "
-                              )
-                            ]),
-                            _vm._v(" "),
-                            _c("div", { staticClass: "timeline-footer" }, [
-                              _c(
-                                "a",
-                                {
-                                  staticClass: "btn btn-primary btn-sm",
-                                  attrs: { href: "#" }
-                                },
-                                [_vm._v("Read more")]
-                              ),
-                              _vm._v(" "),
-                              _c(
-                                "a",
-                                {
-                                  staticClass: "btn btn-danger btn-sm",
-                                  attrs: { href: "#" }
-                                },
-                                [_vm._v("Delete")]
-                              )
-                            ])
+                          _c("div", { staticClass: "timeline-body" }, [
+                            _vm._v(_vm._s(_vm._f("Uptext")(this.form.Nama_Ibu)))
                           ])
-                        ]),
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("li", [
+                        _c("i", { staticClass: "fa fa-map bg-primary" }),
                         _vm._v(" "),
-                        _c("li", [
-                          _c("i", { staticClass: "fa fa-user bg-info" }),
+                        _c("div", { staticClass: "timeline-item" }, [
+                          _vm._m(13),
                           _vm._v(" "),
-                          _c("div", { staticClass: "timeline-item" }, [
-                            _c("span", { staticClass: "time" }, [
-                              _c("i", { staticClass: "fa fa-clock-o" }),
-                              _vm._v(" 5 mins ago\n                      ")
-                            ]),
-                            _vm._v(" "),
-                            _c(
-                              "h3",
-                              { staticClass: "timeline-header no-border" },
-                              [
-                                _c("a", { attrs: { href: "#" } }, [
-                                  _vm._v("Sarah Young")
-                                ]),
-                                _vm._v(
-                                  " accepted your friend request\n                      "
-                                )
-                              ]
+                          _c("div", { staticClass: "timeline-body" }, [
+                            _vm._v(
+                              _vm._s(_vm._f("Uptext")(this.form.Alamat_Ibu))
                             )
                           ])
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("li", [
+                        _c("i", { staticClass: "fa fa-church bg-danger" }),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "timeline-item" }, [
+                          _vm._m(14),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "timeline-body" }, [
+                            _vm._v(
+                              _vm._s(_vm._f("Uptext")(this.form.Agama_Ibu))
+                            )
+                          ])
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("li", [
+                        _c("i", { staticClass: "fa fa-user-graduate bg-info" }),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "timeline-item" }, [
+                          _vm._m(15),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "timeline-body" }, [
+                            _vm._v(
+                              _vm._s(_vm._f("Uptext")(this.form.Pendidikan_Ibu))
+                            )
+                          ])
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("li", [
+                        _c("i", { staticClass: "fa fa-briefcase bg-warning" }),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "timeline-item" }, [
+                          _vm._m(16),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "timeline-body" }, [
+                            _vm._v(
+                              _vm._s(_vm._f("Uptext")(this.form.Pekerjaan_Ibu))
+                            )
+                          ])
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("li", [
+                        _c("i", { staticClass: "fa bg-success" }, [
+                          _vm._v("Rp.")
                         ]),
                         _vm._v(" "),
-                        _c("li", [
-                          _c("i", { staticClass: "fa fa-comments bg-warning" }),
+                        _c("div", { staticClass: "timeline-item" }, [
+                          _c("h3", { staticClass: "timeline-header" }, [
+                            _vm._v("Penghasilan Ibu")
+                          ]),
                           _vm._v(" "),
-                          _c("div", { staticClass: "timeline-item" }, [
-                            _c("span", { staticClass: "time" }, [
-                              _c("i", { staticClass: "fa fa-clock-o" }),
-                              _vm._v(" 27 mins ago\n                      ")
-                            ]),
-                            _vm._v(" "),
-                            _c("h3", { staticClass: "timeline-header" }, [
-                              _c("a", { attrs: { href: "#" } }, [
-                                _vm._v("Jay White")
-                              ]),
-                              _vm._v(
-                                " commented on your post\n                      "
-                              )
-                            ]),
-                            _vm._v(" "),
+                          _c("div", { staticClass: "timeline-body" }, [
                             _c("div", { staticClass: "timeline-body" }, [
                               _vm._v(
-                                "\n                        Take me to your leader!\n                        Switzerland is small and neutral!\n                        We are more like Germany, ambitious and misunderstood!\n                      "
-                              )
-                            ]),
-                            _vm._v(" "),
-                            _c("div", { staticClass: "timeline-footer" }, [
-                              _c(
-                                "a",
-                                {
-                                  staticClass:
-                                    "btn btn-warning btn-flat btn-sm",
-                                  attrs: { href: "#" }
-                                },
-                                [_vm._v("View comment")]
+                                _vm._s(
+                                  _vm._f("Uptext")(this.form.Penghasilan_Ibu)
+                                ) + "/perbulan"
                               )
                             ])
                           ])
-                        ]),
-                        _vm._v(" "),
-                        _c("li", { staticClass: "time-label" }, [
-                          _c("span", { staticClass: "bg-success" }, [
-                            _vm._v("3 Jan. 2014")
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c("li", [
-                          _c("i", { staticClass: "fa fa-camera bg-purple" }),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "timeline-item" }, [
-                            _c("span", { staticClass: "time" }, [
-                              _c("i", { staticClass: "fa fa-clock-o" }),
-                              _vm._v(" 2 days ago\n                      ")
-                            ]),
-                            _vm._v(" "),
-                            _c("h3", { staticClass: "timeline-header" }, [
-                              _c("a", { attrs: { href: "#" } }, [
-                                _vm._v("Mina Lee")
-                              ]),
-                              _vm._v(
-                                " uploaded new photos\n                      "
-                              )
-                            ]),
-                            _vm._v(" "),
-                            _c("div", { staticClass: "timeline-body" })
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c("li", [
-                          _c("i", { staticClass: "fa fa-clock-o bg-gray" })
                         ])
-                      ])
-                    ]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "div",
-                    { staticClass: "tab-pane", attrs: { id: "settings" } },
-                    [
-                      _c("form", { staticClass: "form-horizontal" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c(
-                            "label",
-                            {
-                              staticClass: "col-sm-2 control-label",
-                              attrs: { for: "inputName" }
-                            },
-                            [_vm._v("Name")]
-                          ),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "col-sm-10" }, [
-                            _c("input", {
-                              staticClass: "form-control",
-                              attrs: {
-                                type: "email",
-                                id: "inputName",
-                                placeholder: "Name"
-                              }
-                            })
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "form-group" }, [
-                          _c(
-                            "label",
-                            {
-                              staticClass: "col-sm-2 control-label",
-                              attrs: { for: "inputEmail" }
-                            },
-                            [_vm._v("Email")]
-                          ),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "col-sm-10" }, [
-                            _c("input", {
-                              staticClass: "form-control",
-                              attrs: {
-                                type: "email",
-                                id: "inputEmail",
-                                placeholder: "Email"
-                              }
-                            })
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "form-group" }, [
-                          _c(
-                            "label",
-                            {
-                              staticClass: "col-sm-2 control-label",
-                              attrs: { for: "inputName2" }
-                            },
-                            [_vm._v("Name")]
-                          ),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "col-sm-10" }, [
-                            _c("input", {
-                              staticClass: "form-control",
-                              attrs: {
-                                type: "text",
-                                id: "inputName2",
-                                placeholder: "Name"
-                              }
-                            })
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "form-group" }, [
-                          _c(
-                            "label",
-                            {
-                              staticClass: "col-sm-2 control-label",
-                              attrs: { for: "inputExperience" }
-                            },
-                            [_vm._v("Experience")]
-                          ),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "col-sm-10" }, [
-                            _c("textarea", {
-                              staticClass: "form-control",
-                              attrs: {
-                                id: "inputExperience",
-                                placeholder: "Experience"
-                              }
-                            })
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "form-group" }, [
-                          _c(
-                            "label",
-                            {
-                              staticClass: "col-sm-2 control-label",
-                              attrs: { for: "inputSkills" }
-                            },
-                            [_vm._v("Skills")]
-                          ),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "col-sm-10" }, [
-                            _c("input", {
-                              staticClass: "form-control",
-                              attrs: {
-                                type: "text",
-                                id: "inputSkills",
-                                placeholder: "Skills"
-                              }
-                            })
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "form-group" }, [
-                          _c(
-                            "div",
-                            { staticClass: "col-sm-offset-2 col-sm-10" },
-                            [
-                              _c("div", { staticClass: "checkbox" }, [
-                                _c("label", [
-                                  _c("input", { attrs: { type: "checkbox" } }),
-                                  _vm._v(
-                                    " I agree to the\n                          "
-                                  ),
-                                  _c("a", { attrs: { href: "#" } }, [
-                                    _vm._v("terms and conditions")
-                                  ])
-                                ])
-                              ])
-                            ]
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "form-group" }, [
-                          _c(
-                            "div",
-                            { staticClass: "col-sm-offset-2 col-sm-10" },
-                            [
-                              _c(
-                                "button",
-                                {
-                                  staticClass: "btn btn-danger",
-                                  attrs: { type: "submit" }
-                                },
-                                [_vm._v("Submit")]
-                              )
-                            ]
+                      ]),
+                      _vm._v(" "),
+                      _vm._m(17)
+                    ])
+                  ]
+                ),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    staticClass: "tab-pane",
+                    attrs: { id: "Data_Permasalahan" }
+                  },
+                  [
+                    _c("ul", { staticClass: "timeline timeline-inverse" }, [
+                      _c("li", { staticClass: "time-label" }, [
+                        _c("span", { staticClass: "bg-success" }, [
+                          _vm._v(
+                            "Diupdate : " +
+                              _vm._s(_vm._f("myDate")(this.form.updated_at))
                           )
                         ])
-                      ])
-                    ]
-                  )
-                ])
+                      ]),
+                      _vm._v(" "),
+                      _c("li", [
+                        _c("i", { staticClass: "fa fa-map-pin bg-danger" }),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "timeline-item" }, [
+                          _vm._m(18),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "timeline-body" }, [
+                            _vm._v(
+                              _vm._s(
+                                _vm._f("Uptext")(
+                                  this.form.Latar_Belakang_Permasalahan
+                                )
+                              )
+                            )
+                          ])
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("li", [
+                        _c("i", { staticClass: "fa fa-map-pin bg-danger" }),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "timeline-item" }, [
+                          _vm._m(19),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "timeline-body" }, [
+                            _vm._v(
+                              _vm._s(
+                                _vm._f("Uptext")(this.form.Alasan_yg_menitipkan)
+                              )
+                            )
+                          ])
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _vm._m(20)
+                    ])
+                  ]
+                )
               ])
             ])
           ])
         ])
       ])
     ])
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header" }, [
+      _c("h3", { staticClass: "card-title" }, [_vm._v("Tentang Anak")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("strong", [
+      _c("i", { staticClass: "fas fa-map mr-1" }),
+      _vm._v(" Alamat Anak\n            ")
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("strong", [
+      _c("i", { staticClass: "fas fa-school mr-1" }),
+      _vm._v(" "),
+      _c("span", [_vm._v("Sekolah")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("strong", [
+      _c("i", { staticClass: "fa fa-map-marker mr-1" }),
+      _vm._v(" Sebab masuk Panti Asuhan\n            ")
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("strong", [
+      _c("i", { staticClass: "fas fa-file-alt" }),
+      _vm._v(" Keterangan Anak\n            ")
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header p-2" }, [
+      _c("ul", { staticClass: "nav nav-pills" }, [
+        _c("li", { staticClass: "nav-item" }, [
+          _c(
+            "a",
+            {
+              staticClass: "nav-link active",
+              attrs: { href: "#Data_Detail_Ayah", "data-toggle": "tab" }
+            },
+            [_vm._v("Detail Ayah")]
+          )
+        ]),
+        _vm._v(" "),
+        _c("li", { staticClass: "nav-item" }, [
+          _c(
+            "a",
+            {
+              staticClass: "nav-link",
+              attrs: { href: "#Data_Detail_Ibu", "data-toggle": "tab" }
+            },
+            [_vm._v("Detail Ibu")]
+          )
+        ]),
+        _vm._v(" "),
+        _c("li", { staticClass: "nav-item" }, [
+          _c(
+            "a",
+            {
+              staticClass: "nav-link",
+              attrs: { href: "#Data_Permasalahan", "data-toggle": "tab" }
+            },
+            [_vm._v("Masalah Anak")]
+          )
+        ])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("h3", { staticClass: "timeline-header" }, [
+      _c("strong", [_vm._v("Nama Lengkap")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("h3", { staticClass: "timeline-header" }, [
+      _c("strong", [_vm._v("Alamat")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("h3", { staticClass: "timeline-header" }, [
+      _c("strong", [_vm._v("Agama")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("h3", { staticClass: "timeline-header" }, [
+      _c("strong", [_vm._v("Pendidikan Terakhir")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("h3", { staticClass: "timeline-header" }, [
+      _c("strong", [_vm._v("Pekerjaan Ayah")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("li", [_c("i", { staticClass: "fa fa-clock-o bg-gray" })])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("h3", { staticClass: "timeline-header" }, [
+      _c("strong", [_vm._v("Nama Lengkap")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("h3", { staticClass: "timeline-header" }, [
+      _c("strong", [_vm._v("Alamat")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("h3", { staticClass: "timeline-header" }, [
+      _c("strong", [_vm._v("Agama")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("h3", { staticClass: "timeline-header" }, [
+      _c("strong", [_vm._v("Pendidikan Terakhir")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("h3", { staticClass: "timeline-header" }, [
+      _c("strong", [_vm._v("Pekerjaan Ibu")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("li", [_c("i", { staticClass: "fa fa-clock-o bg-gray" })])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("h3", { staticClass: "timeline-header" }, [
+      _c("strong", [_vm._v("Latar Belakang Permasalahan Anak")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("h3", { staticClass: "timeline-header" }, [
+      _c("strong", [_vm._v("Alasan Menitipkan Anak di Panti")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("li", [_c("i", { staticClass: "fa fa-clock-o bg-gray" })])
   }
 ]
 render._withStripped = true
@@ -69565,2116 +70061,2424 @@ var render = function() {
         ? _c("div", { staticClass: "row mt-2" }, [
             _c("div", { staticClass: "col md-12" }, [
               _c("div", { staticClass: "card card-success" }, [
+                _c("div", { staticClass: "card-header p-3" }, [
+                  _c("h3", { staticClass: "card-title" }, [
+                    _vm._v(
+                      "Ubah Data Anak -> " + _vm._s(this.form.Nama_Lengkap)
+                    )
+                  ])
+                ]),
+                _vm._v(" "),
                 _vm._m(0),
                 _vm._v(" "),
                 _c("form", { attrs: { role: "form" } }, [
                   _c("div", { staticClass: "card-body" }, [
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col-2" }, [
-                        _c("label", { attrs: { for: "inputNo_induk" } }, [
-                          _vm._v("No induk")
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "input-group" },
-                          [
-                            _vm._m(1),
-                            _vm._v(" "),
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.No_induk,
-                                  expression: "form.No_induk"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has("No_induk")
-                              },
-                              attrs: {
-                                type: "text",
-                                name: "No_induk",
-                                placeholder: "No induk"
-                              },
-                              domProps: { value: _vm.form.No_induk },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "No_induk",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: { form: _vm.form, field: "No_induk" }
-                            })
-                          ],
-                          1
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c("label", { attrs: { for: "inputNama_lengkap" } }, [
-                            _vm._v("Nama Lengkap Anak")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "input-group" },
-                            [
-                              _vm._m(2),
-                              _vm._v(" "),
-                              _c("input", {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.form.Nama_Lengkap,
-                                    expression: "form.Nama_Lengkap"
-                                  }
-                                ],
-                                staticClass: "form-control",
-                                class: {
-                                  "is-invalid": _vm.form.errors.has(
-                                    "Nama_Lengkap"
-                                  )
-                                },
-                                attrs: {
-                                  type: "text",
-                                  name: "Nama_lengkap",
-                                  placeholder: "Nama Lengkap Anak"
-                                },
-                                domProps: { value: _vm.form.Nama_Lengkap },
-                                on: {
-                                  input: function($event) {
-                                    if ($event.target.composing) {
-                                      return
-                                    }
-                                    _vm.$set(
-                                      _vm.form,
-                                      "Nama_Lengkap",
-                                      $event.target.value
-                                    )
-                                  }
-                                }
-                              }),
-                              _vm._v(" "),
-                              _c("has-error", {
-                                attrs: { form: _vm.form, field: "Nama_Lengkap" }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "div",
-                      { staticClass: "form-group" },
-                      [
-                        _c("label", { attrs: { for: "inputAlamat" } }, [
-                          _vm._v("Alamat")
-                        ]),
-                        _vm._v(" "),
-                        _c("textarea", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.form.Alamat,
-                              expression: "form.Alamat"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          class: {
-                            "is-invalid": _vm.form.errors.has("Alamat")
-                          },
-                          attrs: {
-                            rows: "4",
-                            type: "text",
-                            name: "Alamat",
-                            placeholder: "Alamat Anak ..."
-                          },
-                          domProps: { value: _vm.form.Alamat },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.$set(_vm.form, "Alamat", $event.target.value)
-                            }
-                          }
-                        }),
-                        _vm._v(" "),
-                        _c("has-error", {
-                          attrs: { form: _vm.form, field: "Alamat" }
-                        })
-                      ],
-                      1
-                    ),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c("label", { attrs: { for: "inputAgama" } }, [
-                            _vm._v("Agama")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "input-group" },
-                            [
-                              _vm._m(3),
+                    _c("div", { staticClass: "tab-content" }, [
+                      _c(
+                        "div",
+                        {
+                          staticClass: "tab-pane active show",
+                          attrs: { id: "data_anak" }
+                        },
+                        [
+                          _c("div", { staticClass: "form-row" }, [
+                            _c("div", { staticClass: "col-2" }, [
+                              _c("label", { attrs: { for: "inputNo_induk" } }, [
+                                _vm._v("No induk")
+                              ]),
                               _vm._v(" "),
                               _c(
-                                "select",
-                                {
-                                  directives: [
-                                    {
-                                      name: "model",
-                                      rawName: "v-model",
-                                      value: _vm.form.Agama,
-                                      expression: "form.Agama"
-                                    }
-                                  ],
-                                  staticClass: "form-control",
-                                  class: {
-                                    "is-invalid": _vm.form.errors.has("Agama")
-                                  },
-                                  attrs: {
-                                    type: "text",
-                                    name: "Agama",
-                                    placeholder: "Agama"
-                                  },
-                                  on: {
-                                    change: function($event) {
-                                      var $$selectedVal = Array.prototype.filter
-                                        .call($event.target.options, function(
-                                          o
-                                        ) {
-                                          return o.selected
-                                        })
-                                        .map(function(o) {
-                                          var val =
-                                            "_value" in o ? o._value : o.value
-                                          return val
-                                        })
-                                      _vm.$set(
-                                        _vm.form,
-                                        "Agama",
-                                        $event.target.multiple
-                                          ? $$selectedVal
-                                          : $$selectedVal[0]
-                                      )
-                                    }
-                                  }
-                                },
+                                "div",
+                                { staticClass: "input-group" },
                                 [
-                                  _c(
-                                    "option",
-                                    {
-                                      attrs: {
-                                        value: "",
-                                        disabled: "",
-                                        selected: ""
+                                  _vm._m(1),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.No_induk,
+                                        expression: "form.No_induk"
                                       }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "No_induk"
+                                      )
                                     },
-                                    [_vm._v("Pilih Agama")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c("option", { attrs: { value: "islam" } }, [
-                                    _vm._v("Islam")
-                                  ]),
-                                  _vm._v(" "),
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "kristen" } },
-                                    [_vm._v("Kristen")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "katolik" } },
-                                    [_vm._v("Katolik")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "kristen" } },
-                                    [_vm._v("Hindu")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "kristen" } },
-                                    [_vm._v("Budha")]
-                                  )
-                                ]
-                              ),
-                              _vm._v(" "),
-                              _c("has-error", {
-                                attrs: {
-                                  form: _vm.form,
-                                  field: "Jenis_Kelamin"
-                                }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c("label", { attrs: { for: "inputtempatlahir" } }, [
-                            _vm._v("Tempat Lahir")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "input-group" },
-                            [
-                              _vm._m(4),
-                              _vm._v(" "),
-                              _c("input", {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.form.Tempat_lahir,
-                                    expression: "form.Tempat_lahir"
-                                  }
-                                ],
-                                staticClass: "form-control",
-                                class: {
-                                  "is-invalid": _vm.form.errors.has(
-                                    "tempat_lahir"
-                                  )
-                                },
-                                attrs: {
-                                  type: "text",
-                                  name: "tempat_lahir",
-                                  placeholder: "Tempat Lahir"
-                                },
-                                domProps: { value: _vm.form.Tempat_lahir },
-                                on: {
-                                  input: function($event) {
-                                    if ($event.target.composing) {
-                                      return
-                                    }
-                                    _vm.$set(
-                                      _vm.form,
-                                      "Tempat_lahir",
-                                      $event.target.value
-                                    )
-                                  }
-                                }
-                              }),
-                              _vm._v(" "),
-                              _c("has-error", {
-                                attrs: { form: _vm.form, field: "tempat_lahir" }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c("label", { attrs: { for: "tgl_lahir" } }, [
-                            _vm._v("Tanggal Lahir")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "input-group" },
-                            [
-                              _vm._m(5),
-                              _vm._v(" "),
-                              _c("date-picker", {
-                                attrs: { config: _vm.options },
-                                model: {
-                                  value: _vm.form.Tgl_lahir,
-                                  callback: function($$v) {
-                                    _vm.$set(_vm.form, "Tgl_lahir", $$v)
-                                  },
-                                  expression: "form.Tgl_lahir"
-                                }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c("label", { attrs: { for: "Tgl_masuk_PA" } }, [
-                            _vm._v("Tanggal Masuk PA")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "input-group" },
-                            [
-                              _vm._m(6),
-                              _vm._v(" "),
-                              _c("date-picker", {
-                                attrs: { config: _vm.options },
-                                model: {
-                                  value: _vm.form.Tgl_masuk_PA,
-                                  callback: function($$v) {
-                                    _vm.$set(_vm.form, "Tgl_masuk_PA", $$v)
-                                  },
-                                  expression: "form.Tgl_masuk_PA"
-                                }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c(
-                          "div",
-                          { staticClass: "form-group" },
-                          [
-                            _c(
-                              "label",
-                              { attrs: { for: "inputtempatlahir" } },
-                              [_vm._v("Kelengkapan Surat")]
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "select",
-                              {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.form.Surat_Kelahiran_Akta,
-                                    expression: "form.Surat_Kelahiran_Akta"
-                                  }
-                                ],
-                                staticClass: "form-control",
-                                class: {
-                                  "is-invalid": _vm.form.errors.has(
-                                    "Surat_Kelahiran_Akta"
-                                  )
-                                },
-                                attrs: {
-                                  type: "text",
-                                  name: "Surat_Kelahiran_Akta",
-                                  placeholder: "Kelengkapan Surat"
-                                },
-                                on: {
-                                  change: function($event) {
-                                    var $$selectedVal = Array.prototype.filter
-                                      .call($event.target.options, function(o) {
-                                        return o.selected
-                                      })
-                                      .map(function(o) {
-                                        var val =
-                                          "_value" in o ? o._value : o.value
-                                        return val
-                                      })
-                                    _vm.$set(
-                                      _vm.form,
-                                      "Surat_Kelahiran_Akta",
-                                      $event.target.multiple
-                                        ? $$selectedVal
-                                        : $$selectedVal[0]
-                                    )
-                                  }
-                                }
-                              },
-                              [
-                                _c(
-                                  "option",
-                                  {
                                     attrs: {
-                                      value: "",
-                                      disabled: "",
-                                      selected: ""
-                                    }
-                                  },
-                                  [_vm._v("Pilih Kelengkapan Surat")]
-                                ),
-                                _vm._v(" "),
-                                _c(
-                                  "option",
-                                  { attrs: { value: "Akta Kelahiran" } },
-                                  [_vm._v("Akta Kelahiran")]
-                                ),
-                                _vm._v(" "),
-                                _c(
-                                  "option",
-                                  { attrs: { value: "Surat Kelahiran" } },
-                                  [_vm._v("Surat Kelahiran")]
-                                )
-                              ]
-                            ),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: { form: _vm.form, field: "Jenis_Kelamin" }
-                            })
-                          ],
-                          1
-                        )
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c(
-                            "label",
-                            { attrs: { for: "inputmulaimasukSekolah" } },
-                            [_vm._v("Mulai Masuk Sekolah")]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "input-group" },
-                            [
-                              _vm._m(7),
-                              _vm._v(" "),
-                              _c("date-picker", {
-                                attrs: { config: _vm.options },
-                                model: {
-                                  value: _vm.form.Mulai_masuk_sekolah,
-                                  callback: function($$v) {
-                                    _vm.$set(
-                                      _vm.form,
-                                      "Mulai_masuk_sekolah",
-                                      $$v
-                                    )
-                                  },
-                                  expression: "form.Mulai_masuk_sekolah"
-                                }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c("label", { attrs: { for: "inputtempatlahir" } }, [
-                            _vm._v("Nama Sekolah")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "input-group" },
-                            [
-                              _vm._m(8),
-                              _vm._v(" "),
-                              _c("input", {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.form.Nama_sekolah,
-                                    expression: "form.Nama_sekolah"
-                                  }
-                                ],
-                                staticClass: "form-control",
-                                class: {
-                                  "is-invalid": _vm.form.errors.has(
-                                    "Nama_sekolah"
-                                  )
-                                },
-                                attrs: {
-                                  type: "text",
-                                  name: "Nama_sekolah",
-                                  placeholder: "Nama sekolah"
-                                },
-                                domProps: { value: _vm.form.Nama_sekolah },
-                                on: {
-                                  input: function($event) {
-                                    if ($event.target.composing) {
-                                      return
-                                    }
-                                    _vm.$set(
-                                      _vm.form,
-                                      "Nama_sekolah",
-                                      $event.target.value
-                                    )
-                                  }
-                                }
-                              }),
-                              _vm._v(" "),
-                              _c("has-error", {
-                                attrs: { form: _vm.form, field: "Nama_sekolah" }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col-2" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c("label", { attrs: { for: "kelas" } }, [
-                            _vm._v("Kelas")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "input-group" },
-                            [
-                              _vm._m(9),
-                              _vm._v(" "),
-                              _c("input", {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.form.Kelas,
-                                    expression: "form.Kelas"
-                                  }
-                                ],
-                                staticClass: "form-control",
-                                class: {
-                                  "is-invalid": _vm.form.errors.has("Kelas")
-                                },
-                                attrs: {
-                                  type: "text",
-                                  name: "Kelas",
-                                  placeholder: "Kelas"
-                                },
-                                domProps: { value: _vm.form.Kelas },
-                                on: {
-                                  input: function($event) {
-                                    if ($event.target.composing) {
-                                      return
-                                    }
-                                    _vm.$set(
-                                      _vm.form,
-                                      "Kelas",
-                                      $event.target.value
-                                    )
-                                  }
-                                }
-                              }),
-                              _vm._v(" "),
-                              _c("has-error", {
-                                attrs: { form: _vm.form, field: "Nama_sekolah" }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col" }, [
-                        _c(
-                          "div",
-                          { staticClass: "form-group" },
-                          [
-                            _c("label", { attrs: { for: "inputAlamat" } }, [
-                              _vm._v("Sebab Masuk PA")
-                            ]),
-                            _vm._v(" "),
-                            _c("textarea", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Sebab_masuk_PA,
-                                  expression: "form.Sebab_masuk_PA"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has(
-                                  "Sebab_masuk_PA"
-                                )
-                              },
-                              attrs: {
-                                rows: "4",
-                                type: "text",
-                                name: "Sebab_masuk_PA",
-                                placeholder: "Sebab masuk PA . . ."
-                              },
-                              domProps: { value: _vm.form.Sebab_masuk_PA },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Sebab_masuk_PA",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: { form: _vm.form, field: "Sebab_masuk_PA" }
-                            })
-                          ],
-                          1
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c(
-                          "div",
-                          { staticClass: "form-group" },
-                          [
-                            _c("label", { attrs: { for: "inputAlamat" } }, [
-                              _vm._v("Keterangan Anak")
-                            ]),
-                            _vm._v(" "),
-                            _c("textarea", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Keterangan_anak,
-                                  expression: "form.Keterangan_anak"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has(
-                                  "Keterangan_anak"
-                                )
-                              },
-                              attrs: {
-                                rows: "4",
-                                type: "text",
-                                name: "Keterangan_anak",
-                                placeholder: "Keterangan anak . . . "
-                              },
-                              domProps: { value: _vm.form.Keterangan_anak },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Keterangan_anak",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: {
-                                form: _vm.form,
-                                field: "Keterangan_anak"
-                              }
-                            })
-                          ],
-                          1
-                        )
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col" }, [
-                        _c("label", { attrs: { for: "inputNo_induk" } }, [
-                          _vm._v("Nama Wali")
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "input-group" },
-                          [
-                            _vm._m(10),
-                            _vm._v(" "),
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Nama_Wali,
-                                  expression: "form.Nama_Wali"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has("Nama_Wali")
-                              },
-                              attrs: {
-                                type: "text",
-                                name: "Nama_Wali",
-                                placeholder: "Nama Wali"
-                              },
-                              domProps: { value: _vm.form.Nama_Wali },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Nama_Wali",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: { form: _vm.form, field: "Nama_Wali" }
-                            })
-                          ],
-                          1
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col-4" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c("label", { attrs: { for: "inputNama_lengkap" } }, [
-                            _vm._v("Nomor Telepon Wali")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "input-group" },
-                            [
-                              _vm._m(11),
-                              _vm._v(" "),
-                              _c("input", {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.form.Nomor_telp_wali,
-                                    expression: "form.Nomor_telp_wali"
-                                  }
-                                ],
-                                staticClass: "form-control",
-                                class: {
-                                  "is-invalid": _vm.form.errors.has(
-                                    "Nomor_telp_wali"
-                                  )
-                                },
-                                attrs: {
-                                  type: "text",
-                                  name: "Nomor_telp_wali",
-                                  placeholder: "Nomor telp wali"
-                                },
-                                domProps: { value: _vm.form.Nomor_telp_wali },
-                                on: {
-                                  input: function($event) {
-                                    if ($event.target.composing) {
-                                      return
-                                    }
-                                    _vm.$set(
-                                      _vm.form,
-                                      "Nomor_telp_wali",
-                                      $event.target.value
-                                    )
-                                  }
-                                }
-                              }),
-                              _vm._v(" "),
-                              _c("has-error", {
-                                attrs: {
-                                  form: _vm.form,
-                                  field: "Nomor_telp_wali"
-                                }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("br"),
-                    _vm._v(" "),
-                    _vm._m(12),
-                    _vm._v(" "),
-                    _c("br"),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col" }, [
-                        _c("label", { attrs: { for: "inputNo_induk" } }, [
-                          _vm._v("Nama Ayah")
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "input-group" },
-                          [
-                            _vm._m(13),
-                            _vm._v(" "),
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Nama_Ayah,
-                                  expression: "form.Nama_Ayah"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has("Nama_Ayah")
-                              },
-                              attrs: {
-                                type: "text",
-                                name: "Nama_Ayah",
-                                placeholder: "Nama Ayah"
-                              },
-                              domProps: { value: _vm.form.Nama_Ayah },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Nama_Ayah",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: { form: _vm.form, field: "Nama_Ayah" }
-                            })
-                          ],
-                          1
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c("label", { attrs: { for: "inputNama_lengkap" } }, [
-                            _vm._v("Nama Ibu")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "input-group" },
-                            [
-                              _vm._m(14),
-                              _vm._v(" "),
-                              _c("input", {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.form.Nama_Ibu,
-                                    expression: "form.Nama_Ibu"
-                                  }
-                                ],
-                                staticClass: "form-control",
-                                class: {
-                                  "is-invalid": _vm.form.errors.has("Nama_Ibu")
-                                },
-                                attrs: {
-                                  type: "text",
-                                  name: "Nama_Ibu",
-                                  placeholder: "Nama Ibu"
-                                },
-                                domProps: { value: _vm.form.Nama_Ibu },
-                                on: {
-                                  input: function($event) {
-                                    if ($event.target.composing) {
-                                      return
-                                    }
-                                    _vm.$set(
-                                      _vm.form,
-                                      "Nama_Ibu",
-                                      $event.target.value
-                                    )
-                                  }
-                                }
-                              }),
-                              _vm._v(" "),
-                              _c("has-error", {
-                                attrs: { form: _vm.form, field: "Nama_Ibu" }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col" }, [
-                        _c(
-                          "div",
-                          { staticClass: "form-group" },
-                          [
-                            _c("label", { attrs: { for: "inputAlamat" } }, [
-                              _vm._v("Alamat Ayah")
-                            ]),
-                            _vm._v(" "),
-                            _c("textarea", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Alamat_Ayah,
-                                  expression: "form.Alamat_Ayah"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has("Alamat_Ayah")
-                              },
-                              attrs: {
-                                rows: "4",
-                                type: "text",
-                                name: "Alamat_Ayah",
-                                placeholder: "Alamat Ayah . . ."
-                              },
-                              domProps: { value: _vm.form.Alamat_Ayah },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Alamat_Ayah",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: { form: _vm.form, field: "Alamat_Ayah" }
-                            })
-                          ],
-                          1
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c(
-                          "div",
-                          { staticClass: "form-group" },
-                          [
-                            _c("label", { attrs: { for: "inputAlamat" } }, [
-                              _vm._v("Alamat Ibu")
-                            ]),
-                            _vm._v(" "),
-                            _c("textarea", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Alamat_Ibu,
-                                  expression: "form.Alamat_Ibu"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has("Alamat_Ibu")
-                              },
-                              attrs: {
-                                rows: "4",
-                                type: "text",
-                                name: "Alamat_Ibu",
-                                placeholder: "Alamat Ibu . . ."
-                              },
-                              domProps: { value: _vm.form.Alamat_Ibu },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Alamat_Ibu",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: { form: _vm.form, field: "Alamat_Ibu" }
-                            })
-                          ],
-                          1
-                        )
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c("label", { attrs: { for: "inputAgamaAyah" } }, [
-                            _vm._v("Agama Ayah")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "input-group" },
-                            [
-                              _vm._m(15),
-                              _vm._v(" "),
-                              _c(
-                                "select",
-                                {
-                                  directives: [
-                                    {
-                                      name: "model",
-                                      rawName: "v-model",
-                                      value: _vm.form.Agama_Ayah,
-                                      expression: "form.Agama_Ayah"
-                                    }
-                                  ],
-                                  staticClass: "form-control",
-                                  class: {
-                                    "is-invalid": _vm.form.errors.has(
-                                      "Agama_Ayah"
-                                    )
-                                  },
-                                  attrs: {
-                                    type: "text",
-                                    name: "Agama_Ayah",
-                                    placeholder: "Agama Ayah"
-                                  },
-                                  on: {
-                                    change: function($event) {
-                                      var $$selectedVal = Array.prototype.filter
-                                        .call($event.target.options, function(
-                                          o
-                                        ) {
-                                          return o.selected
-                                        })
-                                        .map(function(o) {
-                                          var val =
-                                            "_value" in o ? o._value : o.value
-                                          return val
-                                        })
-                                      _vm.$set(
-                                        _vm.form,
-                                        "Agama_Ayah",
-                                        $event.target.multiple
-                                          ? $$selectedVal
-                                          : $$selectedVal[0]
-                                      )
-                                    }
-                                  }
-                                },
-                                [
-                                  _c(
-                                    "option",
-                                    {
-                                      attrs: {
-                                        value: "",
-                                        disabled: "",
-                                        selected: ""
-                                      }
+                                      type: "text",
+                                      name: "No_induk",
+                                      placeholder: "No induk"
                                     },
-                                    [_vm._v("Pilih Agama")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c("option", { attrs: { value: "islam" } }, [
-                                    _vm._v("Islam")
-                                  ]),
-                                  _vm._v(" "),
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "kristen" } },
-                                    [_vm._v("Kristen")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "katolik" } },
-                                    [_vm._v("Katolik")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c("option", { attrs: { value: "hindu" } }, [
-                                    _vm._v("Hindu")
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("option", { attrs: { value: "budha" } }, [
-                                    _vm._v("Budha")
-                                  ])
-                                ]
-                              ),
-                              _vm._v(" "),
-                              _c("has-error", {
-                                attrs: { form: _vm.form, field: "Agama_Ayah" }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c("label", { attrs: { for: "inputAgamaIbu" } }, [
-                            _vm._v("Agama Ibu")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "input-group" },
-                            [
-                              _vm._m(16),
-                              _vm._v(" "),
-                              _c(
-                                "select",
-                                {
-                                  directives: [
-                                    {
-                                      name: "model",
-                                      rawName: "v-model",
-                                      value: _vm.form.Agama_Ibu,
-                                      expression: "form.Agama_Ibu"
-                                    }
-                                  ],
-                                  staticClass: "form-control",
-                                  class: {
-                                    "is-invalid": _vm.form.errors.has(
-                                      "Agama_Ibu"
-                                    )
-                                  },
-                                  attrs: {
-                                    type: "text",
-                                    name: "Agama_Ibu",
-                                    placeholder: "Agama Ibu"
-                                  },
-                                  on: {
-                                    change: function($event) {
-                                      var $$selectedVal = Array.prototype.filter
-                                        .call($event.target.options, function(
-                                          o
-                                        ) {
-                                          return o.selected
-                                        })
-                                        .map(function(o) {
-                                          var val =
-                                            "_value" in o ? o._value : o.value
-                                          return val
-                                        })
-                                      _vm.$set(
-                                        _vm.form,
-                                        "Agama_Ibu",
-                                        $event.target.multiple
-                                          ? $$selectedVal
-                                          : $$selectedVal[0]
-                                      )
-                                    }
-                                  }
-                                },
-                                [
-                                  _c(
-                                    "option",
-                                    {
-                                      attrs: {
-                                        value: "",
-                                        disabled: "",
-                                        selected: ""
+                                    domProps: { value: _vm.form.No_induk },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "No_induk",
+                                          $event.target.value
+                                        )
                                       }
-                                    },
-                                    [_vm._v("Pilih Agama")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c("option", { attrs: { value: "islam" } }, [
-                                    _vm._v("Islam")
-                                  ]),
-                                  _vm._v(" "),
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "kristen" } },
-                                    [_vm._v("Kristen")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "katolik" } },
-                                    [_vm._v("Katolik")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c("option", { attrs: { value: "hindu" } }, [
-                                    _vm._v("Hindu")
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("option", { attrs: { value: "budha" } }, [
-                                    _vm._v("Budha")
-                                  ])
-                                ]
-                              ),
-                              _vm._v(" "),
-                              _c("has-error", {
-                                attrs: { form: _vm.form, field: "Agama_Ibu" }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col" }, [
-                        _c("label", { attrs: { for: "inputStatusAyah" } }, [
-                          _vm._v("Status Ayah")
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "input-group" },
-                          [
-                            _vm._m(17),
-                            _vm._v(" "),
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Status_Ayah,
-                                  expression: "form.Status_Ayah"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has("Status_Ayah")
-                              },
-                              attrs: {
-                                type: "text",
-                                name: "Status_Ayah",
-                                placeholder: "Status Ayah"
-                              },
-                              domProps: { value: _vm.form.Status_Ayah },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Status_Ayah",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: { form: _vm.form, field: "Status_Ayah" }
-                            })
-                          ],
-                          1
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c("label", { attrs: { for: "inputStatusIbu" } }, [
-                          _vm._v("Status Ibu")
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "input-group" },
-                          [
-                            _vm._m(18),
-                            _vm._v(" "),
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Status_Ibu,
-                                  expression: "form.Status_Ibu"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has("Status_Ibu")
-                              },
-                              attrs: {
-                                type: "text",
-                                name: "Status_Ibu",
-                                placeholder: "Status Ibu"
-                              },
-                              domProps: { value: _vm.form.Status_Ibu },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Status_Ibu",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: { form: _vm.form, field: "Status_Ibu" }
-                            })
-                          ],
-                          1
-                        )
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c(
-                            "label",
-                            { attrs: { for: "inputPendidikanTerakhir" } },
-                            [_vm._v("Pendidikan Ayah")]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "input-group" },
-                            [
-                              _vm._m(19),
-                              _vm._v(" "),
-                              _c(
-                                "select",
-                                {
-                                  directives: [
-                                    {
-                                      name: "model",
-                                      rawName: "v-model",
-                                      value: _vm.form.Pendidikan_Ayah,
-                                      expression: "form.Pendidikan_Ayah"
                                     }
-                                  ],
-                                  staticClass: "form-control",
-                                  class: {
-                                    "is-invalid": _vm.form.errors.has(
-                                      "Pendidikan_Ayah"
-                                    )
-                                  },
-                                  attrs: {
-                                    type: "text",
-                                    name: "Pendidikan_Ayah",
-                                    placeholder: "Pendidikan Ayah"
-                                  },
-                                  on: {
-                                    change: function($event) {
-                                      var $$selectedVal = Array.prototype.filter
-                                        .call($event.target.options, function(
-                                          o
-                                        ) {
-                                          return o.selected
-                                        })
-                                        .map(function(o) {
-                                          var val =
-                                            "_value" in o ? o._value : o.value
-                                          return val
-                                        })
-                                      _vm.$set(
-                                        _vm.form,
-                                        "Pendidikan_Ayah",
-                                        $event.target.multiple
-                                          ? $$selectedVal
-                                          : $$selectedVal[0]
-                                      )
-                                    }
-                                  }
-                                },
-                                [
-                                  _c(
-                                    "option",
-                                    {
-                                      attrs: {
-                                        value: "",
-                                        disabled: "",
-                                        selected: ""
-                                      }
-                                    },
-                                    [_vm._v("Pendidikan Terakhir")]
-                                  ),
+                                  }),
                                   _vm._v(" "),
-                                  _c("option", { attrs: { value: "SD" } }, [
-                                    _vm._v("SD")
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("option", { attrs: { value: "SMP" } }, [
-                                    _vm._v("SMP")
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("option", { attrs: { value: "SMA" } }, [
-                                    _vm._v("SMA")
-                                  ]),
-                                  _vm._v(" "),
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "Strata-1" } },
-                                    [_vm._v("Strata-1")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "Strata-2" } },
-                                    [_vm._v("Strata-2")]
-                                  )
-                                ]
-                              ),
-                              _vm._v(" "),
-                              _c("has-error", {
-                                attrs: {
-                                  form: _vm.form,
-                                  field: "Pendidikan_Ayah"
-                                }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c(
-                            "label",
-                            { attrs: { for: "inputPendidikanTerakhir" } },
-                            [_vm._v("Pendidikan Ibu")]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "input-group" },
-                            [
-                              _vm._m(20),
-                              _vm._v(" "),
-                              _c(
-                                "select",
-                                {
-                                  directives: [
-                                    {
-                                      name: "model",
-                                      rawName: "v-model",
-                                      value: _vm.form.Pendidikan_Ibu,
-                                      expression: "form.Pendidikan_Ibu"
-                                    }
-                                  ],
-                                  staticClass: "form-control",
-                                  class: {
-                                    "is-invalid": _vm.form.errors.has(
-                                      "Pendidikan_Ibu"
-                                    )
-                                  },
-                                  attrs: {
-                                    type: "text",
-                                    name: "Pendidikan_Ibu",
-                                    placeholder: "Pendidikan Ibu"
-                                  },
-                                  on: {
-                                    change: function($event) {
-                                      var $$selectedVal = Array.prototype.filter
-                                        .call($event.target.options, function(
-                                          o
-                                        ) {
-                                          return o.selected
-                                        })
-                                        .map(function(o) {
-                                          var val =
-                                            "_value" in o ? o._value : o.value
-                                          return val
-                                        })
-                                      _vm.$set(
-                                        _vm.form,
-                                        "Pendidikan_Ibu",
-                                        $event.target.multiple
-                                          ? $$selectedVal
-                                          : $$selectedVal[0]
-                                      )
-                                    }
-                                  }
-                                },
-                                [
-                                  _c(
-                                    "option",
-                                    {
-                                      attrs: {
-                                        value: "",
-                                        disabled: "",
-                                        selected: ""
-                                      }
-                                    },
-                                    [_vm._v("Pendidikan Terakhir")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c("option", { attrs: { value: "SD" } }, [
-                                    _vm._v("SD")
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("option", { attrs: { value: "SMP" } }, [
-                                    _vm._v("SMP")
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("option", { attrs: { value: "SMA" } }, [
-                                    _vm._v("SMA")
-                                  ]),
-                                  _vm._v(" "),
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "Strata-1" } },
-                                    [_vm._v("Strata-1")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "Strata-2" } },
-                                    [_vm._v("Strata-2")]
-                                  )
-                                ]
-                              ),
-                              _vm._v(" "),
-                              _c("has-error", {
-                                attrs: {
-                                  form: _vm.form,
-                                  field: "Pendidikan_Ibu"
-                                }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col" }, [
-                        _c("label", { attrs: { for: "inputNo_induk" } }, [
-                          _vm._v("Pekerjaan Ayah")
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "input-group" },
-                          [
-                            _vm._m(21),
-                            _vm._v(" "),
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Pekerjaan_Ayah,
-                                  expression: "form.Pekerjaan_Ayah"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has(
-                                  "Pekerjaan_Ayah"
-                                )
-                              },
-                              attrs: {
-                                type: "text",
-                                name: "Pekerjaan_Ayah",
-                                placeholder: "Pekerjaan Ayah"
-                              },
-                              domProps: { value: _vm.form.Pekerjaan_Ayah },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Pekerjaan_Ayah",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: { form: _vm.form, field: "Pekerjaan_Ayah" }
-                            })
-                          ],
-                          1
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c("label", { attrs: { for: "inputNo_induk" } }, [
-                          _vm._v("Pekerjaan Ibu")
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "input-group" },
-                          [
-                            _vm._m(22),
-                            _vm._v(" "),
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Pekerjaan_Ibu,
-                                  expression: "form.Pekerjaan_Ibu"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has(
-                                  "Pekerjaan_Ibu"
-                                )
-                              },
-                              attrs: {
-                                type: "text",
-                                name: "Pekerjaan_Ibu",
-                                placeholder: "Pekerjaan Ibu"
-                              },
-                              domProps: { value: _vm.form.Pekerjaan_Ibu },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Pekerjaan_Ibu",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: { form: _vm.form, field: "Pekerjaan_Ibu" }
-                            })
-                          ],
-                          1
-                        )
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col" }, [
-                        _c("label", { attrs: { for: "inputNo_induk" } }, [
-                          _vm._v("Penghasilan Ayah")
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "input-group" },
-                          [
-                            _vm._m(23),
-                            _vm._v(" "),
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Penghasilan_Ayah,
-                                  expression: "form.Penghasilan_Ayah"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has(
-                                  "Penghasilan_Ayah"
-                                )
-                              },
-                              attrs: {
-                                type: "text",
-                                name: "Penghasilan_Ayah",
-                                placeholder: "Penghasilan Ayah"
-                              },
-                              domProps: { value: _vm.form.Penghasilan_Ayah },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Penghasilan_Ayah",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: {
-                                form: _vm.form,
-                                field: "Penghasilan_Ayah"
-                              }
-                            }),
-                            _vm._v(" "),
-                            _vm._m(24)
-                          ],
-                          1
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c("label", { attrs: { for: "inputNo_induk" } }, [
-                          _vm._v("Penghasilan Ibu")
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "input-group" },
-                          [
-                            _vm._m(25),
-                            _vm._v(" "),
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Penghasilan_Ibu,
-                                  expression: "form.Penghasilan_Ibu"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has(
-                                  "Penghasilan_Ibu"
-                                )
-                              },
-                              attrs: {
-                                type: "text",
-                                name: "Penghasilan_Ibu",
-                                placeholder: "Penghasilan Ibu"
-                              },
-                              domProps: { value: _vm.form.Penghasilan_Ibu },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Penghasilan_Ibu",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: {
-                                form: _vm.form,
-                                field: "Penghasilan_Ibu"
-                              }
-                            }),
-                            _vm._v(" "),
-                            _vm._m(26)
-                          ],
-                          1
-                        )
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col" }, [
-                        _c("label", { attrs: { for: "inputNo_induk" } }, [
-                          _vm._v("Tanggungan")
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "input-group" },
-                          [
-                            _vm._m(27),
-                            _vm._v(" "),
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Tanggungan,
-                                  expression: "form.Tanggungan"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has("Tanggungan")
-                              },
-                              attrs: {
-                                type: "text",
-                                name: "Tanggungan",
-                                placeholder: "Tanggungan"
-                              },
-                              domProps: { value: _vm.form.Tanggungan },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Tanggungan",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: { form: _vm.form, field: "Tanggungan" }
-                            })
-                          ],
-                          1
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c("label", { attrs: { for: "inputNo_induk" } }, [
-                          _vm._v("Perumahan")
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "input-group" },
-                          [
-                            _vm._m(28),
-                            _vm._v(" "),
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Perumahan,
-                                  expression: "form.Perumahan"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has("Perumahan")
-                              },
-                              attrs: {
-                                type: "text",
-                                name: "No_induk",
-                                placeholder: "Perumahan"
-                              },
-                              domProps: { value: _vm.form.Perumahan },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Perumahan",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: { form: _vm.form, field: "Perumahan" }
-                            })
-                          ],
-                          1
-                        )
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "div",
-                      { staticClass: "form-group" },
-                      [
-                        _c("label", { attrs: { for: "inputAlamat" } }, [
-                          _vm._v("Latar Belakang Permasalahan")
-                        ]),
-                        _vm._v(" "),
-                        _c("textarea", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.form.Latar_Belakang_Permasalahan,
-                              expression: "form.Latar_Belakang_Permasalahan"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          class: {
-                            "is-invalid": _vm.form.errors.has(
-                              "Latar_Belakang_Permasalahan"
-                            )
-                          },
-                          attrs: {
-                            rows: "4",
-                            type: "text",
-                            name: "Latar_Belakang_Permasalahan",
-                            placeholder: "Latar Belakang Permasalahan ..."
-                          },
-                          domProps: {
-                            value: _vm.form.Latar_Belakang_Permasalahan
-                          },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.$set(
-                                _vm.form,
-                                "Latar_Belakang_Permasalahan",
-                                $event.target.value
+                                  _c("has-error", {
+                                    attrs: { form: _vm.form, field: "No_induk" }
+                                  })
+                                ],
+                                1
                               )
-                            }
-                          }
-                        }),
-                        _vm._v(" "),
-                        _c("has-error", {
-                          attrs: {
-                            form: _vm.form,
-                            field: "Latar_Belakang_Permasalahan"
-                          }
-                        })
-                      ],
-                      1
-                    ),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col" }, [
-                        _c(
-                          "div",
-                          { staticClass: "form-group" },
-                          [
-                            _c("label", { attrs: { for: "inputAlamat" } }, [
-                              _vm._v("Alamat Yang Menitipkan Anak")
                             ]),
                             _vm._v(" "),
-                            _c("textarea", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Alamat_yg_menitipkan,
-                                  expression: "form.Alamat_yg_menitipkan"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has(
-                                  "Alamat_yg_menitipkan"
+                            _c("div", { staticClass: "col" }, [
+                              _c("div", { staticClass: "form-group" }, [
+                                _c(
+                                  "label",
+                                  { attrs: { for: "inputNama_lengkap" } },
+                                  [_vm._v("Nama Lengkap Anak")]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "input-group" },
+                                  [
+                                    _vm._m(2),
+                                    _vm._v(" "),
+                                    _c("input", {
+                                      directives: [
+                                        {
+                                          name: "model",
+                                          rawName: "v-model",
+                                          value: _vm.form.Nama_Lengkap,
+                                          expression: "form.Nama_Lengkap"
+                                        }
+                                      ],
+                                      staticClass: "form-control",
+                                      class: {
+                                        "is-invalid": _vm.form.errors.has(
+                                          "Nama_Lengkap"
+                                        )
+                                      },
+                                      attrs: {
+                                        type: "text",
+                                        name: "Nama_lengkap",
+                                        placeholder: "Nama Lengkap Anak"
+                                      },
+                                      domProps: {
+                                        value: _vm.form.Nama_Lengkap
+                                      },
+                                      on: {
+                                        input: function($event) {
+                                          if ($event.target.composing) {
+                                            return
+                                          }
+                                          _vm.$set(
+                                            _vm.form,
+                                            "Nama_Lengkap",
+                                            $event.target.value
+                                          )
+                                        }
+                                      }
+                                    }),
+                                    _vm._v(" "),
+                                    _c("has-error", {
+                                      attrs: {
+                                        form: _vm.form,
+                                        field: "Nama_Lengkap"
+                                      }
+                                    })
+                                  ],
+                                  1
                                 )
-                              },
-                              attrs: {
-                                rows: "4",
-                                type: "text",
-                                name: "Alamat_yg_menitipkan",
-                                placeholder: "Sebab masuk PA . . ."
-                              },
-                              domProps: {
-                                value: _vm.form.Alamat_yg_menitipkan
-                              },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Alamat_yg_menitipkan",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
+                              ])
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-row" }, [
+                            _c("div", { staticClass: "col-3" }, [
+                              _c("div", { staticClass: "form-group" }, [
+                                _c(
+                                  "label",
+                                  {
+                                    staticClass: "control-label",
+                                    attrs: { for: "photo" }
+                                  },
+                                  [_vm._v("Foto Anak")]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  {
+                                    staticClass: "card card-widget widget-user"
+                                  },
+                                  [
+                                    _c(
+                                      "div",
+                                      {
+                                        staticClass:
+                                          "widget-user-header text-white"
+                                      },
+                                      [
+                                        _c(
+                                          "div",
+                                          { staticClass: "text-center" },
+                                          [
+                                            _c(
+                                              "div",
+                                              {
+                                                staticClass:
+                                                  "widget-user-image-anak"
+                                              },
+                                              [
+                                                _c("img", {
+                                                  staticClass:
+                                                    "profile-user-img img-fluid img-circle",
+                                                  attrs: {
+                                                    src: _vm.getProfilePhoto(),
+                                                    alt: "Foto Anak"
+                                                  }
+                                                })
+                                              ]
+                                            )
+                                          ]
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c("input", {
+                                      staticClass: "form-input",
+                                      attrs: { type: "file", name: "photo" },
+                                      on: { change: _vm.updateProfile }
+                                    })
+                                  ]
+                                )
+                              ])
+                            ]),
                             _vm._v(" "),
-                            _c("has-error", {
-                              attrs: {
-                                form: _vm.form,
-                                field: "Alamat_yg_menitipkan"
-                              }
-                            })
-                          ],
-                          1
-                        )
-                      ]),
+                            _c("div", { staticClass: "col" }, [
+                              _c(
+                                "div",
+                                { staticClass: "form-group" },
+                                [
+                                  _c(
+                                    "label",
+                                    { attrs: { for: "inputAlamat" } },
+                                    [_vm._v("Alamat")]
+                                  ),
+                                  _vm._v(" "),
+                                  _c("textarea", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Alamat,
+                                        expression: "form.Alamat"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Alamat"
+                                      )
+                                    },
+                                    attrs: {
+                                      rows: "4",
+                                      type: "text",
+                                      name: "Alamat",
+                                      placeholder: "Alamat Anak ..."
+                                    },
+                                    domProps: { value: _vm.form.Alamat },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Alamat",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: { form: _vm.form, field: "Alamat" }
+                                  })
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "form-row" }, [
+                                _c("div", { staticClass: "col" }, [
+                                  _c("div", { staticClass: "form-group" }, [
+                                    _c(
+                                      "label",
+                                      { attrs: { for: "inputAgama" } },
+                                      [_vm._v("Agama")]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "div",
+                                      { staticClass: "input-group" },
+                                      [
+                                        _vm._m(3),
+                                        _vm._v(" "),
+                                        _c(
+                                          "select",
+                                          {
+                                            directives: [
+                                              {
+                                                name: "model",
+                                                rawName: "v-model",
+                                                value: _vm.form.Agama,
+                                                expression: "form.Agama"
+                                              }
+                                            ],
+                                            staticClass: "form-control",
+                                            class: {
+                                              "is-invalid": _vm.form.errors.has(
+                                                "Agama"
+                                              )
+                                            },
+                                            attrs: {
+                                              type: "text",
+                                              name: "Agama",
+                                              placeholder: "Agama"
+                                            },
+                                            on: {
+                                              change: function($event) {
+                                                var $$selectedVal = Array.prototype.filter
+                                                  .call(
+                                                    $event.target.options,
+                                                    function(o) {
+                                                      return o.selected
+                                                    }
+                                                  )
+                                                  .map(function(o) {
+                                                    var val =
+                                                      "_value" in o
+                                                        ? o._value
+                                                        : o.value
+                                                    return val
+                                                  })
+                                                _vm.$set(
+                                                  _vm.form,
+                                                  "Agama",
+                                                  $event.target.multiple
+                                                    ? $$selectedVal
+                                                    : $$selectedVal[0]
+                                                )
+                                              }
+                                            }
+                                          },
+                                          [
+                                            _c(
+                                              "option",
+                                              {
+                                                attrs: {
+                                                  value: "",
+                                                  disabled: "",
+                                                  selected: ""
+                                                }
+                                              },
+                                              [_vm._v("Pilih Agama")]
+                                            ),
+                                            _vm._v(" "),
+                                            _c(
+                                              "option",
+                                              { attrs: { value: "islam" } },
+                                              [_vm._v("Islam")]
+                                            ),
+                                            _vm._v(" "),
+                                            _c(
+                                              "option",
+                                              { attrs: { value: "kristen" } },
+                                              [_vm._v("Kristen")]
+                                            ),
+                                            _vm._v(" "),
+                                            _c(
+                                              "option",
+                                              { attrs: { value: "katolik" } },
+                                              [_vm._v("Katolik")]
+                                            ),
+                                            _vm._v(" "),
+                                            _c(
+                                              "option",
+                                              { attrs: { value: "hindu" } },
+                                              [_vm._v("Hindu")]
+                                            ),
+                                            _vm._v(" "),
+                                            _c(
+                                              "option",
+                                              { attrs: { value: "budha" } },
+                                              [_vm._v("Budha")]
+                                            )
+                                          ]
+                                        ),
+                                        _vm._v(" "),
+                                        _c("has-error", {
+                                          attrs: {
+                                            form: _vm.form,
+                                            field: "Jenis_Kelamin"
+                                          }
+                                        })
+                                      ],
+                                      1
+                                    )
+                                  ])
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "col" }, [
+                                  _c("div", { staticClass: "form-group" }, [
+                                    _c(
+                                      "label",
+                                      { attrs: { for: "inputtempatlahir" } },
+                                      [_vm._v("Tempat Lahir")]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "div",
+                                      { staticClass: "input-group" },
+                                      [
+                                        _vm._m(4),
+                                        _vm._v(" "),
+                                        _c("input", {
+                                          directives: [
+                                            {
+                                              name: "model",
+                                              rawName: "v-model",
+                                              value: _vm.form.Tempat_lahir,
+                                              expression: "form.Tempat_lahir"
+                                            }
+                                          ],
+                                          staticClass: "form-control",
+                                          class: {
+                                            "is-invalid": _vm.form.errors.has(
+                                              "tempat_lahir"
+                                            )
+                                          },
+                                          attrs: {
+                                            type: "text",
+                                            name: "tempat_lahir",
+                                            placeholder: "Tempat Lahir"
+                                          },
+                                          domProps: {
+                                            value: _vm.form.Tempat_lahir
+                                          },
+                                          on: {
+                                            input: function($event) {
+                                              if ($event.target.composing) {
+                                                return
+                                              }
+                                              _vm.$set(
+                                                _vm.form,
+                                                "Tempat_lahir",
+                                                $event.target.value
+                                              )
+                                            }
+                                          }
+                                        }),
+                                        _vm._v(" "),
+                                        _c("has-error", {
+                                          attrs: {
+                                            form: _vm.form,
+                                            field: "tempat_lahir"
+                                          }
+                                        })
+                                      ],
+                                      1
+                                    )
+                                  ])
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "col" }, [
+                                  _c("div", { staticClass: "form-group" }, [
+                                    _c(
+                                      "label",
+                                      { attrs: { for: "tgl_lahir" } },
+                                      [_vm._v("Tanggal Lahir")]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "div",
+                                      { staticClass: "input-group" },
+                                      [
+                                        _vm._m(5),
+                                        _vm._v(" "),
+                                        _c("date-picker", {
+                                          attrs: { config: _vm.options },
+                                          model: {
+                                            value: _vm.form.Tgl_lahir,
+                                            callback: function($$v) {
+                                              _vm.$set(
+                                                _vm.form,
+                                                "Tgl_lahir",
+                                                $$v
+                                              )
+                                            },
+                                            expression: "form.Tgl_lahir"
+                                          }
+                                        })
+                                      ],
+                                      1
+                                    )
+                                  ])
+                                ])
+                              ]),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "form-row" }, [
+                                _c("div", { staticClass: "col" }, [
+                                  _c("div", { staticClass: "form-group" }, [
+                                    _c(
+                                      "label",
+                                      { attrs: { for: "Tgl_masuk_PA" } },
+                                      [_vm._v("Tanggal Masuk PA")]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "div",
+                                      { staticClass: "input-group" },
+                                      [
+                                        _vm._m(6),
+                                        _vm._v(" "),
+                                        _c("date-picker", {
+                                          attrs: { config: _vm.options },
+                                          model: {
+                                            value: _vm.form.Tgl_masuk_PA,
+                                            callback: function($$v) {
+                                              _vm.$set(
+                                                _vm.form,
+                                                "Tgl_masuk_PA",
+                                                $$v
+                                              )
+                                            },
+                                            expression: "form.Tgl_masuk_PA"
+                                          }
+                                        })
+                                      ],
+                                      1
+                                    )
+                                  ])
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "col" }, [
+                                  _c(
+                                    "div",
+                                    { staticClass: "form-group" },
+                                    [
+                                      _c(
+                                        "label",
+                                        { attrs: { for: "inputtempatlahir" } },
+                                        [_vm._v("Kelengkapan Surat")]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "select",
+                                        {
+                                          directives: [
+                                            {
+                                              name: "model",
+                                              rawName: "v-model",
+                                              value:
+                                                _vm.form.Surat_Kelahiran_Akta,
+                                              expression:
+                                                "form.Surat_Kelahiran_Akta"
+                                            }
+                                          ],
+                                          staticClass: "form-control",
+                                          class: {
+                                            "is-invalid": _vm.form.errors.has(
+                                              "Surat_Kelahiran_Akta"
+                                            )
+                                          },
+                                          attrs: {
+                                            type: "text",
+                                            name: "Surat_Kelahiran_Akta",
+                                            placeholder: "Kelengkapan Surat"
+                                          },
+                                          on: {
+                                            change: function($event) {
+                                              var $$selectedVal = Array.prototype.filter
+                                                .call(
+                                                  $event.target.options,
+                                                  function(o) {
+                                                    return o.selected
+                                                  }
+                                                )
+                                                .map(function(o) {
+                                                  var val =
+                                                    "_value" in o
+                                                      ? o._value
+                                                      : o.value
+                                                  return val
+                                                })
+                                              _vm.$set(
+                                                _vm.form,
+                                                "Surat_Kelahiran_Akta",
+                                                $event.target.multiple
+                                                  ? $$selectedVal
+                                                  : $$selectedVal[0]
+                                              )
+                                            }
+                                          }
+                                        },
+                                        [
+                                          _c(
+                                            "option",
+                                            {
+                                              attrs: {
+                                                value: "",
+                                                disabled: "",
+                                                selected: ""
+                                              }
+                                            },
+                                            [_vm._v("Pilih Kelengkapan Surat")]
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "option",
+                                            {
+                                              attrs: { value: "Akta Kelahiran" }
+                                            },
+                                            [_vm._v("Akta Kelahiran")]
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "option",
+                                            {
+                                              attrs: {
+                                                value: "Surat Kelahiran"
+                                              }
+                                            },
+                                            [_vm._v("Surat Kelahiran")]
+                                          )
+                                        ]
+                                      ),
+                                      _vm._v(" "),
+                                      _c("has-error", {
+                                        attrs: {
+                                          form: _vm.form,
+                                          field: "Jenis_Kelamin"
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  )
+                                ])
+                              ])
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-row" }, [
+                            _c("div", { staticClass: "col" }, [
+                              _c("div", { staticClass: "form-group" }, [
+                                _c(
+                                  "label",
+                                  { attrs: { for: "inputmulaimasukSekolah" } },
+                                  [_vm._v("Mulai Masuk Sekolah")]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "input-group" },
+                                  [
+                                    _vm._m(7),
+                                    _vm._v(" "),
+                                    _c("date-picker", {
+                                      attrs: { config: _vm.options },
+                                      model: {
+                                        value: _vm.form.Mulai_masuk_sekolah,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.form,
+                                            "Mulai_masuk_sekolah",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "form.Mulai_masuk_sekolah"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ])
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col" }, [
+                              _c("div", { staticClass: "form-group" }, [
+                                _c(
+                                  "label",
+                                  { attrs: { for: "inputtempatlahir" } },
+                                  [_vm._v("Nama Sekolah")]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "input-group" },
+                                  [
+                                    _vm._m(8),
+                                    _vm._v(" "),
+                                    _c("input", {
+                                      directives: [
+                                        {
+                                          name: "model",
+                                          rawName: "v-model",
+                                          value: _vm.form.Nama_sekolah,
+                                          expression: "form.Nama_sekolah"
+                                        }
+                                      ],
+                                      staticClass: "form-control",
+                                      class: {
+                                        "is-invalid": _vm.form.errors.has(
+                                          "Nama_sekolah"
+                                        )
+                                      },
+                                      attrs: {
+                                        type: "text",
+                                        name: "Nama_sekolah",
+                                        placeholder: "Nama sekolah"
+                                      },
+                                      domProps: {
+                                        value: _vm.form.Nama_sekolah
+                                      },
+                                      on: {
+                                        input: function($event) {
+                                          if ($event.target.composing) {
+                                            return
+                                          }
+                                          _vm.$set(
+                                            _vm.form,
+                                            "Nama_sekolah",
+                                            $event.target.value
+                                          )
+                                        }
+                                      }
+                                    }),
+                                    _vm._v(" "),
+                                    _c("has-error", {
+                                      attrs: {
+                                        form: _vm.form,
+                                        field: "Nama_sekolah"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ])
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col-2" }, [
+                              _c("div", { staticClass: "form-group" }, [
+                                _c("label", { attrs: { for: "kelas" } }, [
+                                  _vm._v("Kelas")
+                                ]),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "input-group" },
+                                  [
+                                    _vm._m(9),
+                                    _vm._v(" "),
+                                    _c("input", {
+                                      directives: [
+                                        {
+                                          name: "model",
+                                          rawName: "v-model",
+                                          value: _vm.form.Kelas,
+                                          expression: "form.Kelas"
+                                        }
+                                      ],
+                                      staticClass: "form-control",
+                                      class: {
+                                        "is-invalid": _vm.form.errors.has(
+                                          "Kelas"
+                                        )
+                                      },
+                                      attrs: {
+                                        type: "text",
+                                        name: "Kelas",
+                                        placeholder: "Kelas"
+                                      },
+                                      domProps: { value: _vm.form.Kelas },
+                                      on: {
+                                        input: function($event) {
+                                          if ($event.target.composing) {
+                                            return
+                                          }
+                                          _vm.$set(
+                                            _vm.form,
+                                            "Kelas",
+                                            $event.target.value
+                                          )
+                                        }
+                                      }
+                                    }),
+                                    _vm._v(" "),
+                                    _c("has-error", {
+                                      attrs: {
+                                        form: _vm.form,
+                                        field: "Nama_sekolah"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ])
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-row" }, [
+                            _c("div", { staticClass: "col" }, [
+                              _c(
+                                "div",
+                                { staticClass: "form-group" },
+                                [
+                                  _c(
+                                    "label",
+                                    { attrs: { for: "inputAlamat" } },
+                                    [_vm._v("Sebab Masuk PA")]
+                                  ),
+                                  _vm._v(" "),
+                                  _c("textarea", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Sebab_masuk_PA,
+                                        expression: "form.Sebab_masuk_PA"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Sebab_masuk_PA"
+                                      )
+                                    },
+                                    attrs: {
+                                      rows: "4",
+                                      type: "text",
+                                      name: "Sebab_masuk_PA",
+                                      placeholder: "Sebab masuk PA . . ."
+                                    },
+                                    domProps: {
+                                      value: _vm.form.Sebab_masuk_PA
+                                    },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Sebab_masuk_PA",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Sebab_masuk_PA"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col" }, [
+                              _c(
+                                "div",
+                                { staticClass: "form-group" },
+                                [
+                                  _c(
+                                    "label",
+                                    { attrs: { for: "inputAlamat" } },
+                                    [_vm._v("Keterangan Anak")]
+                                  ),
+                                  _vm._v(" "),
+                                  _c("textarea", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Keterangan_anak,
+                                        expression: "form.Keterangan_anak"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Keterangan_anak"
+                                      )
+                                    },
+                                    attrs: {
+                                      rows: "4",
+                                      type: "text",
+                                      name: "Keterangan_anak",
+                                      placeholder: "Keterangan anak . . . "
+                                    },
+                                    domProps: {
+                                      value: _vm.form.Keterangan_anak
+                                    },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Keterangan_anak",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Keterangan_anak"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-row" }, [
+                            _c("div", { staticClass: "col" }, [
+                              _c("label", { attrs: { for: "inputNo_induk" } }, [
+                                _vm._v("Nama Wali")
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "input-group" },
+                                [
+                                  _vm._m(10),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Nama_Wali,
+                                        expression: "form.Nama_Wali"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Nama_Wali"
+                                      )
+                                    },
+                                    attrs: {
+                                      type: "text",
+                                      name: "Nama_Wali",
+                                      placeholder: "Nama Wali"
+                                    },
+                                    domProps: { value: _vm.form.Nama_Wali },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Nama_Wali",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Nama_Wali"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col-4" }, [
+                              _c("div", { staticClass: "form-group" }, [
+                                _c(
+                                  "label",
+                                  { attrs: { for: "inputNama_lengkap" } },
+                                  [_vm._v("Nomor Telepon Wali")]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "input-group" },
+                                  [
+                                    _vm._m(11),
+                                    _vm._v(" "),
+                                    _c("input", {
+                                      directives: [
+                                        {
+                                          name: "model",
+                                          rawName: "v-model",
+                                          value: _vm.form.Nomor_telp_wali,
+                                          expression: "form.Nomor_telp_wali"
+                                        }
+                                      ],
+                                      staticClass: "form-control",
+                                      class: {
+                                        "is-invalid": _vm.form.errors.has(
+                                          "Nomor_telp_wali"
+                                        )
+                                      },
+                                      attrs: {
+                                        type: "text",
+                                        name: "Nomor_telp_wali",
+                                        placeholder: "Nomor telp wali"
+                                      },
+                                      domProps: {
+                                        value: _vm.form.Nomor_telp_wali
+                                      },
+                                      on: {
+                                        input: function($event) {
+                                          if ($event.target.composing) {
+                                            return
+                                          }
+                                          _vm.$set(
+                                            _vm.form,
+                                            "Nomor_telp_wali",
+                                            $event.target.value
+                                          )
+                                        }
+                                      }
+                                    }),
+                                    _vm._v(" "),
+                                    _c("has-error", {
+                                      attrs: {
+                                        form: _vm.form,
+                                        field: "Nomor_telp_wali"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ])
+                            ])
+                          ])
+                        ]
+                      ),
                       _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c(
-                          "div",
-                          { staticClass: "form-group" },
-                          [
-                            _c("label", { attrs: { for: "inputAlamat" } }, [
-                              _vm._v("Alasan Yang Menitipkan Anak")
+                      _c(
+                        "div",
+                        { staticClass: "tab-pane", attrs: { id: "data_ortu" } },
+                        [
+                          _c("div", { staticClass: "form-row" }, [
+                            _c("div", { staticClass: "col" }, [
+                              _c("label", { attrs: { for: "inputNo_induk" } }, [
+                                _vm._v("Nama Ayah")
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "input-group" },
+                                [
+                                  _vm._m(12),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Nama_Ayah,
+                                        expression: "form.Nama_Ayah"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Nama_Ayah"
+                                      )
+                                    },
+                                    attrs: {
+                                      type: "text",
+                                      name: "Nama_Ayah",
+                                      placeholder: "Nama Ayah"
+                                    },
+                                    domProps: { value: _vm.form.Nama_Ayah },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Nama_Ayah",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Nama_Ayah"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
                             ]),
                             _vm._v(" "),
-                            _c("textarea", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Alasan_yg_menitipkan,
-                                  expression: "form.Alasan_yg_menitipkan"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has(
-                                  "Alasan_yg_menitipkan"
+                            _c("div", { staticClass: "col" }, [
+                              _c("div", { staticClass: "form-group" }, [
+                                _c(
+                                  "label",
+                                  { attrs: { for: "inputNama_lengkap" } },
+                                  [_vm._v("Nama Ibu")]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "input-group" },
+                                  [
+                                    _vm._m(13),
+                                    _vm._v(" "),
+                                    _c("input", {
+                                      directives: [
+                                        {
+                                          name: "model",
+                                          rawName: "v-model",
+                                          value: _vm.form.Nama_Ibu,
+                                          expression: "form.Nama_Ibu"
+                                        }
+                                      ],
+                                      staticClass: "form-control",
+                                      class: {
+                                        "is-invalid": _vm.form.errors.has(
+                                          "Nama_Ibu"
+                                        )
+                                      },
+                                      attrs: {
+                                        type: "text",
+                                        name: "Nama_Ibu",
+                                        placeholder: "Nama Ibu"
+                                      },
+                                      domProps: { value: _vm.form.Nama_Ibu },
+                                      on: {
+                                        input: function($event) {
+                                          if ($event.target.composing) {
+                                            return
+                                          }
+                                          _vm.$set(
+                                            _vm.form,
+                                            "Nama_Ibu",
+                                            $event.target.value
+                                          )
+                                        }
+                                      }
+                                    }),
+                                    _vm._v(" "),
+                                    _c("has-error", {
+                                      attrs: {
+                                        form: _vm.form,
+                                        field: "Nama_Ibu"
+                                      }
+                                    })
+                                  ],
+                                  1
                                 )
-                              },
-                              attrs: {
-                                rows: "4",
-                                type: "text",
-                                name: "Alasan_yg_menitipkan",
-                                placeholder: "Keterangan anak . . . "
-                              },
-                              domProps: {
-                                value: _vm.form.Alasan_yg_menitipkan
-                              },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Alasan_yg_menitipkan",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
+                              ])
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-row" }, [
+                            _c("div", { staticClass: "col" }, [
+                              _c(
+                                "div",
+                                { staticClass: "form-group" },
+                                [
+                                  _c(
+                                    "label",
+                                    { attrs: { for: "inputAlamat" } },
+                                    [_vm._v("Alamat Ayah")]
+                                  ),
+                                  _vm._v(" "),
+                                  _c("textarea", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Alamat_Ayah,
+                                        expression: "form.Alamat_Ayah"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Alamat_Ayah"
+                                      )
+                                    },
+                                    attrs: {
+                                      rows: "4",
+                                      type: "text",
+                                      name: "Alamat_Ayah",
+                                      placeholder: "Alamat Ayah . . ."
+                                    },
+                                    domProps: { value: _vm.form.Alamat_Ayah },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Alamat_Ayah",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Alamat_Ayah"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ]),
                             _vm._v(" "),
-                            _c("has-error", {
-                              attrs: {
-                                form: _vm.form,
-                                field: "Alasan_yg_menitipkan"
-                              }
-                            })
-                          ],
-                          1
-                        )
-                      ])
+                            _c("div", { staticClass: "col" }, [
+                              _c(
+                                "div",
+                                { staticClass: "form-group" },
+                                [
+                                  _c(
+                                    "label",
+                                    { attrs: { for: "inputAlamat" } },
+                                    [_vm._v("Alamat Ibu")]
+                                  ),
+                                  _vm._v(" "),
+                                  _c("textarea", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Alamat_Ibu,
+                                        expression: "form.Alamat_Ibu"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Alamat_Ibu"
+                                      )
+                                    },
+                                    attrs: {
+                                      rows: "4",
+                                      type: "text",
+                                      name: "Alamat_Ibu",
+                                      placeholder: "Alamat Ibu . . ."
+                                    },
+                                    domProps: { value: _vm.form.Alamat_Ibu },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Alamat_Ibu",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Alamat_Ibu"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-row" }, [
+                            _c("div", { staticClass: "col" }, [
+                              _c("div", { staticClass: "form-group" }, [
+                                _c(
+                                  "label",
+                                  { attrs: { for: "inputAgamaAyah" } },
+                                  [_vm._v("Agama Ayah")]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "input-group" },
+                                  [
+                                    _vm._m(14),
+                                    _vm._v(" "),
+                                    _c(
+                                      "select",
+                                      {
+                                        directives: [
+                                          {
+                                            name: "model",
+                                            rawName: "v-model",
+                                            value: _vm.form.Agama_Ayah,
+                                            expression: "form.Agama_Ayah"
+                                          }
+                                        ],
+                                        staticClass: "form-control",
+                                        class: {
+                                          "is-invalid": _vm.form.errors.has(
+                                            "Agama_Ayah"
+                                          )
+                                        },
+                                        attrs: {
+                                          type: "text",
+                                          name: "Agama_Ayah",
+                                          placeholder: "Agama Ayah"
+                                        },
+                                        on: {
+                                          change: function($event) {
+                                            var $$selectedVal = Array.prototype.filter
+                                              .call(
+                                                $event.target.options,
+                                                function(o) {
+                                                  return o.selected
+                                                }
+                                              )
+                                              .map(function(o) {
+                                                var val =
+                                                  "_value" in o
+                                                    ? o._value
+                                                    : o.value
+                                                return val
+                                              })
+                                            _vm.$set(
+                                              _vm.form,
+                                              "Agama_Ayah",
+                                              $event.target.multiple
+                                                ? $$selectedVal
+                                                : $$selectedVal[0]
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c(
+                                          "option",
+                                          {
+                                            attrs: {
+                                              value: "",
+                                              disabled: "",
+                                              selected: ""
+                                            }
+                                          },
+                                          [_vm._v("Pilih Agama")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "islam" } },
+                                          [_vm._v("Islam")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "kristen" } },
+                                          [_vm._v("Kristen")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "katolik" } },
+                                          [_vm._v("Katolik")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "hindu" } },
+                                          [_vm._v("Hindu")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "budha" } },
+                                          [_vm._v("Budha")]
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c("has-error", {
+                                      attrs: {
+                                        form: _vm.form,
+                                        field: "Agama_Ayah"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ])
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col" }, [
+                              _c("div", { staticClass: "form-group" }, [
+                                _c(
+                                  "label",
+                                  { attrs: { for: "inputAgamaIbu" } },
+                                  [_vm._v("Agama Ibu")]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "input-group" },
+                                  [
+                                    _vm._m(15),
+                                    _vm._v(" "),
+                                    _c(
+                                      "select",
+                                      {
+                                        directives: [
+                                          {
+                                            name: "model",
+                                            rawName: "v-model",
+                                            value: _vm.form.Agama_Ibu,
+                                            expression: "form.Agama_Ibu"
+                                          }
+                                        ],
+                                        staticClass: "form-control",
+                                        class: {
+                                          "is-invalid": _vm.form.errors.has(
+                                            "Agama_Ibu"
+                                          )
+                                        },
+                                        attrs: {
+                                          type: "text",
+                                          name: "Agama_Ibu",
+                                          placeholder: "Agama Ibu"
+                                        },
+                                        on: {
+                                          change: function($event) {
+                                            var $$selectedVal = Array.prototype.filter
+                                              .call(
+                                                $event.target.options,
+                                                function(o) {
+                                                  return o.selected
+                                                }
+                                              )
+                                              .map(function(o) {
+                                                var val =
+                                                  "_value" in o
+                                                    ? o._value
+                                                    : o.value
+                                                return val
+                                              })
+                                            _vm.$set(
+                                              _vm.form,
+                                              "Agama_Ibu",
+                                              $event.target.multiple
+                                                ? $$selectedVal
+                                                : $$selectedVal[0]
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c(
+                                          "option",
+                                          {
+                                            attrs: {
+                                              value: "",
+                                              disabled: "",
+                                              selected: ""
+                                            }
+                                          },
+                                          [_vm._v("Pilih Agama")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "islam" } },
+                                          [_vm._v("Islam")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "kristen" } },
+                                          [_vm._v("Kristen")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "katolik" } },
+                                          [_vm._v("Katolik")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "hindu" } },
+                                          [_vm._v("Hindu")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "budha" } },
+                                          [_vm._v("Budha")]
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c("has-error", {
+                                      attrs: {
+                                        form: _vm.form,
+                                        field: "Agama_Ibu"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ])
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-row" }, [
+                            _c("div", { staticClass: "col" }, [
+                              _c(
+                                "label",
+                                { attrs: { for: "inputStatusAyah" } },
+                                [_vm._v("Status Ayah")]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "input-group" },
+                                [
+                                  _vm._m(16),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Status_Ayah,
+                                        expression: "form.Status_Ayah"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Status_Ayah"
+                                      )
+                                    },
+                                    attrs: {
+                                      type: "text",
+                                      name: "Status_Ayah",
+                                      placeholder: "Status Ayah"
+                                    },
+                                    domProps: { value: _vm.form.Status_Ayah },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Status_Ayah",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Status_Ayah"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col" }, [
+                              _c(
+                                "label",
+                                { attrs: { for: "inputStatusIbu" } },
+                                [_vm._v("Status Ibu")]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "input-group" },
+                                [
+                                  _vm._m(17),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Status_Ibu,
+                                        expression: "form.Status_Ibu"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Status_Ibu"
+                                      )
+                                    },
+                                    attrs: {
+                                      type: "text",
+                                      name: "Status_Ibu",
+                                      placeholder: "Status Ibu"
+                                    },
+                                    domProps: { value: _vm.form.Status_Ibu },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Status_Ibu",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Status_Ibu"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-row" }, [
+                            _c("div", { staticClass: "col" }, [
+                              _c("div", { staticClass: "form-group" }, [
+                                _c(
+                                  "label",
+                                  { attrs: { for: "inputPendidikanTerakhir" } },
+                                  [_vm._v("Pendidikan Ayah")]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "input-group" },
+                                  [
+                                    _vm._m(18),
+                                    _vm._v(" "),
+                                    _c(
+                                      "select",
+                                      {
+                                        directives: [
+                                          {
+                                            name: "model",
+                                            rawName: "v-model",
+                                            value: _vm.form.Pendidikan_Ayah,
+                                            expression: "form.Pendidikan_Ayah"
+                                          }
+                                        ],
+                                        staticClass: "form-control",
+                                        class: {
+                                          "is-invalid": _vm.form.errors.has(
+                                            "Pendidikan_Ayah"
+                                          )
+                                        },
+                                        attrs: {
+                                          type: "text",
+                                          name: "Pendidikan_Ayah",
+                                          placeholder: "Pendidikan Ayah"
+                                        },
+                                        on: {
+                                          change: function($event) {
+                                            var $$selectedVal = Array.prototype.filter
+                                              .call(
+                                                $event.target.options,
+                                                function(o) {
+                                                  return o.selected
+                                                }
+                                              )
+                                              .map(function(o) {
+                                                var val =
+                                                  "_value" in o
+                                                    ? o._value
+                                                    : o.value
+                                                return val
+                                              })
+                                            _vm.$set(
+                                              _vm.form,
+                                              "Pendidikan_Ayah",
+                                              $event.target.multiple
+                                                ? $$selectedVal
+                                                : $$selectedVal[0]
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c(
+                                          "option",
+                                          {
+                                            attrs: {
+                                              value: "",
+                                              disabled: "",
+                                              selected: ""
+                                            }
+                                          },
+                                          [_vm._v("Pendidikan Terakhir")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "Sekolah Dasar" } },
+                                          [_vm._v("SD")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          {
+                                            attrs: {
+                                              value: "Sekolah Menengah Pertama"
+                                            }
+                                          },
+                                          [_vm._v("SMP")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          {
+                                            attrs: {
+                                              value: "Sekolah Menengah Atas"
+                                            }
+                                          },
+                                          [_vm._v("SMA")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "Strata-1" } },
+                                          [_vm._v("Strata-1")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "Strata-2" } },
+                                          [_vm._v("Strata-2")]
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c("has-error", {
+                                      attrs: {
+                                        form: _vm.form,
+                                        field: "Pendidikan_Ayah"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ])
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col" }, [
+                              _c("div", { staticClass: "form-group" }, [
+                                _c(
+                                  "label",
+                                  { attrs: { for: "inputPendidikanTerakhir" } },
+                                  [_vm._v("Pendidikan Ibu")]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "input-group" },
+                                  [
+                                    _vm._m(19),
+                                    _vm._v(" "),
+                                    _c(
+                                      "select",
+                                      {
+                                        directives: [
+                                          {
+                                            name: "model",
+                                            rawName: "v-model",
+                                            value: _vm.form.Pendidikan_Ibu,
+                                            expression: "form.Pendidikan_Ibu"
+                                          }
+                                        ],
+                                        staticClass: "form-control",
+                                        class: {
+                                          "is-invalid": _vm.form.errors.has(
+                                            "Pendidikan_Ibu"
+                                          )
+                                        },
+                                        attrs: {
+                                          type: "text",
+                                          name: "Pendidikan_Ibu",
+                                          placeholder: "Pendidikan Ibu"
+                                        },
+                                        on: {
+                                          change: function($event) {
+                                            var $$selectedVal = Array.prototype.filter
+                                              .call(
+                                                $event.target.options,
+                                                function(o) {
+                                                  return o.selected
+                                                }
+                                              )
+                                              .map(function(o) {
+                                                var val =
+                                                  "_value" in o
+                                                    ? o._value
+                                                    : o.value
+                                                return val
+                                              })
+                                            _vm.$set(
+                                              _vm.form,
+                                              "Pendidikan_Ibu",
+                                              $event.target.multiple
+                                                ? $$selectedVal
+                                                : $$selectedVal[0]
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c(
+                                          "option",
+                                          {
+                                            attrs: {
+                                              value: "",
+                                              disabled: "",
+                                              selected: ""
+                                            }
+                                          },
+                                          [_vm._v("Pendidikan Terakhir")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "Sekolah Dasar" } },
+                                          [_vm._v("SD")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          {
+                                            attrs: {
+                                              value: "Sekolah Menengah Pertama"
+                                            }
+                                          },
+                                          [_vm._v("SMP")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          {
+                                            attrs: {
+                                              value: "Sekolah Menengah Atas"
+                                            }
+                                          },
+                                          [_vm._v("SMA")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "Strata-1" } },
+                                          [_vm._v("Strata-1")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "Strata-2" } },
+                                          [_vm._v("Strata-2")]
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c("has-error", {
+                                      attrs: {
+                                        form: _vm.form,
+                                        field: "Pendidikan_Ibu"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ])
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-row" }, [
+                            _c("div", { staticClass: "col" }, [
+                              _c("label", { attrs: { for: "inputNo_induk" } }, [
+                                _vm._v("Pekerjaan Ayah")
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "input-group" },
+                                [
+                                  _vm._m(20),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Pekerjaan_Ayah,
+                                        expression: "form.Pekerjaan_Ayah"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Pekerjaan_Ayah"
+                                      )
+                                    },
+                                    attrs: {
+                                      type: "text",
+                                      name: "Pekerjaan_Ayah",
+                                      placeholder: "Pekerjaan Ayah"
+                                    },
+                                    domProps: {
+                                      value: _vm.form.Pekerjaan_Ayah
+                                    },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Pekerjaan_Ayah",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Pekerjaan_Ayah"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col" }, [
+                              _c("label", { attrs: { for: "inputNo_induk" } }, [
+                                _vm._v("Pekerjaan Ibu")
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "input-group" },
+                                [
+                                  _vm._m(21),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Pekerjaan_Ibu,
+                                        expression: "form.Pekerjaan_Ibu"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Pekerjaan_Ibu"
+                                      )
+                                    },
+                                    attrs: {
+                                      type: "text",
+                                      name: "Pekerjaan_Ibu",
+                                      placeholder: "Pekerjaan Ibu"
+                                    },
+                                    domProps: { value: _vm.form.Pekerjaan_Ibu },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Pekerjaan_Ibu",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Pekerjaan_Ibu"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-row" }, [
+                            _c("div", { staticClass: "col" }, [
+                              _c("label", { attrs: { for: "inputNo_induk" } }, [
+                                _vm._v("Penghasilan Ayah")
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "input-group" },
+                                [
+                                  _vm._m(22),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Penghasilan_Ayah,
+                                        expression: "form.Penghasilan_Ayah"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Penghasilan_Ayah"
+                                      )
+                                    },
+                                    attrs: {
+                                      type: "text",
+                                      name: "Penghasilan_Ayah",
+                                      placeholder: "Penghasilan Ayah"
+                                    },
+                                    domProps: {
+                                      value: _vm.form.Penghasilan_Ayah
+                                    },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Penghasilan_Ayah",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Penghasilan_Ayah"
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _vm._m(23)
+                                ],
+                                1
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col" }, [
+                              _c("label", { attrs: { for: "inputNo_induk" } }, [
+                                _vm._v("Penghasilan Ibu")
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "input-group" },
+                                [
+                                  _vm._m(24),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Penghasilan_Ibu,
+                                        expression: "form.Penghasilan_Ibu"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Penghasilan_Ibu"
+                                      )
+                                    },
+                                    attrs: {
+                                      type: "text",
+                                      name: "Penghasilan_Ibu",
+                                      placeholder: "Penghasilan Ibu"
+                                    },
+                                    domProps: {
+                                      value: _vm.form.Penghasilan_Ibu
+                                    },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Penghasilan_Ibu",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Penghasilan_Ibu"
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _vm._m(25)
+                                ],
+                                1
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-row" }, [
+                            _c("div", { staticClass: "col" }, [
+                              _c("label", { attrs: { for: "inputNo_induk" } }, [
+                                _vm._v("Tanggungan")
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "input-group" },
+                                [
+                                  _vm._m(26),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Tanggungan,
+                                        expression: "form.Tanggungan"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Tanggungan"
+                                      )
+                                    },
+                                    attrs: {
+                                      type: "text",
+                                      name: "Tanggungan",
+                                      placeholder: "Tanggungan"
+                                    },
+                                    domProps: { value: _vm.form.Tanggungan },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Tanggungan",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Tanggungan"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col" }, [
+                              _c("label", { attrs: { for: "inputNo_induk" } }, [
+                                _vm._v("Perumahan")
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "input-group" },
+                                [
+                                  _vm._m(27),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Perumahan,
+                                        expression: "form.Perumahan"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Perumahan"
+                                      )
+                                    },
+                                    attrs: {
+                                      type: "text",
+                                      name: "No_induk",
+                                      placeholder: "Perumahan"
+                                    },
+                                    domProps: { value: _vm.form.Perumahan },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Perumahan",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Perumahan"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("hr"),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            { staticClass: "form-group" },
+                            [
+                              _c("label", { attrs: { for: "inputAlamat" } }, [
+                                _vm._v("Latar Belakang Permasalahan")
+                              ]),
+                              _vm._v(" "),
+                              _c("textarea", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.form.Latar_Belakang_Permasalahan,
+                                    expression:
+                                      "form.Latar_Belakang_Permasalahan"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                class: {
+                                  "is-invalid": _vm.form.errors.has(
+                                    "Latar_Belakang_Permasalahan"
+                                  )
+                                },
+                                attrs: {
+                                  rows: "4",
+                                  type: "text",
+                                  name: "Latar_Belakang_Permasalahan",
+                                  placeholder: "Latar Belakang Permasalahan ..."
+                                },
+                                domProps: {
+                                  value: _vm.form.Latar_Belakang_Permasalahan
+                                },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.$set(
+                                      _vm.form,
+                                      "Latar_Belakang_Permasalahan",
+                                      $event.target.value
+                                    )
+                                  }
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c("has-error", {
+                                attrs: {
+                                  form: _vm.form,
+                                  field: "Latar_Belakang_Permasalahan"
+                                }
+                              })
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-row" }, [
+                            _c("div", { staticClass: "col" }, [
+                              _c(
+                                "div",
+                                { staticClass: "form-group" },
+                                [
+                                  _c(
+                                    "label",
+                                    { attrs: { for: "inputAlamat" } },
+                                    [_vm._v("Alamat Yang Menitipkan Anak")]
+                                  ),
+                                  _vm._v(" "),
+                                  _c("textarea", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Alamat_yg_menitipkan,
+                                        expression: "form.Alamat_yg_menitipkan"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Alamat_yg_menitipkan"
+                                      )
+                                    },
+                                    attrs: {
+                                      rows: "4",
+                                      type: "text",
+                                      name: "Alamat_yg_menitipkan",
+                                      placeholder: "Sebab masuk PA . . ."
+                                    },
+                                    domProps: {
+                                      value: _vm.form.Alamat_yg_menitipkan
+                                    },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Alamat_yg_menitipkan",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Alamat_yg_menitipkan"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col" }, [
+                              _c(
+                                "div",
+                                { staticClass: "form-group" },
+                                [
+                                  _c(
+                                    "label",
+                                    { attrs: { for: "inputAlamat" } },
+                                    [_vm._v("Alasan Yang Menitipkan Anak")]
+                                  ),
+                                  _vm._v(" "),
+                                  _c("textarea", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Alasan_yg_menitipkan,
+                                        expression: "form.Alasan_yg_menitipkan"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Alasan_yg_menitipkan"
+                                      )
+                                    },
+                                    attrs: {
+                                      rows: "4",
+                                      type: "text",
+                                      name: "Alasan_yg_menitipkan",
+                                      placeholder:
+                                        "Alasan Yang Menitipkan Anak . . . "
+                                    },
+                                    domProps: {
+                                      value: _vm.form.Alasan_yg_menitipkan
+                                    },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Alasan_yg_menitipkan",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Alasan_yg_menitipkan"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ])
+                          ])
+                        ]
+                      )
                     ])
                   ]),
                   _vm._v(" "),
@@ -71713,8 +72517,32 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card-header" }, [
-      _c("h3", { staticClass: "card-title" }, [_vm._v("Ubah Data Anak")])
+    return _c("div", { staticClass: "card" }, [
+      _c("div", { staticClass: "p-2" }, [
+        _c("ul", { staticClass: "nav nav-pills p-0" }, [
+          _c("li", { staticClass: "nav-item" }, [
+            _c(
+              "a",
+              {
+                staticClass: "nav-link active show",
+                attrs: { href: "#data_anak", "data-toggle": "tab" }
+              },
+              [_vm._v("Detail Anak")]
+            )
+          ]),
+          _vm._v(" "),
+          _c("li", { staticClass: "nav-item" }, [
+            _c(
+              "a",
+              {
+                staticClass: "nav-link",
+                attrs: { href: "#data_ortu", "data-toggle": "tab" }
+              },
+              [_vm._v("Detail Orang Tua")]
+            )
+          ])
+        ])
+      ])
     ])
   },
   function() {
@@ -71824,16 +72652,6 @@ var staticRenderFns = [
     return _c("div", { staticClass: "input-group-prepend" }, [
       _c("span", { staticClass: "input-group-text" }, [
         _c("i", { staticClass: "fas fa-phone" })
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", [
-      _c("h3", { staticClass: "profile-username text-center" }, [
-        _vm._v("Detail Orang Tua Anak")
       ])
     ])
   },
@@ -72019,2123 +72837,2415 @@ var render = function() {
               _c("div", { staticClass: "card card-primary" }, [
                 _vm._m(0),
                 _vm._v(" "),
+                _vm._m(1),
+                _vm._v(" "),
                 _c("form", { attrs: { role: "form" } }, [
                   _c("div", { staticClass: "card-body" }, [
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col-2" }, [
-                        _c("label", { attrs: { for: "inputNo_induk" } }, [
-                          _vm._v("No induk")
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "input-group" },
-                          [
-                            _vm._m(1),
-                            _vm._v(" "),
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.No_induk,
-                                  expression: "form.No_induk"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has("No_induk")
-                              },
-                              attrs: {
-                                type: "text",
-                                name: "No_induk",
-                                placeholder: "No induk"
-                              },
-                              domProps: { value: _vm.form.No_induk },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "No_induk",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: { form: _vm.form, field: "No_induk" }
-                            })
-                          ],
-                          1
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c("label", { attrs: { for: "inputNama_lengkap" } }, [
-                            _vm._v("Nama Lengkap Anak")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "input-group" },
-                            [
-                              _vm._m(2),
-                              _vm._v(" "),
-                              _c("input", {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.form.Nama_Lengkap,
-                                    expression: "form.Nama_Lengkap"
-                                  }
-                                ],
-                                staticClass: "form-control",
-                                class: {
-                                  "is-invalid": _vm.form.errors.has(
-                                    "Nama_Lengkap"
-                                  )
-                                },
-                                attrs: {
-                                  type: "text",
-                                  name: "Nama_lengkap",
-                                  placeholder: "Nama Lengkap Anak"
-                                },
-                                domProps: { value: _vm.form.Nama_Lengkap },
-                                on: {
-                                  input: function($event) {
-                                    if ($event.target.composing) {
-                                      return
-                                    }
-                                    _vm.$set(
-                                      _vm.form,
-                                      "Nama_Lengkap",
-                                      $event.target.value
-                                    )
-                                  }
-                                }
-                              }),
-                              _vm._v(" "),
-                              _c("has-error", {
-                                attrs: { form: _vm.form, field: "Nama_Lengkap" }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "div",
-                      { staticClass: "form-group" },
-                      [
-                        _c("label", { attrs: { for: "inputAlamat" } }, [
-                          _vm._v("Alamat")
-                        ]),
-                        _vm._v(" "),
-                        _c("textarea", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.form.Alamat,
-                              expression: "form.Alamat"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          class: {
-                            "is-invalid": _vm.form.errors.has("Alamat")
-                          },
-                          attrs: {
-                            rows: "4",
-                            type: "text",
-                            name: "Alamat",
-                            placeholder: "Alamat Anak ..."
-                          },
-                          domProps: { value: _vm.form.Alamat },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.$set(_vm.form, "Alamat", $event.target.value)
-                            }
-                          }
-                        }),
-                        _vm._v(" "),
-                        _c("has-error", {
-                          attrs: { form: _vm.form, field: "Alamat" }
-                        })
-                      ],
-                      1
-                    ),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c("label", { attrs: { for: "inputAgama" } }, [
-                            _vm._v("Agama")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "input-group" },
-                            [
-                              _vm._m(3),
+                    _c("div", { staticClass: "tab-content" }, [
+                      _c(
+                        "div",
+                        {
+                          staticClass: "tab-pane active show",
+                          attrs: { id: "data_anak" }
+                        },
+                        [
+                          _c("div", { staticClass: "form-row" }, [
+                            _c("div", { staticClass: "col-2" }, [
+                              _c("label", { attrs: { for: "inputNo_induk" } }, [
+                                _vm._v("No induk")
+                              ]),
                               _vm._v(" "),
                               _c(
-                                "select",
-                                {
-                                  directives: [
-                                    {
-                                      name: "model",
-                                      rawName: "v-model",
-                                      value: _vm.form.Agama,
-                                      expression: "form.Agama"
-                                    }
-                                  ],
-                                  staticClass: "form-control",
-                                  class: {
-                                    "is-invalid": _vm.form.errors.has("Agama")
-                                  },
-                                  attrs: {
-                                    type: "text",
-                                    name: "Agama",
-                                    placeholder: "Agama"
-                                  },
-                                  on: {
-                                    change: function($event) {
-                                      var $$selectedVal = Array.prototype.filter
-                                        .call($event.target.options, function(
-                                          o
-                                        ) {
-                                          return o.selected
-                                        })
-                                        .map(function(o) {
-                                          var val =
-                                            "_value" in o ? o._value : o.value
-                                          return val
-                                        })
-                                      _vm.$set(
-                                        _vm.form,
-                                        "Agama",
-                                        $event.target.multiple
-                                          ? $$selectedVal
-                                          : $$selectedVal[0]
-                                      )
-                                    }
-                                  }
-                                },
+                                "div",
+                                { staticClass: "input-group" },
                                 [
-                                  _c(
-                                    "option",
-                                    {
-                                      attrs: {
-                                        value: "",
-                                        disabled: "",
-                                        selected: ""
+                                  _vm._m(2),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.No_induk,
+                                        expression: "form.No_induk"
                                       }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "No_induk"
+                                      )
                                     },
-                                    [_vm._v("Pilih Agama")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c("option", { attrs: { value: "islam" } }, [
-                                    _vm._v("Islam")
-                                  ]),
-                                  _vm._v(" "),
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "kristen" } },
-                                    [_vm._v("Kristen")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "katolik" } },
-                                    [_vm._v("Katolik")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "kristen" } },
-                                    [_vm._v("Hindu")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "kristen" } },
-                                    [_vm._v("Budha")]
-                                  )
-                                ]
-                              ),
-                              _vm._v(" "),
-                              _c("has-error", {
-                                attrs: {
-                                  form: _vm.form,
-                                  field: "Jenis_Kelamin"
-                                }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c("label", { attrs: { for: "inputtempatlahir" } }, [
-                            _vm._v("Tempat Lahir")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "input-group" },
-                            [
-                              _vm._m(4),
-                              _vm._v(" "),
-                              _c("input", {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.form.Tempat_lahir,
-                                    expression: "form.Tempat_lahir"
-                                  }
-                                ],
-                                staticClass: "form-control",
-                                class: {
-                                  "is-invalid": _vm.form.errors.has(
-                                    "tempat_lahir"
-                                  )
-                                },
-                                attrs: {
-                                  type: "text",
-                                  name: "tempat_lahir",
-                                  placeholder: "Tempat Lahir"
-                                },
-                                domProps: { value: _vm.form.Tempat_lahir },
-                                on: {
-                                  input: function($event) {
-                                    if ($event.target.composing) {
-                                      return
-                                    }
-                                    _vm.$set(
-                                      _vm.form,
-                                      "Tempat_lahir",
-                                      $event.target.value
-                                    )
-                                  }
-                                }
-                              }),
-                              _vm._v(" "),
-                              _c("has-error", {
-                                attrs: { form: _vm.form, field: "tempat_lahir" }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c("label", { attrs: { for: "tgl_lahir" } }, [
-                            _vm._v("Tanggal Lahir")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "input-group" },
-                            [
-                              _vm._m(5),
-                              _vm._v(" "),
-                              _c("date-picker", {
-                                attrs: { config: _vm.options },
-                                model: {
-                                  value: _vm.form.Tgl_lahir,
-                                  callback: function($$v) {
-                                    _vm.$set(_vm.form, "Tgl_lahir", $$v)
-                                  },
-                                  expression: "form.Tgl_lahir"
-                                }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c("label", { attrs: { for: "Tgl_masuk_PA" } }, [
-                            _vm._v("Tanggal Masuk PA")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "input-group" },
-                            [
-                              _vm._m(6),
-                              _vm._v(" "),
-                              _c("date-picker", {
-                                attrs: { config: _vm.options },
-                                model: {
-                                  value: _vm.form.Tgl_masuk_PA,
-                                  callback: function($$v) {
-                                    _vm.$set(_vm.form, "Tgl_masuk_PA", $$v)
-                                  },
-                                  expression: "form.Tgl_masuk_PA"
-                                }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c(
-                          "div",
-                          { staticClass: "form-group" },
-                          [
-                            _c(
-                              "label",
-                              { attrs: { for: "inputtempatlahir" } },
-                              [_vm._v("Kelengkapan Surat")]
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "select",
-                              {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.form.Surat_Kelahiran_Akta,
-                                    expression: "form.Surat_Kelahiran_Akta"
-                                  }
-                                ],
-                                staticClass: "form-control",
-                                class: {
-                                  "is-invalid": _vm.form.errors.has(
-                                    "Surat_Kelahiran_Akta"
-                                  )
-                                },
-                                attrs: {
-                                  type: "text",
-                                  name: "Surat_Kelahiran_Akta",
-                                  placeholder: "Kelengkapan Surat"
-                                },
-                                on: {
-                                  change: function($event) {
-                                    var $$selectedVal = Array.prototype.filter
-                                      .call($event.target.options, function(o) {
-                                        return o.selected
-                                      })
-                                      .map(function(o) {
-                                        var val =
-                                          "_value" in o ? o._value : o.value
-                                        return val
-                                      })
-                                    _vm.$set(
-                                      _vm.form,
-                                      "Surat_Kelahiran_Akta",
-                                      $event.target.multiple
-                                        ? $$selectedVal
-                                        : $$selectedVal[0]
-                                    )
-                                  }
-                                }
-                              },
-                              [
-                                _c(
-                                  "option",
-                                  {
                                     attrs: {
-                                      value: "",
-                                      disabled: "",
-                                      selected: ""
-                                    }
-                                  },
-                                  [_vm._v("Pilih Kelengkapan Surat")]
-                                ),
-                                _vm._v(" "),
-                                _c(
-                                  "option",
-                                  { attrs: { value: "Akta Kelahiran" } },
-                                  [_vm._v("Akta Kelahiran")]
-                                ),
-                                _vm._v(" "),
-                                _c(
-                                  "option",
-                                  { attrs: { value: "Surat Kelahiran" } },
-                                  [_vm._v("Surat Kelahiran")]
-                                )
-                              ]
-                            ),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: { form: _vm.form, field: "Jenis_Kelamin" }
-                            })
-                          ],
-                          1
-                        )
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c(
-                            "label",
-                            { attrs: { for: "inputmulaimasukSekolah" } },
-                            [_vm._v("Mulai Masuk Sekolah")]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "input-group" },
-                            [
-                              _vm._m(7),
-                              _vm._v(" "),
-                              _c("date-picker", {
-                                attrs: { config: _vm.options },
-                                model: {
-                                  value: _vm.form.Mulai_masuk_sekolah,
-                                  callback: function($$v) {
-                                    _vm.$set(
-                                      _vm.form,
-                                      "Mulai_masuk_sekolah",
-                                      $$v
-                                    )
-                                  },
-                                  expression: "form.Mulai_masuk_sekolah"
-                                }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c("label", { attrs: { for: "inputtempatlahir" } }, [
-                            _vm._v("Nama Sekolah")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "input-group" },
-                            [
-                              _vm._m(8),
-                              _vm._v(" "),
-                              _c("input", {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.form.Nama_sekolah,
-                                    expression: "form.Nama_sekolah"
-                                  }
-                                ],
-                                staticClass: "form-control",
-                                class: {
-                                  "is-invalid": _vm.form.errors.has(
-                                    "Nama_sekolah"
-                                  )
-                                },
-                                attrs: {
-                                  type: "text",
-                                  name: "Nama_sekolah",
-                                  placeholder: "Nama sekolah"
-                                },
-                                domProps: { value: _vm.form.Nama_sekolah },
-                                on: {
-                                  input: function($event) {
-                                    if ($event.target.composing) {
-                                      return
-                                    }
-                                    _vm.$set(
-                                      _vm.form,
-                                      "Nama_sekolah",
-                                      $event.target.value
-                                    )
-                                  }
-                                }
-                              }),
-                              _vm._v(" "),
-                              _c("has-error", {
-                                attrs: { form: _vm.form, field: "Nama_sekolah" }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col-2" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c("label", { attrs: { for: "kelas" } }, [
-                            _vm._v("Kelas")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "input-group" },
-                            [
-                              _vm._m(9),
-                              _vm._v(" "),
-                              _c("input", {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.form.Kelas,
-                                    expression: "form.Kelas"
-                                  }
-                                ],
-                                staticClass: "form-control",
-                                class: {
-                                  "is-invalid": _vm.form.errors.has("Kelas")
-                                },
-                                attrs: {
-                                  type: "text",
-                                  name: "Kelas",
-                                  placeholder: "Kelas"
-                                },
-                                domProps: { value: _vm.form.Kelas },
-                                on: {
-                                  input: function($event) {
-                                    if ($event.target.composing) {
-                                      return
-                                    }
-                                    _vm.$set(
-                                      _vm.form,
-                                      "Kelas",
-                                      $event.target.value
-                                    )
-                                  }
-                                }
-                              }),
-                              _vm._v(" "),
-                              _c("has-error", {
-                                attrs: { form: _vm.form, field: "Nama_sekolah" }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col" }, [
-                        _c(
-                          "div",
-                          { staticClass: "form-group" },
-                          [
-                            _c("label", { attrs: { for: "inputAlamat" } }, [
-                              _vm._v("Sebab Masuk PA")
-                            ]),
-                            _vm._v(" "),
-                            _c("textarea", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Sebab_masuk_PA,
-                                  expression: "form.Sebab_masuk_PA"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has(
-                                  "Sebab_masuk_PA"
-                                )
-                              },
-                              attrs: {
-                                rows: "4",
-                                type: "text",
-                                name: "Sebab_masuk_PA",
-                                placeholder: "Sebab masuk PA . . ."
-                              },
-                              domProps: { value: _vm.form.Sebab_masuk_PA },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Sebab_masuk_PA",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: { form: _vm.form, field: "Sebab_masuk_PA" }
-                            })
-                          ],
-                          1
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c(
-                          "div",
-                          { staticClass: "form-group" },
-                          [
-                            _c("label", { attrs: { for: "inputAlamat" } }, [
-                              _vm._v("Keterangan Anak")
-                            ]),
-                            _vm._v(" "),
-                            _c("textarea", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Keterangan_anak,
-                                  expression: "form.Keterangan_anak"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has(
-                                  "Keterangan_anak"
-                                )
-                              },
-                              attrs: {
-                                rows: "4",
-                                type: "text",
-                                name: "Keterangan_anak",
-                                placeholder: "Keterangan anak . . . "
-                              },
-                              domProps: { value: _vm.form.Keterangan_anak },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Keterangan_anak",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: {
-                                form: _vm.form,
-                                field: "Keterangan_anak"
-                              }
-                            })
-                          ],
-                          1
-                        )
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col" }, [
-                        _c("label", { attrs: { for: "inputNo_induk" } }, [
-                          _vm._v("Nama Wali")
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "input-group" },
-                          [
-                            _vm._m(10),
-                            _vm._v(" "),
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Nama_Wali,
-                                  expression: "form.Nama_Wali"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has("Nama_Wali")
-                              },
-                              attrs: {
-                                type: "text",
-                                name: "Nama_Wali",
-                                placeholder: "Nama Wali"
-                              },
-                              domProps: { value: _vm.form.Nama_Wali },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Nama_Wali",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: { form: _vm.form, field: "Nama_Wali" }
-                            })
-                          ],
-                          1
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col-4" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c("label", { attrs: { for: "inputNama_lengkap" } }, [
-                            _vm._v("Nomor Telepon Wali")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "input-group" },
-                            [
-                              _vm._m(11),
-                              _vm._v(" "),
-                              _c("input", {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.form.Nomor_telp_wali,
-                                    expression: "form.Nomor_telp_wali"
-                                  }
-                                ],
-                                staticClass: "form-control",
-                                class: {
-                                  "is-invalid": _vm.form.errors.has(
-                                    "Nomor_telp_wali"
-                                  )
-                                },
-                                attrs: {
-                                  type: "text",
-                                  name: "Nomor_telp_wali",
-                                  placeholder: "Nomor telp wali"
-                                },
-                                domProps: { value: _vm.form.Nomor_telp_wali },
-                                on: {
-                                  input: function($event) {
-                                    if ($event.target.composing) {
-                                      return
-                                    }
-                                    _vm.$set(
-                                      _vm.form,
-                                      "Nomor_telp_wali",
-                                      $event.target.value
-                                    )
-                                  }
-                                }
-                              }),
-                              _vm._v(" "),
-                              _c("has-error", {
-                                attrs: {
-                                  form: _vm.form,
-                                  field: "Nomor_telp_wali"
-                                }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("br"),
-                    _vm._v(" "),
-                    _vm._m(12),
-                    _vm._v(" "),
-                    _c("br"),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col" }, [
-                        _c("label", { attrs: { for: "inputNo_induk" } }, [
-                          _vm._v("Nama Ayah")
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "input-group" },
-                          [
-                            _vm._m(13),
-                            _vm._v(" "),
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Nama_Ayah,
-                                  expression: "form.Nama_Ayah"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has("Nama_Ayah")
-                              },
-                              attrs: {
-                                type: "text",
-                                name: "Nama_Ayah",
-                                placeholder: "Nama Ayah"
-                              },
-                              domProps: { value: _vm.form.Nama_Ayah },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Nama_Ayah",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: { form: _vm.form, field: "Nama_Ayah" }
-                            })
-                          ],
-                          1
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c("label", { attrs: { for: "inputNama_lengkap" } }, [
-                            _vm._v("Nama Ibu")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "input-group" },
-                            [
-                              _vm._m(14),
-                              _vm._v(" "),
-                              _c("input", {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.form.Nama_Ibu,
-                                    expression: "form.Nama_Ibu"
-                                  }
-                                ],
-                                staticClass: "form-control",
-                                class: {
-                                  "is-invalid": _vm.form.errors.has("Nama_Ibu")
-                                },
-                                attrs: {
-                                  type: "text",
-                                  name: "Nama_Ibu",
-                                  placeholder: "Nama Ibu"
-                                },
-                                domProps: { value: _vm.form.Nama_Ibu },
-                                on: {
-                                  input: function($event) {
-                                    if ($event.target.composing) {
-                                      return
-                                    }
-                                    _vm.$set(
-                                      _vm.form,
-                                      "Nama_Ibu",
-                                      $event.target.value
-                                    )
-                                  }
-                                }
-                              }),
-                              _vm._v(" "),
-                              _c("has-error", {
-                                attrs: { form: _vm.form, field: "Nama_Ibu" }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col" }, [
-                        _c(
-                          "div",
-                          { staticClass: "form-group" },
-                          [
-                            _c("label", { attrs: { for: "inputAlamat" } }, [
-                              _vm._v("Alamat Ayah")
-                            ]),
-                            _vm._v(" "),
-                            _c("textarea", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Alamat_Ayah,
-                                  expression: "form.Alamat_Ayah"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has("Alamat_Ayah")
-                              },
-                              attrs: {
-                                rows: "4",
-                                type: "text",
-                                name: "Alamat_Ayah",
-                                placeholder: "Alamat Ayah . . ."
-                              },
-                              domProps: { value: _vm.form.Alamat_Ayah },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Alamat_Ayah",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: { form: _vm.form, field: "Alamat_Ayah" }
-                            })
-                          ],
-                          1
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c(
-                          "div",
-                          { staticClass: "form-group" },
-                          [
-                            _c("label", { attrs: { for: "inputAlamat" } }, [
-                              _vm._v("Alamat Ibu")
-                            ]),
-                            _vm._v(" "),
-                            _c("textarea", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Alamat_Ibu,
-                                  expression: "form.Alamat_Ibu"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has("Alamat_Ibu")
-                              },
-                              attrs: {
-                                rows: "4",
-                                type: "text",
-                                name: "Alamat_Ibu",
-                                placeholder: "Alamat Ibu . . ."
-                              },
-                              domProps: { value: _vm.form.Alamat_Ibu },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Alamat_Ibu",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: { form: _vm.form, field: "Alamat_Ibu" }
-                            })
-                          ],
-                          1
-                        )
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c("label", { attrs: { for: "inputAgamaAyah" } }, [
-                            _vm._v("Agama Ayah")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "input-group" },
-                            [
-                              _vm._m(15),
-                              _vm._v(" "),
-                              _c(
-                                "select",
-                                {
-                                  directives: [
-                                    {
-                                      name: "model",
-                                      rawName: "v-model",
-                                      value: _vm.form.Agama_Ayah,
-                                      expression: "form.Agama_Ayah"
-                                    }
-                                  ],
-                                  staticClass: "form-control",
-                                  class: {
-                                    "is-invalid": _vm.form.errors.has(
-                                      "Agama_Ayah"
-                                    )
-                                  },
-                                  attrs: {
-                                    type: "text",
-                                    name: "Agama_Ayah",
-                                    placeholder: "Agama Ayah"
-                                  },
-                                  on: {
-                                    change: function($event) {
-                                      var $$selectedVal = Array.prototype.filter
-                                        .call($event.target.options, function(
-                                          o
-                                        ) {
-                                          return o.selected
-                                        })
-                                        .map(function(o) {
-                                          var val =
-                                            "_value" in o ? o._value : o.value
-                                          return val
-                                        })
-                                      _vm.$set(
-                                        _vm.form,
-                                        "Agama_Ayah",
-                                        $event.target.multiple
-                                          ? $$selectedVal
-                                          : $$selectedVal[0]
-                                      )
-                                    }
-                                  }
-                                },
-                                [
-                                  _c(
-                                    "option",
-                                    {
-                                      attrs: {
-                                        value: "",
-                                        disabled: "",
-                                        selected: ""
-                                      }
+                                      type: "text",
+                                      name: "No_induk",
+                                      placeholder: "No induk"
                                     },
-                                    [_vm._v("Pilih Agama")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c("option", { attrs: { value: "islam" } }, [
-                                    _vm._v("Islam")
-                                  ]),
-                                  _vm._v(" "),
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "kristen" } },
-                                    [_vm._v("Kristen")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "katolik" } },
-                                    [_vm._v("Katolik")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "kristen" } },
-                                    [_vm._v("Hindu")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "kristen" } },
-                                    [_vm._v("Budha")]
-                                  )
-                                ]
-                              ),
-                              _vm._v(" "),
-                              _c("has-error", {
-                                attrs: { form: _vm.form, field: "Agama_Ayah" }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c("label", { attrs: { for: "inputAgamaIbu" } }, [
-                            _vm._v("Agama Ibu")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "input-group" },
-                            [
-                              _vm._m(16),
-                              _vm._v(" "),
-                              _c(
-                                "select",
-                                {
-                                  directives: [
-                                    {
-                                      name: "model",
-                                      rawName: "v-model",
-                                      value: _vm.form.Agama_Ibu,
-                                      expression: "form.Agama_Ibu"
-                                    }
-                                  ],
-                                  staticClass: "form-control",
-                                  class: {
-                                    "is-invalid": _vm.form.errors.has(
-                                      "Agama_Ibu"
-                                    )
-                                  },
-                                  attrs: {
-                                    type: "text",
-                                    name: "Agama_Ibu",
-                                    placeholder: "Agama Ibu"
-                                  },
-                                  on: {
-                                    change: function($event) {
-                                      var $$selectedVal = Array.prototype.filter
-                                        .call($event.target.options, function(
-                                          o
-                                        ) {
-                                          return o.selected
-                                        })
-                                        .map(function(o) {
-                                          var val =
-                                            "_value" in o ? o._value : o.value
-                                          return val
-                                        })
-                                      _vm.$set(
-                                        _vm.form,
-                                        "Agama_Ibu",
-                                        $event.target.multiple
-                                          ? $$selectedVal
-                                          : $$selectedVal[0]
-                                      )
-                                    }
-                                  }
-                                },
-                                [
-                                  _c(
-                                    "option",
-                                    {
-                                      attrs: {
-                                        value: "",
-                                        disabled: "",
-                                        selected: ""
+                                    domProps: { value: _vm.form.No_induk },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "No_induk",
+                                          $event.target.value
+                                        )
                                       }
-                                    },
-                                    [_vm._v("Pilih Agama")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c("option", { attrs: { value: "islam" } }, [
-                                    _vm._v("Islam")
-                                  ]),
-                                  _vm._v(" "),
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "kristen" } },
-                                    [_vm._v("Kristen")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "katolik" } },
-                                    [_vm._v("Katolik")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "kristen" } },
-                                    [_vm._v("Hindu")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "kristen" } },
-                                    [_vm._v("Budha")]
-                                  )
-                                ]
-                              ),
-                              _vm._v(" "),
-                              _c("has-error", {
-                                attrs: { form: _vm.form, field: "Agama_Ibu" }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col" }, [
-                        _c("label", { attrs: { for: "inputStatusAyah" } }, [
-                          _vm._v("Status Ayah")
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "input-group" },
-                          [
-                            _vm._m(17),
-                            _vm._v(" "),
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Status_Ayah,
-                                  expression: "form.Status_Ayah"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has("Status_Ayah")
-                              },
-                              attrs: {
-                                type: "text",
-                                name: "Status_Ayah",
-                                placeholder: "Status Ayah"
-                              },
-                              domProps: { value: _vm.form.Status_Ayah },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Status_Ayah",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: { form: _vm.form, field: "Status_Ayah" }
-                            })
-                          ],
-                          1
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c("label", { attrs: { for: "inputStatusIbu" } }, [
-                          _vm._v("Status Ibu")
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "input-group" },
-                          [
-                            _vm._m(18),
-                            _vm._v(" "),
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Status_Ibu,
-                                  expression: "form.Status_Ibu"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has("Status_Ibu")
-                              },
-                              attrs: {
-                                type: "text",
-                                name: "Status_Ibu",
-                                placeholder: "Status Ibu"
-                              },
-                              domProps: { value: _vm.form.Status_Ibu },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Status_Ibu",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: { form: _vm.form, field: "Status_Ibu" }
-                            })
-                          ],
-                          1
-                        )
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c(
-                            "label",
-                            { attrs: { for: "inputPendidikanTerakhir" } },
-                            [_vm._v("Pendidikan Ayah")]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "input-group" },
-                            [
-                              _vm._m(19),
-                              _vm._v(" "),
-                              _c(
-                                "select",
-                                {
-                                  directives: [
-                                    {
-                                      name: "model",
-                                      rawName: "v-model",
-                                      value: _vm.form.Pendidikan_Ayah,
-                                      expression: "form.Pendidikan_Ayah"
                                     }
-                                  ],
-                                  staticClass: "form-control",
-                                  class: {
-                                    "is-invalid": _vm.form.errors.has(
-                                      "Pendidikan_Ayah"
-                                    )
-                                  },
-                                  attrs: {
-                                    type: "text",
-                                    name: "Pendidikan_Ayah",
-                                    placeholder: "Pendidikan Ayah"
-                                  },
-                                  on: {
-                                    change: function($event) {
-                                      var $$selectedVal = Array.prototype.filter
-                                        .call($event.target.options, function(
-                                          o
-                                        ) {
-                                          return o.selected
-                                        })
-                                        .map(function(o) {
-                                          var val =
-                                            "_value" in o ? o._value : o.value
-                                          return val
-                                        })
-                                      _vm.$set(
-                                        _vm.form,
-                                        "Pendidikan_Ayah",
-                                        $event.target.multiple
-                                          ? $$selectedVal
-                                          : $$selectedVal[0]
-                                      )
-                                    }
-                                  }
-                                },
-                                [
-                                  _c(
-                                    "option",
-                                    {
-                                      attrs: {
-                                        value: "",
-                                        disabled: "",
-                                        selected: ""
-                                      }
-                                    },
-                                    [_vm._v("Pendidikan Terakhir")]
-                                  ),
+                                  }),
                                   _vm._v(" "),
-                                  _c("option", { attrs: { value: "SD" } }, [
-                                    _vm._v("SD")
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("option", { attrs: { value: "SMP" } }, [
-                                    _vm._v("SMP")
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("option", { attrs: { value: "SMA" } }, [
-                                    _vm._v("SMA")
-                                  ]),
-                                  _vm._v(" "),
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "Strata-1" } },
-                                    [_vm._v("Strata-1")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "Strata-2" } },
-                                    [_vm._v("Strata-2")]
-                                  )
-                                ]
-                              ),
-                              _vm._v(" "),
-                              _c("has-error", {
-                                attrs: {
-                                  form: _vm.form,
-                                  field: "Pendidikan_Ayah"
-                                }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c(
-                            "label",
-                            { attrs: { for: "inputPendidikanTerakhir" } },
-                            [_vm._v("Pendidikan Ibu")]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "input-group" },
-                            [
-                              _vm._m(20),
-                              _vm._v(" "),
-                              _c(
-                                "select",
-                                {
-                                  directives: [
-                                    {
-                                      name: "model",
-                                      rawName: "v-model",
-                                      value: _vm.form.Pendidikan_Ibu,
-                                      expression: "form.Pendidikan_Ibu"
-                                    }
-                                  ],
-                                  staticClass: "form-control",
-                                  class: {
-                                    "is-invalid": _vm.form.errors.has(
-                                      "Pendidikan_Ibu"
-                                    )
-                                  },
-                                  attrs: {
-                                    type: "text",
-                                    name: "Pendidikan_Ibu",
-                                    placeholder: "Pendidikan Ibu"
-                                  },
-                                  on: {
-                                    change: function($event) {
-                                      var $$selectedVal = Array.prototype.filter
-                                        .call($event.target.options, function(
-                                          o
-                                        ) {
-                                          return o.selected
-                                        })
-                                        .map(function(o) {
-                                          var val =
-                                            "_value" in o ? o._value : o.value
-                                          return val
-                                        })
-                                      _vm.$set(
-                                        _vm.form,
-                                        "Pendidikan_Ibu",
-                                        $event.target.multiple
-                                          ? $$selectedVal
-                                          : $$selectedVal[0]
-                                      )
-                                    }
-                                  }
-                                },
-                                [
-                                  _c(
-                                    "option",
-                                    {
-                                      attrs: {
-                                        value: "",
-                                        disabled: "",
-                                        selected: ""
-                                      }
-                                    },
-                                    [_vm._v("Pendidikan Terakhir")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c("option", { attrs: { value: "SD" } }, [
-                                    _vm._v("SD")
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("option", { attrs: { value: "SMP" } }, [
-                                    _vm._v("SMP")
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("option", { attrs: { value: "SMA" } }, [
-                                    _vm._v("SMA")
-                                  ]),
-                                  _vm._v(" "),
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "Strata-1" } },
-                                    [_vm._v("Strata-1")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "Strata-2" } },
-                                    [_vm._v("Strata-2")]
-                                  )
-                                ]
-                              ),
-                              _vm._v(" "),
-                              _c("has-error", {
-                                attrs: {
-                                  form: _vm.form,
-                                  field: "Pendidikan_Ibu"
-                                }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col" }, [
-                        _c("label", { attrs: { for: "inputNo_induk" } }, [
-                          _vm._v("Pekerjaan Ayah")
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "input-group" },
-                          [
-                            _vm._m(21),
-                            _vm._v(" "),
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Pekerjaan_Ayah,
-                                  expression: "form.Pekerjaan_Ayah"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has(
-                                  "Pekerjaan_Ayah"
-                                )
-                              },
-                              attrs: {
-                                type: "text",
-                                name: "Pekerjaan_Ayah",
-                                placeholder: "Pekerjaan Ayah"
-                              },
-                              domProps: { value: _vm.form.Pekerjaan_Ayah },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Pekerjaan_Ayah",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: { form: _vm.form, field: "Pekerjaan_Ayah" }
-                            })
-                          ],
-                          1
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c("label", { attrs: { for: "inputNo_induk" } }, [
-                          _vm._v("Pekerjaan Ibu")
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "input-group" },
-                          [
-                            _vm._m(22),
-                            _vm._v(" "),
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Pekerjaan_Ibu,
-                                  expression: "form.Pekerjaan_Ibu"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has(
-                                  "Pekerjaan_Ibu"
-                                )
-                              },
-                              attrs: {
-                                type: "text",
-                                name: "Pekerjaan_Ibu",
-                                placeholder: "Pekerjaan Ibu"
-                              },
-                              domProps: { value: _vm.form.Pekerjaan_Ibu },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Pekerjaan_Ibu",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: { form: _vm.form, field: "Pekerjaan_Ibu" }
-                            })
-                          ],
-                          1
-                        )
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col" }, [
-                        _c("label", { attrs: { for: "inputNo_induk" } }, [
-                          _vm._v("Penghasilan Ayah")
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "input-group" },
-                          [
-                            _vm._m(23),
-                            _vm._v(" "),
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Penghasilan_Ayah,
-                                  expression: "form.Penghasilan_Ayah"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has(
-                                  "Penghasilan_Ayah"
-                                )
-                              },
-                              attrs: {
-                                type: "text",
-                                name: "Penghasilan_Ayah",
-                                placeholder: "Penghasilan Ayah"
-                              },
-                              domProps: { value: _vm.form.Penghasilan_Ayah },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Penghasilan_Ayah",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: {
-                                form: _vm.form,
-                                field: "Penghasilan_Ayah"
-                              }
-                            }),
-                            _vm._v(" "),
-                            _vm._m(24)
-                          ],
-                          1
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c("label", { attrs: { for: "inputNo_induk" } }, [
-                          _vm._v("Penghasilan Ibu")
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "input-group" },
-                          [
-                            _vm._m(25),
-                            _vm._v(" "),
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Penghasilan_Ibu,
-                                  expression: "form.Penghasilan_Ibu"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has(
-                                  "Penghasilan_Ibu"
-                                )
-                              },
-                              attrs: {
-                                type: "text",
-                                name: "Penghasilan_Ibu",
-                                placeholder: "Penghasilan Ibu"
-                              },
-                              domProps: { value: _vm.form.Penghasilan_Ibu },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Penghasilan_Ibu",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: {
-                                form: _vm.form,
-                                field: "Penghasilan_Ibu"
-                              }
-                            }),
-                            _vm._v(" "),
-                            _vm._m(26)
-                          ],
-                          1
-                        )
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col" }, [
-                        _c("label", { attrs: { for: "inputNo_induk" } }, [
-                          _vm._v("Tanggungan")
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "input-group" },
-                          [
-                            _vm._m(27),
-                            _vm._v(" "),
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Tanggungan,
-                                  expression: "form.Tanggungan"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has("Tanggungan")
-                              },
-                              attrs: {
-                                type: "text",
-                                name: "Tanggungan",
-                                placeholder: "Tanggungan"
-                              },
-                              domProps: { value: _vm.form.Tanggungan },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Tanggungan",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: { form: _vm.form, field: "Tanggungan" }
-                            })
-                          ],
-                          1
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c("label", { attrs: { for: "inputNo_induk" } }, [
-                          _vm._v("Perumahan")
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "input-group" },
-                          [
-                            _vm._m(28),
-                            _vm._v(" "),
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Perumahan,
-                                  expression: "form.Perumahan"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has("Perumahan")
-                              },
-                              attrs: {
-                                type: "text",
-                                name: "No_induk",
-                                placeholder: "Perumahan"
-                              },
-                              domProps: { value: _vm.form.Perumahan },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Perumahan",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("has-error", {
-                              attrs: { form: _vm.form, field: "Perumahan" }
-                            })
-                          ],
-                          1
-                        )
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "div",
-                      { staticClass: "form-group" },
-                      [
-                        _c("label", { attrs: { for: "inputAlamat" } }, [
-                          _vm._v("Latar Belakang Permasalahan")
-                        ]),
-                        _vm._v(" "),
-                        _c("textarea", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.form.Latar_Belakang_Permasalahan,
-                              expression: "form.Latar_Belakang_Permasalahan"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          class: {
-                            "is-invalid": _vm.form.errors.has(
-                              "Latar_Belakang_Permasalahan"
-                            )
-                          },
-                          attrs: {
-                            rows: "4",
-                            type: "text",
-                            name: "Latar_Belakang_Permasalahan",
-                            placeholder: "Latar Belakang Permasalahan ..."
-                          },
-                          domProps: {
-                            value: _vm.form.Latar_Belakang_Permasalahan
-                          },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.$set(
-                                _vm.form,
-                                "Latar_Belakang_Permasalahan",
-                                $event.target.value
+                                  _c("has-error", {
+                                    attrs: { form: _vm.form, field: "No_induk" }
+                                  })
+                                ],
+                                1
                               )
-                            }
-                          }
-                        }),
-                        _vm._v(" "),
-                        _c("has-error", {
-                          attrs: {
-                            form: _vm.form,
-                            field: "Latar_Belakang_Permasalahan"
-                          }
-                        })
-                      ],
-                      1
-                    ),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-row" }, [
-                      _c("div", { staticClass: "col" }, [
-                        _c(
-                          "div",
-                          { staticClass: "form-group" },
-                          [
-                            _c("label", { attrs: { for: "inputAlamat" } }, [
-                              _vm._v("Alamat Yang Menitipkan Anak")
                             ]),
                             _vm._v(" "),
-                            _c("textarea", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Alamat_yg_menitipkan,
-                                  expression: "form.Alamat_yg_menitipkan"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has(
-                                  "Alamat_yg_menitipkan"
+                            _c("div", { staticClass: "col" }, [
+                              _c("div", { staticClass: "form-group" }, [
+                                _c(
+                                  "label",
+                                  { attrs: { for: "inputNama_lengkap" } },
+                                  [_vm._v("Nama Lengkap Anak")]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "input-group" },
+                                  [
+                                    _vm._m(3),
+                                    _vm._v(" "),
+                                    _c("input", {
+                                      directives: [
+                                        {
+                                          name: "model",
+                                          rawName: "v-model",
+                                          value: _vm.form.Nama_Lengkap,
+                                          expression: "form.Nama_Lengkap"
+                                        }
+                                      ],
+                                      staticClass: "form-control",
+                                      class: {
+                                        "is-invalid": _vm.form.errors.has(
+                                          "Nama_Lengkap"
+                                        )
+                                      },
+                                      attrs: {
+                                        type: "text",
+                                        name: "Nama_lengkap",
+                                        placeholder: "Nama Lengkap Anak"
+                                      },
+                                      domProps: {
+                                        value: _vm.form.Nama_Lengkap
+                                      },
+                                      on: {
+                                        input: function($event) {
+                                          if ($event.target.composing) {
+                                            return
+                                          }
+                                          _vm.$set(
+                                            _vm.form,
+                                            "Nama_Lengkap",
+                                            $event.target.value
+                                          )
+                                        }
+                                      }
+                                    }),
+                                    _vm._v(" "),
+                                    _c("has-error", {
+                                      attrs: {
+                                        form: _vm.form,
+                                        field: "Nama_Lengkap"
+                                      }
+                                    })
+                                  ],
+                                  1
                                 )
-                              },
-                              attrs: {
-                                rows: "4",
-                                type: "text",
-                                name: "Alamat_yg_menitipkan",
-                                placeholder: "Alamat Yang Menitipkan Anak . . ."
-                              },
-                              domProps: {
-                                value: _vm.form.Alamat_yg_menitipkan
-                              },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Alamat_yg_menitipkan",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
+                              ])
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-row" }, [
+                            _c("div", { staticClass: "col-3" }, [
+                              _c("div", { staticClass: "form-group" }, [
+                                _c(
+                                  "label",
+                                  {
+                                    staticClass: "control-label",
+                                    attrs: { for: "photo" }
+                                  },
+                                  [_vm._v("Foto Anak")]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  {
+                                    staticClass: "card card-widget widget-user"
+                                  },
+                                  [
+                                    _c(
+                                      "div",
+                                      {
+                                        staticClass:
+                                          "widget-user-header text-white"
+                                      },
+                                      [
+                                        _c(
+                                          "div",
+                                          { staticClass: "text-center" },
+                                          [
+                                            _c(
+                                              "div",
+                                              {
+                                                staticClass:
+                                                  "widget-user-image-anak"
+                                              },
+                                              [
+                                                _c("img", {
+                                                  staticClass:
+                                                    "profile-user-img img-fluid img-circle",
+                                                  attrs: {
+                                                    src: _vm.getProfilePhoto(),
+                                                    alt: "User Avatar"
+                                                  }
+                                                })
+                                              ]
+                                            )
+                                          ]
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c("input", {
+                                      staticClass: "form-input",
+                                      attrs: { type: "file", name: "photo" },
+                                      on: { change: _vm.updateProfile }
+                                    })
+                                  ]
+                                )
+                              ])
+                            ]),
                             _vm._v(" "),
-                            _c("has-error", {
-                              attrs: {
-                                form: _vm.form,
-                                field: "Alamat_yg_menitipkan"
-                              }
-                            })
-                          ],
-                          1
-                        )
-                      ]),
+                            _c("div", { staticClass: "col" }, [
+                              _c(
+                                "div",
+                                { staticClass: "form-group" },
+                                [
+                                  _c(
+                                    "label",
+                                    { attrs: { for: "inputAlamat" } },
+                                    [_vm._v("Alamat")]
+                                  ),
+                                  _vm._v(" "),
+                                  _c("textarea", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Alamat,
+                                        expression: "form.Alamat"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Alamat"
+                                      )
+                                    },
+                                    attrs: {
+                                      rows: "4",
+                                      type: "text",
+                                      name: "Alamat",
+                                      placeholder: "Alamat Anak ..."
+                                    },
+                                    domProps: { value: _vm.form.Alamat },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Alamat",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: { form: _vm.form, field: "Alamat" }
+                                  })
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "form-row" }, [
+                                _c("div", { staticClass: "col" }, [
+                                  _c("div", { staticClass: "form-group" }, [
+                                    _c(
+                                      "label",
+                                      { attrs: { for: "inputAgama" } },
+                                      [_vm._v("Agama")]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "div",
+                                      { staticClass: "input-group" },
+                                      [
+                                        _vm._m(4),
+                                        _vm._v(" "),
+                                        _c(
+                                          "select",
+                                          {
+                                            directives: [
+                                              {
+                                                name: "model",
+                                                rawName: "v-model",
+                                                value: _vm.form.Agama,
+                                                expression: "form.Agama"
+                                              }
+                                            ],
+                                            staticClass: "form-control",
+                                            class: {
+                                              "is-invalid": _vm.form.errors.has(
+                                                "Agama"
+                                              )
+                                            },
+                                            attrs: {
+                                              type: "text",
+                                              name: "Agama",
+                                              placeholder: "Agama"
+                                            },
+                                            on: {
+                                              change: function($event) {
+                                                var $$selectedVal = Array.prototype.filter
+                                                  .call(
+                                                    $event.target.options,
+                                                    function(o) {
+                                                      return o.selected
+                                                    }
+                                                  )
+                                                  .map(function(o) {
+                                                    var val =
+                                                      "_value" in o
+                                                        ? o._value
+                                                        : o.value
+                                                    return val
+                                                  })
+                                                _vm.$set(
+                                                  _vm.form,
+                                                  "Agama",
+                                                  $event.target.multiple
+                                                    ? $$selectedVal
+                                                    : $$selectedVal[0]
+                                                )
+                                              }
+                                            }
+                                          },
+                                          [
+                                            _c(
+                                              "option",
+                                              {
+                                                attrs: {
+                                                  value: "",
+                                                  disabled: "",
+                                                  selected: ""
+                                                }
+                                              },
+                                              [_vm._v("Pilih Agama")]
+                                            ),
+                                            _vm._v(" "),
+                                            _c(
+                                              "option",
+                                              { attrs: { value: "islam" } },
+                                              [_vm._v("Islam")]
+                                            ),
+                                            _vm._v(" "),
+                                            _c(
+                                              "option",
+                                              { attrs: { value: "kristen" } },
+                                              [_vm._v("Kristen")]
+                                            ),
+                                            _vm._v(" "),
+                                            _c(
+                                              "option",
+                                              { attrs: { value: "katolik" } },
+                                              [_vm._v("Katolik")]
+                                            ),
+                                            _vm._v(" "),
+                                            _c(
+                                              "option",
+                                              { attrs: { value: "hindu" } },
+                                              [_vm._v("Hindu")]
+                                            ),
+                                            _vm._v(" "),
+                                            _c(
+                                              "option",
+                                              { attrs: { value: "budha" } },
+                                              [_vm._v("Budha")]
+                                            )
+                                          ]
+                                        ),
+                                        _vm._v(" "),
+                                        _c("has-error", {
+                                          attrs: {
+                                            form: _vm.form,
+                                            field: "Jenis_Kelamin"
+                                          }
+                                        })
+                                      ],
+                                      1
+                                    )
+                                  ])
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "col" }, [
+                                  _c("div", { staticClass: "form-group" }, [
+                                    _c(
+                                      "label",
+                                      { attrs: { for: "inputtempatlahir" } },
+                                      [_vm._v("Tempat Lahir")]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "div",
+                                      { staticClass: "input-group" },
+                                      [
+                                        _vm._m(5),
+                                        _vm._v(" "),
+                                        _c("input", {
+                                          directives: [
+                                            {
+                                              name: "model",
+                                              rawName: "v-model",
+                                              value: _vm.form.Tempat_lahir,
+                                              expression: "form.Tempat_lahir"
+                                            }
+                                          ],
+                                          staticClass: "form-control",
+                                          class: {
+                                            "is-invalid": _vm.form.errors.has(
+                                              "tempat_lahir"
+                                            )
+                                          },
+                                          attrs: {
+                                            type: "text",
+                                            name: "tempat_lahir",
+                                            placeholder: "Tempat Lahir"
+                                          },
+                                          domProps: {
+                                            value: _vm.form.Tempat_lahir
+                                          },
+                                          on: {
+                                            input: function($event) {
+                                              if ($event.target.composing) {
+                                                return
+                                              }
+                                              _vm.$set(
+                                                _vm.form,
+                                                "Tempat_lahir",
+                                                $event.target.value
+                                              )
+                                            }
+                                          }
+                                        }),
+                                        _vm._v(" "),
+                                        _c("has-error", {
+                                          attrs: {
+                                            form: _vm.form,
+                                            field: "tempat_lahir"
+                                          }
+                                        })
+                                      ],
+                                      1
+                                    )
+                                  ])
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "col" }, [
+                                  _c("div", { staticClass: "form-group" }, [
+                                    _c(
+                                      "label",
+                                      { attrs: { for: "tgl_lahir" } },
+                                      [_vm._v("Tanggal Lahir")]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "div",
+                                      { staticClass: "input-group" },
+                                      [
+                                        _vm._m(6),
+                                        _vm._v(" "),
+                                        _c("date-picker", {
+                                          attrs: { config: _vm.options },
+                                          model: {
+                                            value: _vm.form.Tgl_lahir,
+                                            callback: function($$v) {
+                                              _vm.$set(
+                                                _vm.form,
+                                                "Tgl_lahir",
+                                                $$v
+                                              )
+                                            },
+                                            expression: "form.Tgl_lahir"
+                                          }
+                                        })
+                                      ],
+                                      1
+                                    )
+                                  ])
+                                ])
+                              ]),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "form-row" }, [
+                                _c("div", { staticClass: "col" }, [
+                                  _c("div", { staticClass: "form-group" }, [
+                                    _c(
+                                      "label",
+                                      { attrs: { for: "Tgl_masuk_PA" } },
+                                      [_vm._v("Tanggal Masuk PA")]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "div",
+                                      { staticClass: "input-group" },
+                                      [
+                                        _vm._m(7),
+                                        _vm._v(" "),
+                                        _c("date-picker", {
+                                          attrs: { config: _vm.options },
+                                          model: {
+                                            value: _vm.form.Tgl_masuk_PA,
+                                            callback: function($$v) {
+                                              _vm.$set(
+                                                _vm.form,
+                                                "Tgl_masuk_PA",
+                                                $$v
+                                              )
+                                            },
+                                            expression: "form.Tgl_masuk_PA"
+                                          }
+                                        })
+                                      ],
+                                      1
+                                    )
+                                  ])
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "col" }, [
+                                  _c(
+                                    "div",
+                                    { staticClass: "form-group" },
+                                    [
+                                      _c(
+                                        "label",
+                                        { attrs: { for: "inputtempatlahir" } },
+                                        [_vm._v("Kelengkapan Surat")]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "select",
+                                        {
+                                          directives: [
+                                            {
+                                              name: "model",
+                                              rawName: "v-model",
+                                              value:
+                                                _vm.form.Surat_Kelahiran_Akta,
+                                              expression:
+                                                "form.Surat_Kelahiran_Akta"
+                                            }
+                                          ],
+                                          staticClass: "form-control",
+                                          class: {
+                                            "is-invalid": _vm.form.errors.has(
+                                              "Surat_Kelahiran_Akta"
+                                            )
+                                          },
+                                          attrs: {
+                                            type: "text",
+                                            name: "Surat_Kelahiran_Akta",
+                                            placeholder: "Kelengkapan Surat"
+                                          },
+                                          on: {
+                                            change: function($event) {
+                                              var $$selectedVal = Array.prototype.filter
+                                                .call(
+                                                  $event.target.options,
+                                                  function(o) {
+                                                    return o.selected
+                                                  }
+                                                )
+                                                .map(function(o) {
+                                                  var val =
+                                                    "_value" in o
+                                                      ? o._value
+                                                      : o.value
+                                                  return val
+                                                })
+                                              _vm.$set(
+                                                _vm.form,
+                                                "Surat_Kelahiran_Akta",
+                                                $event.target.multiple
+                                                  ? $$selectedVal
+                                                  : $$selectedVal[0]
+                                              )
+                                            }
+                                          }
+                                        },
+                                        [
+                                          _c(
+                                            "option",
+                                            {
+                                              attrs: {
+                                                value: "",
+                                                disabled: "",
+                                                selected: ""
+                                              }
+                                            },
+                                            [_vm._v("Pilih Kelengkapan Surat")]
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "option",
+                                            {
+                                              attrs: { value: "Akta Kelahiran" }
+                                            },
+                                            [_vm._v("Akta Kelahiran")]
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "option",
+                                            {
+                                              attrs: {
+                                                value: "Surat Kelahiran"
+                                              }
+                                            },
+                                            [_vm._v("Surat Kelahiran")]
+                                          )
+                                        ]
+                                      ),
+                                      _vm._v(" "),
+                                      _c("has-error", {
+                                        attrs: {
+                                          form: _vm.form,
+                                          field: "Jenis_Kelamin"
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  )
+                                ])
+                              ])
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-row" }, [
+                            _c("div", { staticClass: "col" }, [
+                              _c("div", { staticClass: "form-group" }, [
+                                _c(
+                                  "label",
+                                  { attrs: { for: "inputmulaimasukSekolah" } },
+                                  [_vm._v("Mulai Masuk Sekolah")]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "input-group" },
+                                  [
+                                    _vm._m(8),
+                                    _vm._v(" "),
+                                    _c("date-picker", {
+                                      attrs: { config: _vm.options },
+                                      model: {
+                                        value: _vm.form.Mulai_masuk_sekolah,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.form,
+                                            "Mulai_masuk_sekolah",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "form.Mulai_masuk_sekolah"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ])
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col" }, [
+                              _c("div", { staticClass: "form-group" }, [
+                                _c(
+                                  "label",
+                                  { attrs: { for: "inputtempatlahir" } },
+                                  [_vm._v("Nama Sekolah")]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "input-group" },
+                                  [
+                                    _vm._m(9),
+                                    _vm._v(" "),
+                                    _c("input", {
+                                      directives: [
+                                        {
+                                          name: "model",
+                                          rawName: "v-model",
+                                          value: _vm.form.Nama_sekolah,
+                                          expression: "form.Nama_sekolah"
+                                        }
+                                      ],
+                                      staticClass: "form-control",
+                                      class: {
+                                        "is-invalid": _vm.form.errors.has(
+                                          "Nama_sekolah"
+                                        )
+                                      },
+                                      attrs: {
+                                        type: "text",
+                                        name: "Nama_sekolah",
+                                        placeholder: "Nama sekolah"
+                                      },
+                                      domProps: {
+                                        value: _vm.form.Nama_sekolah
+                                      },
+                                      on: {
+                                        input: function($event) {
+                                          if ($event.target.composing) {
+                                            return
+                                          }
+                                          _vm.$set(
+                                            _vm.form,
+                                            "Nama_sekolah",
+                                            $event.target.value
+                                          )
+                                        }
+                                      }
+                                    }),
+                                    _vm._v(" "),
+                                    _c("has-error", {
+                                      attrs: {
+                                        form: _vm.form,
+                                        field: "Nama_sekolah"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ])
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col-2" }, [
+                              _c("div", { staticClass: "form-group" }, [
+                                _c("label", { attrs: { for: "kelas" } }, [
+                                  _vm._v("Kelas")
+                                ]),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "input-group" },
+                                  [
+                                    _vm._m(10),
+                                    _vm._v(" "),
+                                    _c("input", {
+                                      directives: [
+                                        {
+                                          name: "model",
+                                          rawName: "v-model",
+                                          value: _vm.form.Kelas,
+                                          expression: "form.Kelas"
+                                        }
+                                      ],
+                                      staticClass: "form-control",
+                                      class: {
+                                        "is-invalid": _vm.form.errors.has(
+                                          "Kelas"
+                                        )
+                                      },
+                                      attrs: {
+                                        type: "text",
+                                        name: "Kelas",
+                                        placeholder: "Kelas"
+                                      },
+                                      domProps: { value: _vm.form.Kelas },
+                                      on: {
+                                        input: function($event) {
+                                          if ($event.target.composing) {
+                                            return
+                                          }
+                                          _vm.$set(
+                                            _vm.form,
+                                            "Kelas",
+                                            $event.target.value
+                                          )
+                                        }
+                                      }
+                                    }),
+                                    _vm._v(" "),
+                                    _c("has-error", {
+                                      attrs: {
+                                        form: _vm.form,
+                                        field: "Nama_sekolah"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ])
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-row" }, [
+                            _c("div", { staticClass: "col" }, [
+                              _c(
+                                "div",
+                                { staticClass: "form-group" },
+                                [
+                                  _c(
+                                    "label",
+                                    { attrs: { for: "inputAlamat" } },
+                                    [_vm._v("Sebab Masuk PA")]
+                                  ),
+                                  _vm._v(" "),
+                                  _c("textarea", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Sebab_masuk_PA,
+                                        expression: "form.Sebab_masuk_PA"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Sebab_masuk_PA"
+                                      )
+                                    },
+                                    attrs: {
+                                      rows: "4",
+                                      type: "text",
+                                      name: "Sebab_masuk_PA",
+                                      placeholder: "Sebab masuk PA . . ."
+                                    },
+                                    domProps: {
+                                      value: _vm.form.Sebab_masuk_PA
+                                    },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Sebab_masuk_PA",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Sebab_masuk_PA"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col" }, [
+                              _c(
+                                "div",
+                                { staticClass: "form-group" },
+                                [
+                                  _c(
+                                    "label",
+                                    { attrs: { for: "inputAlamat" } },
+                                    [_vm._v("Keterangan Anak")]
+                                  ),
+                                  _vm._v(" "),
+                                  _c("textarea", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Keterangan_anak,
+                                        expression: "form.Keterangan_anak"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Keterangan_anak"
+                                      )
+                                    },
+                                    attrs: {
+                                      rows: "4",
+                                      type: "text",
+                                      name: "Keterangan_anak",
+                                      placeholder: "Keterangan anak . . . "
+                                    },
+                                    domProps: {
+                                      value: _vm.form.Keterangan_anak
+                                    },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Keterangan_anak",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Keterangan_anak"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-row" }, [
+                            _c("div", { staticClass: "col" }, [
+                              _c("label", { attrs: { for: "inputNo_induk" } }, [
+                                _vm._v("Nama Wali")
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "input-group" },
+                                [
+                                  _vm._m(11),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Nama_Wali,
+                                        expression: "form.Nama_Wali"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Nama_Wali"
+                                      )
+                                    },
+                                    attrs: {
+                                      type: "text",
+                                      name: "Nama_Wali",
+                                      placeholder: "Nama Wali"
+                                    },
+                                    domProps: { value: _vm.form.Nama_Wali },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Nama_Wali",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Nama_Wali"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col-4" }, [
+                              _c("div", { staticClass: "form-group" }, [
+                                _c(
+                                  "label",
+                                  { attrs: { for: "inputNama_lengkap" } },
+                                  [_vm._v("Nomor Telepon Wali")]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "input-group" },
+                                  [
+                                    _vm._m(12),
+                                    _vm._v(" "),
+                                    _c("input", {
+                                      directives: [
+                                        {
+                                          name: "model",
+                                          rawName: "v-model",
+                                          value: _vm.form.Nomor_telp_wali,
+                                          expression: "form.Nomor_telp_wali"
+                                        }
+                                      ],
+                                      staticClass: "form-control",
+                                      class: {
+                                        "is-invalid": _vm.form.errors.has(
+                                          "Nomor_telp_wali"
+                                        )
+                                      },
+                                      attrs: {
+                                        type: "text",
+                                        name: "Nomor_telp_wali",
+                                        placeholder: "Nomor telp wali"
+                                      },
+                                      domProps: {
+                                        value: _vm.form.Nomor_telp_wali
+                                      },
+                                      on: {
+                                        input: function($event) {
+                                          if ($event.target.composing) {
+                                            return
+                                          }
+                                          _vm.$set(
+                                            _vm.form,
+                                            "Nomor_telp_wali",
+                                            $event.target.value
+                                          )
+                                        }
+                                      }
+                                    }),
+                                    _vm._v(" "),
+                                    _c("has-error", {
+                                      attrs: {
+                                        form: _vm.form,
+                                        field: "Nomor_telp_wali"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ])
+                            ])
+                          ])
+                        ]
+                      ),
                       _vm._v(" "),
-                      _c("div", { staticClass: "col" }, [
-                        _c(
-                          "div",
-                          { staticClass: "form-group" },
-                          [
-                            _c("label", { attrs: { for: "inputAlamat" } }, [
-                              _vm._v("Alasan Yang Menitipkan Anak")
+                      _c(
+                        "div",
+                        { staticClass: "tab-pane", attrs: { id: "data_ortu" } },
+                        [
+                          _c("div", { staticClass: "form-row" }, [
+                            _c("div", { staticClass: "col" }, [
+                              _c("label", { attrs: { for: "inputNo_induk" } }, [
+                                _vm._v("Nama Ayah")
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "input-group" },
+                                [
+                                  _vm._m(13),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Nama_Ayah,
+                                        expression: "form.Nama_Ayah"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Nama_Ayah"
+                                      )
+                                    },
+                                    attrs: {
+                                      type: "text",
+                                      name: "Nama_Ayah",
+                                      placeholder: "Nama Ayah"
+                                    },
+                                    domProps: { value: _vm.form.Nama_Ayah },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Nama_Ayah",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Nama_Ayah"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
                             ]),
                             _vm._v(" "),
-                            _c("textarea", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.Alasan_yg_menitipkan,
-                                  expression: "form.Alasan_yg_menitipkan"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has(
-                                  "Alasan_yg_menitipkan"
+                            _c("div", { staticClass: "col" }, [
+                              _c("div", { staticClass: "form-group" }, [
+                                _c(
+                                  "label",
+                                  { attrs: { for: "inputNama_lengkap" } },
+                                  [_vm._v("Nama Ibu")]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "input-group" },
+                                  [
+                                    _vm._m(14),
+                                    _vm._v(" "),
+                                    _c("input", {
+                                      directives: [
+                                        {
+                                          name: "model",
+                                          rawName: "v-model",
+                                          value: _vm.form.Nama_Ibu,
+                                          expression: "form.Nama_Ibu"
+                                        }
+                                      ],
+                                      staticClass: "form-control",
+                                      class: {
+                                        "is-invalid": _vm.form.errors.has(
+                                          "Nama_Ibu"
+                                        )
+                                      },
+                                      attrs: {
+                                        type: "text",
+                                        name: "Nama_Ibu",
+                                        placeholder: "Nama Ibu"
+                                      },
+                                      domProps: { value: _vm.form.Nama_Ibu },
+                                      on: {
+                                        input: function($event) {
+                                          if ($event.target.composing) {
+                                            return
+                                          }
+                                          _vm.$set(
+                                            _vm.form,
+                                            "Nama_Ibu",
+                                            $event.target.value
+                                          )
+                                        }
+                                      }
+                                    }),
+                                    _vm._v(" "),
+                                    _c("has-error", {
+                                      attrs: {
+                                        form: _vm.form,
+                                        field: "Nama_Ibu"
+                                      }
+                                    })
+                                  ],
+                                  1
                                 )
-                              },
-                              attrs: {
-                                rows: "4",
-                                type: "text",
-                                name: "Alasan_yg_menitipkan",
-                                placeholder:
-                                  "Alasan Yang Menitipkan Anak . . . "
-                              },
-                              domProps: {
-                                value: _vm.form.Alasan_yg_menitipkan
-                              },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "Alasan_yg_menitipkan",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
+                              ])
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-row" }, [
+                            _c("div", { staticClass: "col" }, [
+                              _c(
+                                "div",
+                                { staticClass: "form-group" },
+                                [
+                                  _c(
+                                    "label",
+                                    { attrs: { for: "inputAlamat" } },
+                                    [_vm._v("Alamat Ayah")]
+                                  ),
+                                  _vm._v(" "),
+                                  _c("textarea", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Alamat_Ayah,
+                                        expression: "form.Alamat_Ayah"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Alamat_Ayah"
+                                      )
+                                    },
+                                    attrs: {
+                                      rows: "4",
+                                      type: "text",
+                                      name: "Alamat_Ayah",
+                                      placeholder: "Alamat Ayah . . ."
+                                    },
+                                    domProps: { value: _vm.form.Alamat_Ayah },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Alamat_Ayah",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Alamat_Ayah"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ]),
                             _vm._v(" "),
-                            _c("has-error", {
-                              attrs: {
-                                form: _vm.form,
-                                field: "Alasan_yg_menitipkan"
-                              }
-                            })
-                          ],
-                          1
-                        )
-                      ])
+                            _c("div", { staticClass: "col" }, [
+                              _c(
+                                "div",
+                                { staticClass: "form-group" },
+                                [
+                                  _c(
+                                    "label",
+                                    { attrs: { for: "inputAlamat" } },
+                                    [_vm._v("Alamat Ibu")]
+                                  ),
+                                  _vm._v(" "),
+                                  _c("textarea", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Alamat_Ibu,
+                                        expression: "form.Alamat_Ibu"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Alamat_Ibu"
+                                      )
+                                    },
+                                    attrs: {
+                                      rows: "4",
+                                      type: "text",
+                                      name: "Alamat_Ibu",
+                                      placeholder: "Alamat Ibu . . ."
+                                    },
+                                    domProps: { value: _vm.form.Alamat_Ibu },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Alamat_Ibu",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Alamat_Ibu"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-row" }, [
+                            _c("div", { staticClass: "col" }, [
+                              _c("div", { staticClass: "form-group" }, [
+                                _c(
+                                  "label",
+                                  { attrs: { for: "inputAgamaAyah" } },
+                                  [_vm._v("Agama Ayah")]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "input-group" },
+                                  [
+                                    _vm._m(15),
+                                    _vm._v(" "),
+                                    _c(
+                                      "select",
+                                      {
+                                        directives: [
+                                          {
+                                            name: "model",
+                                            rawName: "v-model",
+                                            value: _vm.form.Agama_Ayah,
+                                            expression: "form.Agama_Ayah"
+                                          }
+                                        ],
+                                        staticClass: "form-control",
+                                        class: {
+                                          "is-invalid": _vm.form.errors.has(
+                                            "Agama_Ayah"
+                                          )
+                                        },
+                                        attrs: {
+                                          type: "text",
+                                          name: "Agama_Ayah",
+                                          placeholder: "Agama Ayah"
+                                        },
+                                        on: {
+                                          change: function($event) {
+                                            var $$selectedVal = Array.prototype.filter
+                                              .call(
+                                                $event.target.options,
+                                                function(o) {
+                                                  return o.selected
+                                                }
+                                              )
+                                              .map(function(o) {
+                                                var val =
+                                                  "_value" in o
+                                                    ? o._value
+                                                    : o.value
+                                                return val
+                                              })
+                                            _vm.$set(
+                                              _vm.form,
+                                              "Agama_Ayah",
+                                              $event.target.multiple
+                                                ? $$selectedVal
+                                                : $$selectedVal[0]
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c(
+                                          "option",
+                                          {
+                                            attrs: {
+                                              value: "",
+                                              disabled: "",
+                                              selected: ""
+                                            }
+                                          },
+                                          [_vm._v("Pilih Agama")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "islam" } },
+                                          [_vm._v("Islam")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "kristen" } },
+                                          [_vm._v("Kristen")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "katolik" } },
+                                          [_vm._v("Katolik")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "kristen" } },
+                                          [_vm._v("Hindu")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "kristen" } },
+                                          [_vm._v("Budha")]
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c("has-error", {
+                                      attrs: {
+                                        form: _vm.form,
+                                        field: "Agama_Ayah"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ])
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col" }, [
+                              _c("div", { staticClass: "form-group" }, [
+                                _c(
+                                  "label",
+                                  { attrs: { for: "inputAgamaIbu" } },
+                                  [_vm._v("Agama Ibu")]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "input-group" },
+                                  [
+                                    _vm._m(16),
+                                    _vm._v(" "),
+                                    _c(
+                                      "select",
+                                      {
+                                        directives: [
+                                          {
+                                            name: "model",
+                                            rawName: "v-model",
+                                            value: _vm.form.Agama_Ibu,
+                                            expression: "form.Agama_Ibu"
+                                          }
+                                        ],
+                                        staticClass: "form-control",
+                                        class: {
+                                          "is-invalid": _vm.form.errors.has(
+                                            "Agama_Ibu"
+                                          )
+                                        },
+                                        attrs: {
+                                          type: "text",
+                                          name: "Agama_Ibu",
+                                          placeholder: "Agama Ibu"
+                                        },
+                                        on: {
+                                          change: function($event) {
+                                            var $$selectedVal = Array.prototype.filter
+                                              .call(
+                                                $event.target.options,
+                                                function(o) {
+                                                  return o.selected
+                                                }
+                                              )
+                                              .map(function(o) {
+                                                var val =
+                                                  "_value" in o
+                                                    ? o._value
+                                                    : o.value
+                                                return val
+                                              })
+                                            _vm.$set(
+                                              _vm.form,
+                                              "Agama_Ibu",
+                                              $event.target.multiple
+                                                ? $$selectedVal
+                                                : $$selectedVal[0]
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c(
+                                          "option",
+                                          {
+                                            attrs: {
+                                              value: "",
+                                              disabled: "",
+                                              selected: ""
+                                            }
+                                          },
+                                          [_vm._v("Pilih Agama")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "islam" } },
+                                          [_vm._v("Islam")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "kristen" } },
+                                          [_vm._v("Kristen")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "katolik" } },
+                                          [_vm._v("Katolik")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "kristen" } },
+                                          [_vm._v("Hindu")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "kristen" } },
+                                          [_vm._v("Budha")]
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c("has-error", {
+                                      attrs: {
+                                        form: _vm.form,
+                                        field: "Agama_Ibu"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ])
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-row" }, [
+                            _c("div", { staticClass: "col" }, [
+                              _c(
+                                "label",
+                                { attrs: { for: "inputStatusAyah" } },
+                                [_vm._v("Status Ayah")]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "input-group" },
+                                [
+                                  _vm._m(17),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Status_Ayah,
+                                        expression: "form.Status_Ayah"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Status_Ayah"
+                                      )
+                                    },
+                                    attrs: {
+                                      type: "text",
+                                      name: "Status_Ayah",
+                                      placeholder: "Status Ayah"
+                                    },
+                                    domProps: { value: _vm.form.Status_Ayah },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Status_Ayah",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Status_Ayah"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col" }, [
+                              _c(
+                                "label",
+                                { attrs: { for: "inputStatusIbu" } },
+                                [_vm._v("Status Ibu")]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "input-group" },
+                                [
+                                  _vm._m(18),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Status_Ibu,
+                                        expression: "form.Status_Ibu"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Status_Ibu"
+                                      )
+                                    },
+                                    attrs: {
+                                      type: "text",
+                                      name: "Status_Ibu",
+                                      placeholder: "Status Ibu"
+                                    },
+                                    domProps: { value: _vm.form.Status_Ibu },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Status_Ibu",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Status_Ibu"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-row" }, [
+                            _c("div", { staticClass: "col" }, [
+                              _c("div", { staticClass: "form-group" }, [
+                                _c(
+                                  "label",
+                                  { attrs: { for: "inputPendidikanTerakhir" } },
+                                  [_vm._v("Pendidikan Ayah")]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "input-group" },
+                                  [
+                                    _vm._m(19),
+                                    _vm._v(" "),
+                                    _c(
+                                      "select",
+                                      {
+                                        directives: [
+                                          {
+                                            name: "model",
+                                            rawName: "v-model",
+                                            value: _vm.form.Pendidikan_Ayah,
+                                            expression: "form.Pendidikan_Ayah"
+                                          }
+                                        ],
+                                        staticClass: "form-control",
+                                        class: {
+                                          "is-invalid": _vm.form.errors.has(
+                                            "Pendidikan_Ayah"
+                                          )
+                                        },
+                                        attrs: {
+                                          type: "text",
+                                          name: "Pendidikan_Ayah",
+                                          placeholder: "Pendidikan Ayah"
+                                        },
+                                        on: {
+                                          change: function($event) {
+                                            var $$selectedVal = Array.prototype.filter
+                                              .call(
+                                                $event.target.options,
+                                                function(o) {
+                                                  return o.selected
+                                                }
+                                              )
+                                              .map(function(o) {
+                                                var val =
+                                                  "_value" in o
+                                                    ? o._value
+                                                    : o.value
+                                                return val
+                                              })
+                                            _vm.$set(
+                                              _vm.form,
+                                              "Pendidikan_Ayah",
+                                              $event.target.multiple
+                                                ? $$selectedVal
+                                                : $$selectedVal[0]
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c(
+                                          "option",
+                                          {
+                                            attrs: {
+                                              value: "",
+                                              disabled: "",
+                                              selected: ""
+                                            }
+                                          },
+                                          [_vm._v("Pendidikan Terakhir")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "Sekolah Dasar" } },
+                                          [_vm._v("SD")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          {
+                                            attrs: {
+                                              value: "Sekolah Menengah Pertama"
+                                            }
+                                          },
+                                          [_vm._v("SMP")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          {
+                                            attrs: {
+                                              value: "Sekolah Menengah Atas"
+                                            }
+                                          },
+                                          [_vm._v("SMA")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "Strata-1" } },
+                                          [_vm._v("Strata-1")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "Strata-2" } },
+                                          [_vm._v("Strata-2")]
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c("has-error", {
+                                      attrs: {
+                                        form: _vm.form,
+                                        field: "Pendidikan_Ayah"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ])
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col" }, [
+                              _c("div", { staticClass: "form-group" }, [
+                                _c(
+                                  "label",
+                                  { attrs: { for: "inputPendidikanTerakhir" } },
+                                  [_vm._v("Pendidikan Ibu")]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "input-group" },
+                                  [
+                                    _vm._m(20),
+                                    _vm._v(" "),
+                                    _c(
+                                      "select",
+                                      {
+                                        directives: [
+                                          {
+                                            name: "model",
+                                            rawName: "v-model",
+                                            value: _vm.form.Pendidikan_Ibu,
+                                            expression: "form.Pendidikan_Ibu"
+                                          }
+                                        ],
+                                        staticClass: "form-control",
+                                        class: {
+                                          "is-invalid": _vm.form.errors.has(
+                                            "Pendidikan_Ibu"
+                                          )
+                                        },
+                                        attrs: {
+                                          type: "text",
+                                          name: "Pendidikan_Ibu",
+                                          placeholder: "Pendidikan Ibu"
+                                        },
+                                        on: {
+                                          change: function($event) {
+                                            var $$selectedVal = Array.prototype.filter
+                                              .call(
+                                                $event.target.options,
+                                                function(o) {
+                                                  return o.selected
+                                                }
+                                              )
+                                              .map(function(o) {
+                                                var val =
+                                                  "_value" in o
+                                                    ? o._value
+                                                    : o.value
+                                                return val
+                                              })
+                                            _vm.$set(
+                                              _vm.form,
+                                              "Pendidikan_Ibu",
+                                              $event.target.multiple
+                                                ? $$selectedVal
+                                                : $$selectedVal[0]
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c(
+                                          "option",
+                                          {
+                                            attrs: {
+                                              value: "",
+                                              disabled: "",
+                                              selected: ""
+                                            }
+                                          },
+                                          [_vm._v("Pendidikan Terakhir")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "Sekolah Dasar" } },
+                                          [_vm._v("SD")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          {
+                                            attrs: {
+                                              value: "Sekolah Menengah Pertama"
+                                            }
+                                          },
+                                          [_vm._v("SMP")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          {
+                                            attrs: {
+                                              value: "Sekolah Menengah Atas"
+                                            }
+                                          },
+                                          [_vm._v("SMA")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "Strata-1" } },
+                                          [_vm._v("Strata-1")]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "option",
+                                          { attrs: { value: "Strata-2" } },
+                                          [_vm._v("Strata-2")]
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c("has-error", {
+                                      attrs: {
+                                        form: _vm.form,
+                                        field: "Pendidikan_Ibu"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ])
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-row" }, [
+                            _c("div", { staticClass: "col" }, [
+                              _c("label", { attrs: { for: "inputNo_induk" } }, [
+                                _vm._v("Pekerjaan Ayah")
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "input-group" },
+                                [
+                                  _vm._m(21),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Pekerjaan_Ayah,
+                                        expression: "form.Pekerjaan_Ayah"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Pekerjaan_Ayah"
+                                      )
+                                    },
+                                    attrs: {
+                                      type: "text",
+                                      name: "Pekerjaan_Ayah",
+                                      placeholder: "Pekerjaan Ayah"
+                                    },
+                                    domProps: {
+                                      value: _vm.form.Pekerjaan_Ayah
+                                    },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Pekerjaan_Ayah",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Pekerjaan_Ayah"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col" }, [
+                              _c("label", { attrs: { for: "inputNo_induk" } }, [
+                                _vm._v("Pekerjaan Ibu")
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "input-group" },
+                                [
+                                  _vm._m(22),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Pekerjaan_Ibu,
+                                        expression: "form.Pekerjaan_Ibu"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Pekerjaan_Ibu"
+                                      )
+                                    },
+                                    attrs: {
+                                      type: "text",
+                                      name: "Pekerjaan_Ibu",
+                                      placeholder: "Pekerjaan Ibu"
+                                    },
+                                    domProps: { value: _vm.form.Pekerjaan_Ibu },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Pekerjaan_Ibu",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Pekerjaan_Ibu"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-row" }, [
+                            _c("div", { staticClass: "col" }, [
+                              _c("label", { attrs: { for: "inputNo_induk" } }, [
+                                _vm._v("Penghasilan Ayah")
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "input-group" },
+                                [
+                                  _vm._m(23),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Penghasilan_Ayah,
+                                        expression: "form.Penghasilan_Ayah"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Penghasilan_Ayah"
+                                      )
+                                    },
+                                    attrs: {
+                                      type: "text",
+                                      name: "Penghasilan_Ayah",
+                                      placeholder: "Penghasilan Ayah"
+                                    },
+                                    domProps: {
+                                      value: _vm.form.Penghasilan_Ayah
+                                    },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Penghasilan_Ayah",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Penghasilan_Ayah"
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _vm._m(24)
+                                ],
+                                1
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col" }, [
+                              _c("label", { attrs: { for: "inputNo_induk" } }, [
+                                _vm._v("Penghasilan Ibu")
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "input-group" },
+                                [
+                                  _vm._m(25),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Penghasilan_Ibu,
+                                        expression: "form.Penghasilan_Ibu"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Penghasilan_Ibu"
+                                      )
+                                    },
+                                    attrs: {
+                                      type: "text",
+                                      name: "Penghasilan_Ibu",
+                                      placeholder: "Penghasilan Ibu"
+                                    },
+                                    domProps: {
+                                      value: _vm.form.Penghasilan_Ibu
+                                    },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Penghasilan_Ibu",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Penghasilan_Ibu"
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _vm._m(26)
+                                ],
+                                1
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-row" }, [
+                            _c("div", { staticClass: "col" }, [
+                              _c("label", { attrs: { for: "inputNo_induk" } }, [
+                                _vm._v("Tanggungan")
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "input-group" },
+                                [
+                                  _vm._m(27),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Tanggungan,
+                                        expression: "form.Tanggungan"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Tanggungan"
+                                      )
+                                    },
+                                    attrs: {
+                                      type: "text",
+                                      name: "Tanggungan",
+                                      placeholder: "Tanggungan"
+                                    },
+                                    domProps: { value: _vm.form.Tanggungan },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Tanggungan",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Tanggungan"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col" }, [
+                              _c("label", { attrs: { for: "inputNo_induk" } }, [
+                                _vm._v("Perumahan")
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "input-group" },
+                                [
+                                  _vm._m(28),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Perumahan,
+                                        expression: "form.Perumahan"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Perumahan"
+                                      )
+                                    },
+                                    attrs: {
+                                      type: "text",
+                                      name: "No_induk",
+                                      placeholder: "Perumahan"
+                                    },
+                                    domProps: { value: _vm.form.Perumahan },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Perumahan",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Perumahan"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            { staticClass: "form-group" },
+                            [
+                              _c("label", { attrs: { for: "inputAlamat" } }, [
+                                _vm._v("Latar Belakang Permasalahan")
+                              ]),
+                              _vm._v(" "),
+                              _c("textarea", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.form.Latar_Belakang_Permasalahan,
+                                    expression:
+                                      "form.Latar_Belakang_Permasalahan"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                class: {
+                                  "is-invalid": _vm.form.errors.has(
+                                    "Latar_Belakang_Permasalahan"
+                                  )
+                                },
+                                attrs: {
+                                  rows: "4",
+                                  type: "text",
+                                  name: "Latar_Belakang_Permasalahan",
+                                  placeholder: "Latar Belakang Permasalahan ..."
+                                },
+                                domProps: {
+                                  value: _vm.form.Latar_Belakang_Permasalahan
+                                },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.$set(
+                                      _vm.form,
+                                      "Latar_Belakang_Permasalahan",
+                                      $event.target.value
+                                    )
+                                  }
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c("has-error", {
+                                attrs: {
+                                  form: _vm.form,
+                                  field: "Latar_Belakang_Permasalahan"
+                                }
+                              })
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-row" }, [
+                            _c("div", { staticClass: "col" }, [
+                              _c(
+                                "div",
+                                { staticClass: "form-group" },
+                                [
+                                  _c(
+                                    "label",
+                                    { attrs: { for: "inputAlamat" } },
+                                    [_vm._v("Alamat Yang Menitipkan Anak")]
+                                  ),
+                                  _vm._v(" "),
+                                  _c("textarea", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Alamat_yg_menitipkan,
+                                        expression: "form.Alamat_yg_menitipkan"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Alamat_yg_menitipkan"
+                                      )
+                                    },
+                                    attrs: {
+                                      rows: "4",
+                                      type: "text",
+                                      name: "Alamat_yg_menitipkan",
+                                      placeholder:
+                                        "Alamat Yang Menitipkan Anak . . ."
+                                    },
+                                    domProps: {
+                                      value: _vm.form.Alamat_yg_menitipkan
+                                    },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Alamat_yg_menitipkan",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Alamat_yg_menitipkan"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col" }, [
+                              _c(
+                                "div",
+                                { staticClass: "form-group" },
+                                [
+                                  _c(
+                                    "label",
+                                    { attrs: { for: "inputAlamat" } },
+                                    [_vm._v("Alasan Yang Menitipkan Anak")]
+                                  ),
+                                  _vm._v(" "),
+                                  _c("textarea", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Alasan_yg_menitipkan,
+                                        expression: "form.Alasan_yg_menitipkan"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Alasan_yg_menitipkan"
+                                      )
+                                    },
+                                    attrs: {
+                                      rows: "4",
+                                      type: "text",
+                                      name: "Alasan_yg_menitipkan",
+                                      placeholder:
+                                        "Alasan Yang Menitipkan Anak . . . "
+                                    },
+                                    domProps: {
+                                      value: _vm.form.Alasan_yg_menitipkan
+                                    },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Alasan_yg_menitipkan",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Alasan_yg_menitipkan"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ])
+                          ])
+                        ]
+                      )
                     ])
                   ]),
                   _vm._v(" "),
@@ -74174,8 +75284,40 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card-header" }, [
+    return _c("div", { staticClass: "card-header p-3" }, [
       _c("h3", { staticClass: "card-title" }, [_vm._v("Tambah Data Anak")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card" }, [
+      _c("div", { staticClass: "p-2" }, [
+        _c("ul", { staticClass: "nav nav-pills p-0" }, [
+          _c("li", { staticClass: "nav-item" }, [
+            _c(
+              "a",
+              {
+                staticClass: "nav-link active show",
+                attrs: { href: "#data_anak", "data-toggle": "tab" }
+              },
+              [_vm._v("Detail Anak")]
+            )
+          ]),
+          _vm._v(" "),
+          _c("li", { staticClass: "nav-item" }, [
+            _c(
+              "a",
+              {
+                staticClass: "nav-link",
+                attrs: { href: "#data_ortu", "data-toggle": "tab" }
+              },
+              [_vm._v("Detail Orang Tua")]
+            )
+          ])
+        ])
+      ])
     ])
   },
   function() {
@@ -74285,16 +75427,6 @@ var staticRenderFns = [
     return _c("div", { staticClass: "input-group-prepend" }, [
       _c("span", { staticClass: "input-group-text" }, [
         _c("i", { staticClass: "fas fa-phone" })
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", [
-      _c("h3", { staticClass: "profile-username text-center" }, [
-        _vm._v("Detail Orang Tua Anak")
       ])
     ])
   },
@@ -74653,7 +75785,7 @@ var render = function() {
   return _c("section", { staticClass: "content" }, [
     _c("div", { staticClass: "container-fluid" }, [
       _vm.$gate.isAdmin()
-        ? _c("div", { staticClass: "row mt-2" }, [
+        ? _c("div", { staticClass: "row mt-3" }, [
             _c("div", { staticClass: "col md-12" }, [
               _c("div", { staticClass: "card" }, [
                 _c("div", { staticClass: "card-header" }, [
@@ -76088,6 +77220,51 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Profile_LKSA.vue?vue&type=template&id=5c12cb4e&":
+/*!***************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Profile_LKSA.vue?vue&type=template&id=5c12cb4e& ***!
+  \***************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _vm._m(0)
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "container" }, [
+      _c("div", { staticClass: "row justify-content-center" }, [
+        _c("div", { staticClass: "col-md-8" }, [
+          _c("div", { staticClass: "card" }, [
+            _c("div", { staticClass: "card-header" }, [
+              _vm._v("Example Component")
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "card-body" }, [
+              _vm._v("I'm an Profile LKSA component.")
+            ])
+          ])
+        ])
+      ])
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Users.vue?vue&type=template&id=30c27aa6&":
 /*!********************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Users.vue?vue&type=template&id=30c27aa6& ***!
@@ -76106,7 +77283,7 @@ var render = function() {
   return _c("section", { staticClass: "content" }, [
     _c("div", { staticClass: "container-fluid" }, [
       _vm.$gate.isAdmin()
-        ? _c("div", { staticClass: "row mt-2" }, [
+        ? _c("div", { staticClass: "row mt-3" }, [
             _c("div", { staticClass: "col md-12" }, [
               _c("div", { staticClass: "card" }, [
                 _c("div", { staticClass: "card-header" }, [
@@ -76425,9 +77602,17 @@ var render = function() {
                                     }
                                   },
                                   [
-                                    _c("option", { attrs: { value: "" } }, [
-                                      _vm._v("Select User Role")
-                                    ]),
+                                    _c(
+                                      "option",
+                                      {
+                                        attrs: {
+                                          value: "",
+                                          disabled: "",
+                                          selected: ""
+                                        }
+                                      },
+                                      [_vm._v("Select User Role")]
+                                    ),
                                     _vm._v(" "),
                                     _c(
                                       "option",
@@ -94671,6 +95856,75 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/Profile_LKSA.vue":
+/*!**************************************************!*\
+  !*** ./resources/js/components/Profile_LKSA.vue ***!
+  \**************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Profile_LKSA_vue_vue_type_template_id_5c12cb4e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Profile_LKSA.vue?vue&type=template&id=5c12cb4e& */ "./resources/js/components/Profile_LKSA.vue?vue&type=template&id=5c12cb4e&");
+/* harmony import */ var _Profile_LKSA_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Profile_LKSA.vue?vue&type=script&lang=js& */ "./resources/js/components/Profile_LKSA.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Profile_LKSA_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Profile_LKSA_vue_vue_type_template_id_5c12cb4e___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Profile_LKSA_vue_vue_type_template_id_5c12cb4e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/Profile_LKSA.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/Profile_LKSA.vue?vue&type=script&lang=js&":
+/*!***************************************************************************!*\
+  !*** ./resources/js/components/Profile_LKSA.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Profile_LKSA_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./Profile_LKSA.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Profile_LKSA.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Profile_LKSA_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/Profile_LKSA.vue?vue&type=template&id=5c12cb4e&":
+/*!*********************************************************************************!*\
+  !*** ./resources/js/components/Profile_LKSA.vue?vue&type=template&id=5c12cb4e& ***!
+  \*********************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Profile_LKSA_vue_vue_type_template_id_5c12cb4e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./Profile_LKSA.vue?vue&type=template&id=5c12cb4e& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Profile_LKSA.vue?vue&type=template&id=5c12cb4e&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Profile_LKSA_vue_vue_type_template_id_5c12cb4e___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Profile_LKSA_vue_vue_type_template_id_5c12cb4e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/js/components/Users.vue":
 /*!*******************************************!*\
   !*** ./resources/js/components/Users.vue ***!
@@ -95013,15 +96267,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "routes", function() { return routes; });
 /* harmony import */ var _components_Frontend_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components/Frontend.vue */ "./resources/js/components/Frontend.vue");
 /* harmony import */ var _components_Dashboard_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/Dashboard.vue */ "./resources/js/components/Dashboard.vue");
-/* harmony import */ var _components_Users_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/Users.vue */ "./resources/js/components/Users.vue");
-/* harmony import */ var _components_Karyawan_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/Karyawan.vue */ "./resources/js/components/Karyawan.vue");
-/* harmony import */ var _components_Data_Anak_Data_Anak_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/Data_Anak/Data_Anak.vue */ "./resources/js/components/Data_Anak/Data_Anak.vue");
-/* harmony import */ var _components_Data_Anak_Detail_Anak_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/Data_Anak/Detail_Anak.vue */ "./resources/js/components/Data_Anak/Detail_Anak.vue");
-/* harmony import */ var _components_Data_Anak_Tambah_Anak_vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/Data_Anak/Tambah_Anak.vue */ "./resources/js/components/Data_Anak/Tambah_Anak.vue");
-/* harmony import */ var _components_Data_Anak_Edit_Anak_vue__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./components/Data_Anak/Edit_Anak.vue */ "./resources/js/components/Data_Anak/Edit_Anak.vue");
-/* harmony import */ var _components_Inventories_vue__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./components/Inventories.vue */ "./resources/js/components/Inventories.vue");
-/* harmony import */ var _components_Profile_vue__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./components/Profile.vue */ "./resources/js/components/Profile.vue");
-/* harmony import */ var _components_Developer_vue__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./components/Developer.vue */ "./resources/js/components/Developer.vue");
+/* harmony import */ var _components_Profile_LKSA_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/Profile_LKSA.vue */ "./resources/js/components/Profile_LKSA.vue");
+/* harmony import */ var _components_Users_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/Users.vue */ "./resources/js/components/Users.vue");
+/* harmony import */ var _components_Karyawan_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/Karyawan.vue */ "./resources/js/components/Karyawan.vue");
+/* harmony import */ var _components_Data_Anak_Data_Anak_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/Data_Anak/Data_Anak.vue */ "./resources/js/components/Data_Anak/Data_Anak.vue");
+/* harmony import */ var _components_Data_Anak_Detail_Anak_vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/Data_Anak/Detail_Anak.vue */ "./resources/js/components/Data_Anak/Detail_Anak.vue");
+/* harmony import */ var _components_Data_Anak_Tambah_Anak_vue__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./components/Data_Anak/Tambah_Anak.vue */ "./resources/js/components/Data_Anak/Tambah_Anak.vue");
+/* harmony import */ var _components_Data_Anak_Edit_Anak_vue__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./components/Data_Anak/Edit_Anak.vue */ "./resources/js/components/Data_Anak/Edit_Anak.vue");
+/* harmony import */ var _components_Inventories_vue__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./components/Inventories.vue */ "./resources/js/components/Inventories.vue");
+/* harmony import */ var _components_Profile_vue__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./components/Profile.vue */ "./resources/js/components/Profile.vue");
+/* harmony import */ var _components_Developer_vue__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./components/Developer.vue */ "./resources/js/components/Developer.vue");
+
 
 
 
@@ -95044,33 +96300,37 @@ var routes = [{
   path: '/dashboard',
   component: _components_Dashboard_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
 }, {
+  path: '/profile-lksa',
+  component: _components_Profile_LKSA_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
+}, {
   path: '/pengguna',
-  component: _components_Users_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
+  component: _components_Users_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
 }, {
   path: '/data-karyawan',
-  component: _components_Karyawan_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
+  component: _components_Karyawan_vue__WEBPACK_IMPORTED_MODULE_4__["default"]
 }, {
   path: '/data-anak',
-  component: _components_Data_Anak_Data_Anak_vue__WEBPACK_IMPORTED_MODULE_4__["default"]
-}, {
-  path: '/detail-anak',
-  component: _components_Data_Anak_Detail_Anak_vue__WEBPACK_IMPORTED_MODULE_5__["default"]
+  component: _components_Data_Anak_Data_Anak_vue__WEBPACK_IMPORTED_MODULE_5__["default"]
 }, {
   path: '/tambah-anak',
-  component: _components_Data_Anak_Tambah_Anak_vue__WEBPACK_IMPORTED_MODULE_6__["default"]
+  component: _components_Data_Anak_Tambah_Anak_vue__WEBPACK_IMPORTED_MODULE_7__["default"]
 }, {
   path: '/edit-anak:idanak',
   name: 'edit_anak',
-  component: _components_Data_Anak_Edit_Anak_vue__WEBPACK_IMPORTED_MODULE_7__["default"]
+  component: _components_Data_Anak_Edit_Anak_vue__WEBPACK_IMPORTED_MODULE_8__["default"]
+}, {
+  path: '/detail-anak:idanak',
+  name: 'detail_anak',
+  component: _components_Data_Anak_Detail_Anak_vue__WEBPACK_IMPORTED_MODULE_6__["default"]
 }, {
   path: '/inventaris',
-  component: _components_Inventories_vue__WEBPACK_IMPORTED_MODULE_8__["default"]
+  component: _components_Inventories_vue__WEBPACK_IMPORTED_MODULE_9__["default"]
 }, {
   path: '/profile',
-  component: _components_Profile_vue__WEBPACK_IMPORTED_MODULE_9__["default"]
+  component: _components_Profile_vue__WEBPACK_IMPORTED_MODULE_10__["default"]
 }, {
   path: '/developer',
-  component: _components_Developer_vue__WEBPACK_IMPORTED_MODULE_10__["default"]
+  component: _components_Developer_vue__WEBPACK_IMPORTED_MODULE_11__["default"]
 }];
 
 /***/ }),
@@ -95086,11 +96346,23 @@ var routes = [{
 __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   state: {
-    employees: []
+    employees: [],
+    jumlah_users: [],
+    jumlah_employees: [],
+    jumlah_childrens: []
   },
   getters: {
     getEmployee: function getEmployee(state) {
       return state.employees;
+    },
+    getJumlahUser: function getJumlahUser(state) {
+      return state.jumlah_users;
+    },
+    getJumlahEmployee: function getJumlahEmployee(state) {
+      return state.jumlah_employees;
+    },
+    getJumlahChildren: function getJumlahChildren(state) {
+      return state.jumlah_childrens;
     }
   },
   actions: {
@@ -95098,11 +96370,35 @@ __webpack_require__.r(__webpack_exports__);
       axios.get("api/employee").then(function (response) {
         context.commit('employees', response.data.employees);
       });
+    },
+    AllJumlah_Users: function AllJumlah_Users(context) {
+      axios.get("api/banyak_users").then(function (response) {
+        context.commit('jumlah_users', response.data.jumlah_users);
+      });
+    },
+    AllJumlah_Employees: function AllJumlah_Employees(context) {
+      axios.get("api/banyak_karyawan").then(function (response) {
+        context.commit('jumlah_employees', response.data.jumlah_employees);
+      });
+    },
+    AllJumlah_Childrens: function AllJumlah_Childrens(context) {
+      axios.get("api/banyak_anak").then(function (response) {
+        context.commit('jumlah_childrens', response.data.jumlah_childrens);
+      });
     }
   },
   mutations: {
     employees: function employees(state, data) {
       return state.employees = data;
+    },
+    jumlah_users: function jumlah_users(state, data) {
+      return state.jumlah_users = data;
+    },
+    jumlah_employees: function jumlah_employees(state, data) {
+      return state.jumlah_employees = data;
+    },
+    jumlah_childrens: function jumlah_childrens(state, data) {
+      return state.jumlah_childrens = data;
     }
   }
 });

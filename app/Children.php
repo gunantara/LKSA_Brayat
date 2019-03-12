@@ -31,6 +31,7 @@ class Children extends Model
         'Keterangan_anak',
         'Nama_Wali',
         'Nomor_telp_wali',
+        'Photo_anak',
     ];
 
     public static function boot()

@@ -3,7 +3,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateAboutsTable extends Migration {
+class CreateAboutsTable extends Migration
+{
 
 	/**
 	 * Run the migrations.
@@ -12,8 +13,7 @@ class CreateAboutsTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('abouts', function(Blueprint $table)
-		{
+		Schema::create('abouts', function (Blueprint $table) {
 			$table->increments('id');
 			$table->integer('id_user')->unsigned()->nullable()->index('id_user');
 			$table->string('Sejarah', 191);
@@ -21,6 +21,7 @@ class CreateAboutsTable extends Migration {
 			$table->string('Luas_Bangunan', 191);
 			$table->string('Kerjasama', 191);
 			$table->timestamps();
+			$table->softDeletes()->index();
 		});
 	}
 
@@ -34,5 +35,4 @@ class CreateAboutsTable extends Migration {
 	{
 		Schema::drop('abouts');
 	}
-
 }
