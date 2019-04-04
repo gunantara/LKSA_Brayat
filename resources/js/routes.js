@@ -1,4 +1,3 @@
-import Frontend from './components/Frontend.vue'
 import AdminHome from './components/Dashboard.vue'
 import Dashboard from './components/Dashboard.vue'
 import Profile_LKSA from './components/Profile_LKSA.vue'
@@ -13,10 +12,6 @@ import Profile from './components/Profile.vue'
 import Developer from './components/Developer.vue'
 
 export const routes = [{
-        path: '/',
-        component: Frontend
-    },
-    {
         path: '/home',
         component: AdminHome
     },

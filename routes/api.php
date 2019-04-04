@@ -32,3 +32,5 @@ Route::get('banyak_anak', 'API\Dashboardcontroller@banyak_anak');
 //api for user profile
 Route::get('profile', 'API\UserController@profile');
 Route::put('profile', 'API\UserController@UpdateProfile');
+
+Route::apiResource('abouts', 'API\ProfileController');

@@ -17,8 +17,10 @@ class CreateAboutsTable extends Migration
 			$table->increments('id');
 			$table->integer('id_user')->unsigned()->nullable()->index('id_user');
 			$table->string('Sejarah', 191);
-			$table->string('Luas_Tanah', 191);
-			$table->string('Luas_Bangunan', 191);
+			$table->string('About_1', 300);
+			$table->string('About_2', 300);
+			$table->string('About_3', 300);
+			$table->string('About_4', 300);
 			$table->string('Kerjasama', 191);
 			$table->timestamps();
 			$table->softDeletes()->index();
