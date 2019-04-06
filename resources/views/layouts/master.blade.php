@@ -121,20 +121,21 @@
                             </ul>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <router-link to="/pengguna" class="nav-link">
-                                        <i class="fas fa-users-cog nav-icon"></i>
-                                        <p>Data Pengguna</p>
-                                    </router-link>
-                                </li>
-                            </ul>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
                                     <router-link to="/inventaris" class="nav-link">
                                         <i class="fas fa-warehouse nav-icon"></i>
                                         <p>Data inventaris</p>
                                     </router-link>
                                 </li>
                             </ul>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <router-link to="/pengguna" class="nav-link">
+                                        <i class="fas fa-users-cog nav-icon"></i>
+                                        <p>Data Pengguna</p>
+                                    </router-link>
+                                </li>
+                            </ul>
+                            
                         </li>
                         <li class="nav-item has-treeview menu-open">
                             <a href="#" class="nav-link ">

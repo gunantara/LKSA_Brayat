@@ -3,8 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateChildrenDetailEducationsTable extends Migration
-{
+class CreateChildrenDetailDocumentsTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -13,15 +12,14 @@ class CreateChildrenDetailEducationsTable extends Migration
 	 */
 	public function up()
 	{
-		Schema::create('children_detail_educations', function (Blueprint $table) {
+		Schema::create('children_detail_documents', function(Blueprint $table)
+		{
 			$table->increments('id');
 			$table->integer('id_children')->unsigned()->nullable()->index('id_children');
-			$table->year('Tahun_awal');
-			$table->year('Tahun_akhir');
-			$table->string('Nama_Sekolah', 191)->nullable();
-			$table->string('Alamat_Sekolah', 191)->nullable();
+			$table->string('Document', 191)->nullable();
+			$table->string('Asli_Fotocopy', 191)->nullable();
+			$table->string('Keterangan', 191)->nullable();
 			$table->timestamps();
-			$table->softDeletes()->index();
 		});
 	}
 
@@ -33,6 +31,7 @@ class CreateChildrenDetailEducationsTable extends Migration
 	 */
 	public function down()
 	{
-		Schema::drop('children_detail_educations');
+		Schema::drop('children_detail_documents');
 	}
+
 }

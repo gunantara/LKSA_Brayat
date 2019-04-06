@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\About;
+use App\profile;
+use App\profile_kegiatan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -16,7 +18,11 @@ class ProfileController extends Controller
      */
     public function index()
     {
-        return view('index', ['abouts' => About::all()]);
+        return view('index', [
+            'abouts' => About::all(),
+            'profile' => profile::all(),
+            'profile_kegiatan' => profile_kegiatan::all(),
+        ]);
     }
 
     /**

@@ -2,18 +2,23 @@
 
 namespace App;
 
+use Laravel\Passport\HasApiTokens;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
-use Laravel\Passport\Bridge\User;
+
+
 
 class About extends Model
 {
 
     protected $fillable = [
         'id_user',
-        'Sejarah',
-        'Luas_Tanah',
-        'Luas Bangunan',
-        'Kerjasama',
+        'Logo_LKSA',
+        'Nama_LKSA',
+        'Photo',
+        'Title',
+        'Quote',
     ];
 
     public static function boot()
@@ -23,5 +28,17 @@ class About extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'id_user')->withTrashed();
+    }
+    public function profile()
+    {
+        return $this->hasMany(profile::class, 'id_about')->withTrashed();
+    }
+    public function profile_kegiatan()
+    {
+        return $this->hasMany(profile_kegiatan::class, 'id_about')->withTrashed();
+    }
+    public function profile_sejarah()
+    {
+        return $this->hasMany(profile_sejarah::class, 'id_about')->withTrashed();
     }
 }

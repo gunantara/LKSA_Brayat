@@ -49,18 +49,18 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
-        return Employee::create([
-            'Nama_lengkap' => $request['Nama_lengkap'],
-            'NIK' => $request['NIK'],
-            'Jenis_Kelamin' => $request['Jenis_Kelamin'],
-            'Tempat_lahir' => $request['Tempat_lahir'],
-            'Tgl_lahir' => $request['Tgl_lahir'],
-            'Mulai_Bekerja' => $request['Mulai_Bekerja'],
-            'Jabatan' => $request['Jabatan'],
-            'Status_Kepegawaian' => $request['Status_Kepegawaian'],
-            'Pendidikan_Terakhir' => $request['Pendidikan_Terakhir'],
-            'Pelatihan_yg_diikuti' => $request['Pelatihan_yg_diikuti'],
-        ]);
+        $employee = new Employee();
+        $employee->Nama_lengkap = $request->input("Nama_lengkap");
+        $employee->NIK = $request->input("NIK");
+        $employee->Jenis_Kelamin = $request->input("Jenis_Kelamin");
+        $employee->Tempat_lahir = $request->input("Tempat_lahir");
+        $employee->Tgl_lahir = $request->input("Tgl_lahir");
+        $employee->Mulai_Bekerja = $request->input("Mulai_Bekerja");
+        $employee->Jabatan = $request->input("Jabatan");
+        $employee->Status_Kepegawaian = $request->input("Status_Kepegawaian");
+        $employee->Pendidikan_Terakhir = $request->input("Pendidikan_Terakhir");
+        $employee->Pelatihan_yg_diikuti = $request->input("Pelatihan_yg_diikuti");
+        $employee->save();
         return ['message' => 'employee created'];
     }
 
@@ -108,8 +108,8 @@ class EmployeeController extends Controller
      */
     public function destroy($id)
     {
-        $employee = Employee::FindOrFail($id);
         //delete the user
+        $employee = Employee::FindOrFail($id);
         $employee->delete();
         return ['message' => 'user deleted'];
     }

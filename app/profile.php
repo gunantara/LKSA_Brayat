@@ -7,23 +7,20 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
 
-class Galery extends Model
+class profile extends Model
 {
     protected $fillable = [
-        'id_user',
-        'kegiatan',
+        'id_about',
+        'Photo',
+        'Title',
+        'Profile'
     ];
-
     public static function boot()
     {
         parent::boot();
     }
-    public function user()
+    public function about()
     {
-        return $this->belongsTo(User::class, 'id_user')->withTrashed();
-    }
-    public function detail_galeries()
-    {
-        return $this->hasMany(Detail_galeries::class, 'id_galeries')->withTrashed();
+        return $this->belongsTo(About::class, 'id_about')->withTrashed();
     }
 }

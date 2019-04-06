@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateContactsTable extends Migration {
+class CreateProfileKegiatansTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,13 +12,13 @@ class CreateContactsTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('contacts', function(Blueprint $table)
+		Schema::create('profile_kegiatans', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->integer('id_user')->unsigned()->nullable()->index('id_user');
-			$table->string('email', 191);
-			$table->string('Telp', 191);
-			$table->string('Alamat', 191);
+			$table->integer('id_about')->unsigned()->nullable()->index('id_about');
+			$table->string('Photo', 191);
+			$table->string('Title', 191);
+			$table->string('Profile_kegiatan', 2000);
 			$table->timestamps();
 			$table->softDeletes()->index();
 		});
@@ -32,7 +32,7 @@ class CreateContactsTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('contacts');
+		Schema::drop('profile_kegiatans');
 	}
 
 }
