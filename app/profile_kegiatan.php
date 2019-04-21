@@ -11,8 +11,8 @@ class profile_kegiatan extends Model
 {
     protected $fillable = [
         'id_about',
-        'Photo',
-        'Title',
+        'Photo_kegiatan',
+        'Title_kegiatan',
         'Profile_kegiatan'
     ];
     public static function boot()

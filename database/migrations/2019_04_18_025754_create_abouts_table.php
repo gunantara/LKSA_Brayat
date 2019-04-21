@@ -16,11 +16,11 @@ class CreateAboutsTable extends Migration {
 		{
 			$table->increments('id');
 			$table->integer('id_user')->unsigned()->nullable()->index('id_user');
-			$table->string('Logo_LKSA', 191);
-			$table->string('Nama_LKSA', 191);
-			$table->string('Photo', 191);
-			$table->string('Title', 191);
-			$table->string('Quote', 2000);
+			$table->string('Logo_LKSA', 191)->nullable();
+			$table->string('Nama_LKSA', 191)->nullable();
+			$table->string('Photo_about', 191)->nullable();
+			$table->string('Title_about', 191)->nullable();
+			$table->string('Quote', 2000)->nullable();
 			$table->timestamps();
 			$table->softDeletes()->index();
 		});

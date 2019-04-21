@@ -41,13 +41,14 @@
     <!--==========================
   Header
   ============================-->
+    @foreach ($abouts as $rec)
     <header id="header" class="fixed-top">
         <div class="container">
 
             <div class="logo float-left">
                 <!-- Uncomment below if you prefer to use an image logo -->
                 <!-- <h1 class="text-light"><a href="#header"><span>NewBiz</span></a></h1> -->
-                <a href="#intro" class="scrollto"><img src="img/logo.png" alt="" class="img-fluid"></a>
+                <a href="#intro" class="scrollto"><img src="img/profile_lksa/{{$rec->Logo_LKSA}}" alt="" class="img-fluid"></a>
             </div>
 
             <nav class="main-nav float-right d-none d-lg-block">
@@ -55,8 +56,8 @@
                     <li class="active"><a href="#intro">Home</a></li>
                     <li><a href="#about">Tentang Kami</a></li>
                     <li><a href="#services">Program</a></li>
-                    <li><a href="#portfolio">Galery</a></li>
-                    <li><a href="#contact">Contact Us</a></li>
+                    <li><a href="#portfolio">Galeri</a></li>
+                    <li><a href="#contact">Kontak Kami</a></li>
                     <li>
                         <div class="flex-center position-ref full-height">
                             @if (Route::has('login'))
@@ -79,12 +80,12 @@
     <!--==========================
     Intro Section
   ============================-->
-    @foreach ($abouts as $rec)
+
     <section id="intro" class="clearfix">
         <div class="container">
 
             <div class="intro-img">
-                <img src="img/intro-img.svg" alt="" class="img-fluid">
+                <img src="img/profile_lksa/{{$rec->Photo_about}}" alt="" class="img-fluid">
             </div>
 
             <div class="intro-info">
@@ -112,23 +113,23 @@
                 </header>
                 <div class="row about-extra">
                     <div class="col-lg-6 content order-lg-1 order-2">
-                        <h4>{{$rec->Title}}</h4>
+                        <h4>{{$rec->Title_about}}</h4>
                         <p>
                             {{$rec->Quote}}
                         </p>
                     </div>
                     <div class="col-lg-6 background order-lg-2 order-1 wow fadeInUp">
-                        <img src="img/about-img.svg" class="img-fluid" alt="">
+                        <img src="img/profile_lksa/{{$rec->Photo_about}}" class="img-fluid" alt="">
                     </div>
                 </div>
 
                 @foreach($profile_kegiatan as $kegiatan)
                 <div class="row about-extra">
                     <div class="col-lg-6 wow fadeInUp">
-                        <img src="img/about-extra-1.svg" class="img-fluid" alt="">
+                        <img src="img/profile_lksa/{{$kegiatan->Photo_kegiatan}}" class="img-fluid" alt="">
                     </div>
                     <div class="col-lg-6 wow fadeInUp pt-5 pt-lg-0">
-                        <h4>{{$kegiatan->Title}}.</h4>
+                        <h4>{{$kegiatan->Title_kegiatan}}.</h4>
                         <p>
                             {{$kegiatan->Profile_kegiatan}}
                         </p>
@@ -139,11 +140,11 @@
                 @foreach ($profile as $profile)
                 <div class="row about-extra">
                     <div class="col-lg-6 wow fadeInUp order-1 order-lg-2">
-                        <img src="img/about-extra-2.svg" class="img-fluid" alt="">
+                        <img src="img/profile_lksa/{{$profile->Photo_profiles}}" class="img-fluid" alt="">
                     </div>
 
                     <div class="col-lg-6 wow fadeInUp pt-4 pt-lg-0 order-2 order-lg-1">
-                        <h4>{{$profile->Title}}</h4>
+                        <h4>{{$profile->Title_profile}}</h4>
                         <p>
                             {{$profile->Profile}}
                         </p>
@@ -163,56 +164,57 @@
 
                 <header class="section-header">
                     <h3>Program</h3>
-                    <p>Laudem latine persequeris id sed, ex fabulas delectus quo. No vel partiendo abhorreant vituperatoribus.</p>
                 </header>
-
                 <div class="row">
 
                     <div class="col-md-6 col-lg-5 offset-lg-1 wow bounceInUp" data-wow-duration="1.4s">
                         <div class="box">
                             <div class="icon"><i class="ion-ios-analytics-outline" style="color: #ff689b;"></i></div>
-                            <h4 class="title"><a href="">Lorem Ipsum</a></h4>
-                            <p class="description">Voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident</p>
+                            <h4 class="title"><a href="">Peningkatan Kepribadian Anak</a></h4>
+                            <p class="description">Berharap menjadi anak remaja yang berkualitas</p>
+                            <p class="description">Menjadi remaja yang penuh tangung jawab & memiliki pribadi yang utuh dan tangguh</p>
                         </div>
                     </div>
+
+
                     <div class="col-md-6 col-lg-5 wow bounceInUp" data-wow-duration="1.4s">
                         <div class="box">
                             <div class="icon"><i class="ion-ios-bookmarks-outline" style="color: #e9bf06;"></i></div>
-                            <h4 class="title"><a href="">Dolor Sitema</a></h4>
-                            <p class="description">Minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat tarad limino ata</p>
+                            <h4 class="title"><a href="">Pendidikan</a></h4>
+                            <p class="description">Sekolah dari TK, SD,SLTP, SLTA,PT</p>
+                            <p class="description">Untuk meningkatkan kecerdasan dalam ilmu pengetahuan & social.</p>
                         </div>
                     </div>
 
                     <div class="col-md-6 col-lg-5 offset-lg-1 wow bounceInUp" data-wow-delay="0.1s" data-wow-duration="1.4s">
                         <div class="box">
                             <div class="icon"><i class="ion-ios-paper-outline" style="color: #3fcdc7;"></i></div>
-                            <h4 class="title"><a href="">Sed ut perspiciatis</a></h4>
-                            <p class="description">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur</p>
+                            <h4 class="title"><a href="">Peningkatan Pengetahuan Anak</a></h4>
+                            <p class="description">Memberikan Bekal untuk masa depan anak serta keterampilan diluar akademik seperti musik dan berbahasa</p>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-5 wow bounceInUp" data-wow-delay="0.1s" data-wow-duration="1.4s">
                         <div class="box">
                             <div class="icon"><i class="ion-ios-speedometer-outline" style="color:#41cf2e;"></i></div>
-                            <h4 class="title"><a href="">Magni Dolores</a></h4>
-                            <p class="description">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+                            <h4 class="title"><a href="">Mental & Spiritual</a></h4>
+                            <p class="description">Agar anak semakin memiliki iman yang dalam dan kuat serta menyadarkan anak bahwa hidup ini merupakan anugerah Tuhan</p>
                         </div>
                     </div>
 
                     <div class="col-md-6 col-lg-5 offset-lg-1 wow bounceInUp" data-wow-delay="0.2s" data-wow-duration="1.4s">
                         <div class="box">
                             <div class="icon"><i class="ion-ios-world-outline" style="color: #d6ff22;"></i></div>
-                            <h4 class="title"><a href="">Nemo Enim</a></h4>
-                            <p class="description">At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque</p>
+                            <h4 class="title"><a href="">Pembina yang Profesional</a></h4>
+                            <p class="description">Melakukan kunjungan ke panti lain agar anak dapat menimba hal yang baru dan baik serta menjalin kerjasama dan persaudaraan</p>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-5 wow bounceInUp" data-wow-delay="0.2s" data-wow-duration="1.4s">
                         <div class="box">
                             <div class="icon"><i class="ion-ios-clock-outline" style="color: #4680ff;"></i></div>
-                            <h4 class="title"><a href="">Eiusmod Tempor</a></h4>
-                            <p class="description">Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi</p>
+                            <h4 class="title"><a href="">Peningkatan Kualitas Kerja</a></h4>
+                            <p class="description"> Pertemuan rutin untuk meningkatkan kualitas kerja sehinggga dalam bekerja lebih semangat gembira dan tulus</p>
                         </div>
                     </div>
-
                 </div>
 
             </div>
@@ -225,7 +227,7 @@
             <div class="container">
 
                 <header class="section-header">
-                    <h3 class="section-title">Our Galery</h3>
+                    <h3 class="section-title">Galeri Kami</h3>
                 </header>
 
                 <div class="row">
@@ -380,7 +382,7 @@
             <div class="container-fluid">
 
                 <div class="section-header">
-                    <h3>Contact Us</h3>
+                    <h3>Kontak Kami</h3>
                 </div>
 
                 <div class="row wow fadeInUp">
@@ -390,23 +392,23 @@
                             <iframe src="https://maps.google.com/maps?q=brayat%20pinuji&t=&z=13&ie=UTF8&iwloc=&output=embed" frameborder="0" style="border:0; width: 100%; height: 312px;" allowfullscreen></iframe>
                         </div>
                     </div>
-
+                    @foreach ($contact as $kontak)
                     <div class="col-lg-6">
                         <div class="row">
                             <div class="col-md-5 info">
                                 <i class="ion-ios-location-outline"></i>
-                                <p>A108 Adam Street, NY 535022</p>
+                                <p>{{$kontak->Alamat}}</p>
                             </div>
                             <div class="col-md-4 info">
                                 <i class="ion-ios-email-outline"></i>
-                                <p>info@example.com</p>
+                                <p>{{$kontak->email}}</p>
                             </div>
                             <div class="col-md-3 info">
                                 <i class="ion-ios-telephone-outline"></i>
-                                <p>+1 5589 55488 55</p>
+                                <p>{{$kontak->Telp}}</p>
                             </div>
                         </div>
-
+                        @endforeach
                         <div class="form">
                             <div id="sendmessage">Your message has been sent. Thank you!</div>
                             <div id="errormessage"></div>
@@ -449,31 +451,21 @@
             <div class="container">
                 <div class="row">
 
-                    <div class="col-lg-4 col-md-6 footer-info">
-                        <h3>NewBiz</h3>
-                        <p>Cras fermentum odio eu feugiat lide par naso tierra. Justo eget nada terra videa magna derita valies darta donna mare fermentum iaculis eu non diam phasellus. Scelerisque felis imperdiet proin fermentum leo. Amet volutpat consequat mauris nunc congue.</p>
-                    </div>
-
-                    <div class="col-lg-2 col-md-6 footer-links">
-                        <h4>Useful Links</h4>
-                        <ul>
-                            <li><a href="#">Home</a></li>
-                            <li><a href="#about">Tentang Kami</a></li>
-                            <li><a href="#">Program</a></li>
-                            <li><a href="#">Terms of service</a></li>
-                            <li><a href="#">Privacy policy</a></li>
-                        </ul>
+                    <div class="col-lg-6 col-md-6 footer-info">
+                        <h2>LKSA BRAYAT PINUJI</h2>
+                        <p>Panti Asuhan Brayat Pinuji adalah salah satu cabang karya sosial para suster OSF Semarang untuk anak-anak terlantar yang membutuhkan perawatan, gizi pendidikan dan tempat tinggal. Panti ini mulai dirintis pada tahun 1930 oleh Rm.J.B Prentahaler, Sj, yang berkembangsaan Austria sebagai seorang misionaris pertama di Boro dan sekitarnya. Bersama para Suter OSF dari Belanda.</p>
                     </div>
 
                     <div class="col-lg-3 col-md-6 footer-contact">
-                        <h4>Contact Us</h4>
+                        @foreach ($contact as $kontak)
+                        <h4>Kontak Kami</h4>
                         <p>
-                            A108 Adam Street <br>
-                            New York, NY 535022<br>
-                            United States <br>
-                            <strong>Phone:</strong> +1 5589 55488 55<br>
-                            <strong>Email:</strong> info@example.com<br>
+                            {{$kontak->Alamat}} <br>
+                            <strong>Phone:</strong> {{$kontak->Telp}}<br>
+                            <strong>Email:</strong> {{$kontak->email}}<br>
+                            <strong>Rekening</strong> {{$kontak->No_Rekening}}<br>
                         </p>
+                        @endforeach
 
                         <div class="social-links">
                             <a href="#" class="twitter"><i class="fa fa-twitter"></i></a>
@@ -486,8 +478,8 @@
                     </div>
 
                     <div class="col-lg-3 col-md-6 footer-newsletter">
-                        <h4>Our Newsletter</h4>
-                        <p>Tamen quem nulla quae legam multos aute sint culpa legam noster magna veniam enim veniam illum dolore legam minim quorum culpa amet magna export quem marada parida nodela caramase seza.</p>
+                        <h4>Newsletter Kami</h4>
+                        <p>Berita tentang kegiatan LKSA BRAYAT PINUJI BORO dapat didapatkan melalui Newsletter kami dengan cara mengisi email anda lalu klik tombol subscribe</p>
                         <form action="" method="post">
                             <input type="email" name="email"><input type="submit" value="Subscribe">
                         </form>
@@ -499,7 +491,7 @@
 
         <div class="container">
             <div class="copyright">
-                &copy; Copyright <strong>NewBiz</strong>. All Rights Reserved
+                &copy; Copyright <strong>LKSA BRAYAT PINUJI</strong>. All Rights Reserved
             </div>
             <div class="credits">
                 <!--
@@ -508,7 +500,6 @@
           Licensing information: https://bootstrapmade.com/license/
           Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/buy/?theme=NewBiz
         -->
-                Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
             </div>
         </div>
     </footer><!-- #footer -->

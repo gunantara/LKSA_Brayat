@@ -19,6 +19,9 @@
                   <li class="nav-item">
                     <a class="nav-link" href="#data_ortu" data-toggle="tab">Detail Orang Tua</a>
                   </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#biodata" data-toggle="tab">Biodata Anak</a>
+                  </li>
                 </ul>
               </div>
             </div>
@@ -206,6 +209,23 @@
                               <has-error :form="form" field="Jenis_Kelamin"></has-error>
                             </div>
                           </div>
+                          <div class="col">
+                            <div class="form-group">
+                              <label for="inputketeranagAnak">Keterangan Anak</label>
+                              <select
+                                v-model="form.Keterangan_anak"
+                                type="text"
+                                name="Keterangan_anak"
+                                class="form-control"
+                                :class="{ 'is-invalid': form.errors.has('Keterangan_anak') }"
+                              >
+                                <option value disabled selected>Pilih Keterangan Anak</option>
+                                <option value="Panti">Panti</option>
+                                <option value="Non-Panti">Non-Panti</option>
+                              </select>
+                              <has-error :form="form" field="Keterangan_anak"></has-error>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -280,21 +300,6 @@
                             :class="{ 'is-invalid': form.errors.has('Sebab_masuk_PA') }"
                           ></textarea>
                           <has-error :form="form" field="Sebab_masuk_PA"></has-error>
-                        </div>
-                      </div>
-                      <div class="col">
-                        <div class="form-group">
-                          <label for="inputAlamat">Keterangan Anak</label>
-                          <textarea
-                            v-model="form.Keterangan_anak"
-                            rows="4"
-                            class="form-control"
-                            type="text"
-                            name="Keterangan_anak"
-                            placeholder="Keterangan anak . . . "
-                            :class="{ 'is-invalid': form.errors.has('Keterangan_anak') }"
-                          ></textarea>
-                          <has-error :form="form" field="Keterangan_anak"></has-error>
                         </div>
                       </div>
                     </div>
@@ -741,6 +746,139 @@
                       </div>
                     </div>
                   </div>
+                  <!-- Biodata Anak -->
+                  <div class="tab-pane" id="biodata">
+                    <div class="form-row">
+                      <div class="col">
+                        <div class="form-group">
+                          <label for="inputTinggiBadan">Tinggi Badan</label>
+                          <div class="input-group">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text">
+                                <i class="fas fa-text-height"></i>
+                              </span>
+                            </div>
+                            <input
+                              v-model="form.Tinggi_Badan"
+                              type="text"
+                              name="Tinggi_Badan"
+                              placeholder="Tinggi Badan"
+                              class="form-control"
+                              :class="{ 'is-invalid': form.errors.has('Tinggi_Badan') }"
+                            >
+                            <has-error :form="form" field="Tinggi_Badan"></has-error>
+                            <div class="input-group-prepend">
+                              <span class="input-group-text">CM</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col">
+                        <div class="form-group">
+                          <label for="inputBeratBadan">Berat Badan</label>
+                          <div class="input-group">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text">
+                                <i class="fas fa-weight"></i>
+                              </span>
+                            </div>
+                            <input
+                              v-model="form.Berat_Badan"
+                              type="text"
+                              name="Berat_Badan"
+                              placeholder="Berat Badan"
+                              class="form-control"
+                              :class="{ 'is-invalid': form.errors.has('Berat_Badan') }"
+                            >
+                            <has-error :form="form" field="Berat_Badan"></has-error>
+                            <div class="input-group-prepend">
+                              <span class="input-group-text">KG</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col">
+                        <div class="form-group">
+                          <label for="inputGologanDarah">Golongan Darah</label>
+                          <div class="input-group">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text">
+                                <i class="fas fa-tint"></i>
+                              </span>
+                            </div>
+                            <select
+                              v-model="form.Golongan_Darah"
+                              type="text"
+                              name="Golongan_Darah"
+                              placeholder="Pilih Golongan Darah Anak"
+                              class="form-control"
+                              :class="{ 'is-invalid': form.errors.has('Golongan_Darah') }"
+                            >
+                              <option value disabled selected>Pilih Golongan Darah Anak</option>
+                              <option value="A">A</option>
+                              <option value="B">B</option>
+                              <option value="AB">AB</option>
+                              <option value="O">O</option>
+                            </select>
+                            <has-error :form="form" field="Golongan_Darah"></has-error>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="col">
+                        <div class="form-group">
+                          <label for="inputAlergiMakanan">Alergi Makanan</label>
+                          <div class="input-group">
+                            <textarea
+                              v-model="form.Alergi_Makanan"
+                              rows="4"
+                              class="form-control"
+                              type="text"
+                              name="Alergi_Makanan"
+                              placeholder="Alergi Makanan . . ."
+                              :class="{ 'is-invalid': form.errors.has('Alergi_Makanan') }"
+                            ></textarea>
+                            <has-error :form="form" field="Alergi_Makanan"></has-error>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col">
+                        <div class="form-group">
+                          <label for="inputAlergiMinuman">Alergi Minuman</label>
+                          <div class="input-group">
+                            <textarea
+                              v-model="form.Alergi_Minuman"
+                              rows="4"
+                              class="form-control"
+                              type="text"
+                              name="Alergi_Minuman"
+                              placeholder="Alergi Minuman . . ."
+                              :class="{ 'is-invalid': form.errors.has('Alergi_Minuman') }"
+                            ></textarea>
+                            <has-error :form="form" field="Alergi_Minuman"></has-error>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col">
+                        <div class="form-group">
+                          <label for="inputAlergiMinuman">Alergi Obat</label>
+                          <div class="input-group">
+                            <textarea
+                              v-model="form.Alergi_Obat"
+                              rows="4"
+                              class="form-control"
+                              type="text"
+                              name="Alergi_Obat"
+                              placeholder="Alergi Obat . . ."
+                              :class="{ 'is-invalid': form.errors.has('Alergi_Obat') }"
+                            ></textarea>
+                            <has-error :form="form" field="Alergi_Obat"></has-error>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
               <!-- /.card-body -->
@@ -814,7 +952,15 @@ export default {
         Perumahan: "",
         Latar_Belakang_Permasalahan: "",
         Alamat_yg_menitipkan: "",
-        Alasan_yg_menitipkan: ""
+        Alasan_yg_menitipkan: "",
+
+        //Biodata Anak
+        Tinggi_Badan: "",
+        Berat_Badan: "",
+        Golongan_Darah: "",
+        Alergi_Makanan: "",
+        Alergi_Minuman: "",
+        Alergi_Obat: ""
       }),
       options: {
         format: "YYYY/MM/DD",

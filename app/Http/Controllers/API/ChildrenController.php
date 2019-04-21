@@ -4,10 +4,10 @@ namespace App\Http\Controllers\API;
 
 use App\Children;
 use App\Children_Detail;
+use App\Children_detail_health;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
-
 
 class ChildrenController extends Controller
 {
@@ -24,15 +24,73 @@ class ChildrenController extends Controller
     public function index()
     {
         $this->authorize('isAdmin');
+        /** untuk data anak di dalam panti */
         $children = DB::table('childrens')
-            ->rightJoin('children__details', 'childrens.id', '=', 'children__details.id_children')
-            ->select('childrens.*', 'children__details.*')
+            ->join('children__details', 'childrens.id', '=', 'children__details.id_children')
+            ->join('children_detail_healths', 'childrens.id', '=', 'children_detail_healths.id_children')
+            ->select('childrens.*', 'children__details.*', 'children_detail_healths.*')
+            ->where('childrens.Keterangan_anak', '=', 'Panti')
             ->where('childrens.deleted_at', null)
             ->where('children__details.deleted_at', null)
+            ->where('children_detail_healths.deleted_at', null)
             ->orderBy('childrens.No_induk')
             ->get();
+        $countChildren = DB::table('childrens')
+            ->join('children__details', 'childrens.id', '=', 'children__details.id_children')
+            ->join('children_detail_healths', 'childrens.id', '=', 'children_detail_healths.id_children')
+            ->select('childrens.*', 'children__details.*', 'children_detail_healths.*')
+            ->where('childrens.Keterangan_anak', '=', 'Panti')
+            ->where('childrens.deleted_at', null)
+            ->where('children__details.deleted_at', null)
+            ->where('children_detail_healths.deleted_at', null)
+            ->orderBy('childrens.No_induk')
+            ->count();
+
+        /** untuk data anak diluar panti */
+        $childrennon = DB::table('childrens')
+            ->join('children__details', 'childrens.id', '=', 'children__details.id_children')
+            ->join('children_detail_healths', 'childrens.id', '=', 'children_detail_healths.id_children')
+            ->select('childrens.*', 'children__details.*', 'children_detail_healths.*')
+            ->where('childrens.Keterangan_anak', '=', 'Non-Panti')
+            ->where('childrens.deleted_at', null)
+            ->where('children__details.deleted_at', null)
+            ->where('children_detail_healths.deleted_at', null)
+            ->orderBy('childrens.No_induk')
+            ->get();
+        $countChildrennon = DB::table('childrens')
+            ->join('children__details', 'childrens.id', '=', 'children__details.id_children')
+            ->join('children_detail_healths', 'childrens.id', '=', 'children_detail_healths.id_children')
+            ->select('childrens.*', 'children__details.*', 'children_detail_healths.*')
+            ->where('childrens.Keterangan_anak', '=', 'Non-Panti')
+            ->where('childrens.deleted_at', null)
+            ->where('children__details.deleted_at', null)
+            ->where('children_detail_healths.deleted_at', null)
+            ->orderBy('childrens.No_induk')
+            ->count();
+
+        /** Untuk data anak yang sudah keluar panti atau data arsip anak */
+        $childrenOut = DB::table('childrens')
+            ->rightJoin('children__details', 'childrens.id', '=', 'children__details.id_children')
+            ->select('childrens.*', 'children__details.*')
+            ->whereNotNull('childrens.deleted_at')
+            ->whereNotNull('children__details.deleted_at')
+            ->orderBy('childrens.No_induk')
+            ->get();
+        $countchildrenOut = DB::table('childrens')
+            ->rightJoin('children__details', 'childrens.id', '=', 'children__details.id_children')
+            ->select('childrens.*', 'children__details.*')
+            ->whereNotNull('childrens.deleted_at')
+            ->whereNotNull('children__details.deleted_at')
+            ->orderBy('childrens.No_induk')
+            ->count();
+
         return response()->json([
-            'childrens' => $children
+            'childrens' => $children,
+            'childrennon' => $childrennon,
+            'childrenOut' => $childrenOut,
+            'countChildren' => $countChildren,
+            'countChildrennon' => $countChildrennon,
+            'countChildrenOut' => $countchildrenOut,
         ], 200);
     }
     /**
@@ -48,18 +106,29 @@ class ChildrenController extends Controller
 
     public function edit_anak($id)
     {
-
         $children = DB::table('childrens')
-            ->rightJoin('children__details', 'childrens.id', '=', 'children__details.id_children')
-            ->select('childrens.*', 'children__details.*')
+            ->join('children__details', 'childrens.id', '=', 'children__details.id_children')
+            ->join('children_detail_healths', 'childrens.id', '=', 'children_detail_healths.id_children')
+            ->select('childrens.*', 'children__details.*', 'children_detail_healths.*')
             ->where('childrens.deleted_at', null)
             ->where('children__details.deleted_at', null)
+            ->where('children_detail_healths.deleted_at', null)
+            ->where('childrens.id', '=', $id)
+            ->orderBy('childrens.No_induk')
+            ->get();
+
+        $childrenOut = DB::table('childrens')
+            ->join('children__details', 'childrens.id', '=', 'children__details.id_children')
+            ->join('children_detail_healths', 'childrens.id', '=', 'children_detail_healths.id_children')
+            ->select('childrens.*', 'children__details.*', 'children_detail_healths.*')
+            ->whereNotNull('childrens.deleted_at')
             ->where('childrens.id', '=', $id)
             ->orderBy('childrens.No_induk')
             ->get();
 
         return response()->json([
-            'children' => $children
+            'children' => $children,
+            'childrenOut' => $childrenOut
         ], 200);
     }
 
@@ -124,6 +193,16 @@ class ChildrenController extends Controller
         $children_detail->Alasan_yg_menitipkan = $request->input("Alasan_yg_menitipkan");
         $children_detail->save();
 
+        $children_biodata = new Children_detail_health();
+        $children_biodata->id_children = $children->id;
+        $children_biodata->Tinggi_Badan = $request->input("Tinggi_Badan");
+        $children_biodata->Berat_Badan = $request->input("Berat_Badan");
+        $children_biodata->Golongan_Darah = $request->input("Golongan_Darah");
+        $children_biodata->Alergi_Makanan = $request->input("Alergi_Makanan");
+        $children_biodata->Alergi_Minuman = $request->input("Alergi_Minuman");
+        $children_biodata->Alergi_Obat = $request->input("Alergi_Obat");
+        $children_biodata->save();
+
         return ['message' => 'children created'];
     }
 
@@ -147,6 +226,9 @@ class ChildrenController extends Controller
 
         $children_detail = Children_Detail::FindOrFail($id);
         $children_detail->update($request->all());
+
+        $children_biodata = Children_detail_health::FindOrFail($id);
+        $children_biodata->update($request->all());
     }
     /**
      * Display the specified resource.
@@ -194,6 +276,10 @@ class ChildrenController extends Controller
         $children_detail = Children_Detail::FindOrFail($id);
         //delete the children
         $children_detail->delete();
+
+        $children_biodata = Children_detail_health::FindOrFail($id);
+        //delete the children
+        $children_biodata->delete();
 
         return ['message' => 'children has been deleted'];
     }

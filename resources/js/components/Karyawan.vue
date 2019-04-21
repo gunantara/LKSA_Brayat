@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <div class="row mt-3" v-if="$gate.isAdmin()">
         <div class="col md-12">
-          <div class="card">
+          <div class="card card-warning">
             <div class="card-header">
               <h3 class="card-title">
                 <i class="fas fa-user-tie"></i>
@@ -11,7 +11,7 @@
               </h3>
 
               <div class="card-tools">
-                <button class="btn btn-success" @click="newModal()">
+                <button class="btn btn-primary" @click="newModal()">
                   Add New
                   <i class="fa fa-user-plus"></i>
                 </button>

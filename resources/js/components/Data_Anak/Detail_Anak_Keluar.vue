@@ -435,7 +435,7 @@ export default {
   },
   created() {
     axios.get(`api/edit-anak/${this.$route.params.idanak}`).then(response => {
-      this.form.fill(response.data.children[0]);
+      this.form.fill(response.data.childrenOut[0]);
     });
   }
 };

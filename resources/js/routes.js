@@ -4,7 +4,9 @@ import Profile_LKSA from './components/Profile_LKSA.vue'
 import User from './components/Users.vue'
 import Karyawan from './components/Karyawan.vue'
 import Data_Anak from './components/Data_Anak/Data_Anak.vue'
+import Data_Anak_Keluar from './components/Data_Anak/Data_Anak_Keluar.vue'
 import Detail_Anak from './components/Data_Anak/Detail_Anak.vue'
+import Detail_Anak_Keluar from './components/Data_Anak/Detail_Anak_Keluar.vue'
 import Tambah_Anak from './components/Data_Anak/Tambah_Anak.vue'
 import Edit_Anak from './components/Data_Anak/Edit_Anak.vue'
 import Inventaris from './components/Inventories.vue'
@@ -36,6 +38,10 @@ export const routes = [{
         component: Data_Anak
     },
     {
+        path: '/data-anak-keluar',
+        component: Data_Anak_Keluar
+    },
+    {
         path: '/tambah-anak',
         component: Tambah_Anak
     },
@@ -48,6 +54,11 @@ export const routes = [{
         path: '/detail-anak:idanak',
         name: 'detail_anak',
         component: Detail_Anak
+    },
+    {
+        path: '/anak-keluar:idanak',
+        name: 'anak_keluar',
+        component: Detail_Anak_Keluar
     },
     {
         path: '/inventaris',

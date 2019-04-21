@@ -11,8 +11,8 @@ class profile extends Model
 {
     protected $fillable = [
         'id_about',
-        'Photo',
-        'Title',
+        'Photo_profiles',
+        'Title_profile',
         'Profile'
     ];
     public static function boot()

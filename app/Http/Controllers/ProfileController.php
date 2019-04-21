@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\About;
 use App\profile;
 use App\profile_kegiatan;
+use App\Program;
+use App\Contact;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -22,6 +24,8 @@ class ProfileController extends Controller
             'abouts' => About::all(),
             'profile' => profile::all(),
             'profile_kegiatan' => profile_kegiatan::all(),
+            'program' => Program::all(),
+            'contact' => Contact::all()
         ]);
     }
 

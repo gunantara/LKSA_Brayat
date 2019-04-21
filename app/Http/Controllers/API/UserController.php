@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 
+
 class UserController extends Controller
 {
     /**
@@ -26,6 +27,16 @@ class UserController extends Controller
 
     public function index()
     {
+        /*
+        $users = DB::table('users')
+            ->select('users.*')
+            ->where('users.type', '!=', 'admin')
+            ->get();
+
+        return response()->json([
+            'users' => $users
+        ], 200);
+        */
         return User::all();
     }
     /**

@@ -16,8 +16,8 @@ class CreateProfileKegiatansTable extends Migration {
 		{
 			$table->increments('id');
 			$table->integer('id_about')->unsigned()->nullable()->index('id_about');
-			$table->string('Photo', 191);
-			$table->string('Title', 191);
+			$table->string('Photo_kegiatan', 191);
+			$table->string('Title_kegiatan', 191);
 			$table->string('Profile_kegiatan', 2000);
 			$table->timestamps();
 			$table->softDeletes()->index();

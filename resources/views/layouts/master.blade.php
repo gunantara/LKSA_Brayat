@@ -27,6 +27,12 @@
                 </li>
             </ul>
 
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/" target="_blank"><i class="fas fa-home"></i></a>
+                </li>
+            </ul>
+
             <!-- SEARCH FORM -->
             <form class="form-inline ml-3">
                 <div class="input-group input-group-sm">
@@ -38,6 +44,7 @@
                     </div>
                 </div>
             </form>
+            
         </nav>
         <!-- /.navbar -->
 
@@ -113,6 +120,14 @@
                             </ul>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
+                                    <router-link to="/data-anak-keluar" class="nav-link">
+                                        <i class="fas fa-archive nav-icon"></i>
+                                        <p>Arsip Anak</p>
+                                    </router-link>
+                                </li>
+                            </ul>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
                                     <router-link to="/data-karyawan" class="nav-link">
                                         <i class="fas fa-user-tie nav-icon"></i>
                                         <p>Data Karyawan</p>
@@ -135,7 +150,7 @@
                                     </router-link>
                                 </li>
                             </ul>
-                            
+
                         </li>
                         <li class="nav-item has-treeview menu-open">
                             <a href="#" class="nav-link ">
@@ -220,4 +235,4 @@
 </body>
 
 
-</html> 
+</html>

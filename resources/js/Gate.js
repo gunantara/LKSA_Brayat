@@ -9,6 +9,6 @@ export default class Gate {
     }
 
     isUser() {
-        return this.user.type === 'user';
+        return this.user.type === 'pengelola';
     }
 }

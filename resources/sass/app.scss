@@ -1,4 +1,3 @@
-
 // Fonts
 @import url('https://fonts.googleapis.com/css?family=Nunito');
 
@@ -16,12 +15,11 @@ $fa-font-path:"../webfonts";
 
 
 .navbar-laravel {
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
 .router-link-exact-active {
-  background-color: #2980b9;
-  color: #fff !important;
+    background-color: #2980b9;
+    color: #fff !important;
 }
-

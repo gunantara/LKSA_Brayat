@@ -48,4 +48,9 @@ class Children extends Model
     {
         return $this->hasOne(Children_Detail::class, 'id_children')->withTrashed();
     }
+
+    public function children__healts()
+    {
+        return $this->hasOne(Children_detail_health::class, 'id_children')->withTrashed();
+    }
 }

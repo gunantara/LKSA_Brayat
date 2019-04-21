@@ -16,8 +16,8 @@ class About extends Model
         'id_user',
         'Logo_LKSA',
         'Nama_LKSA',
-        'Photo',
-        'Title',
+        'Photo_about',
+        'Title_about',
         'Quote',
     ];
 
@@ -36,9 +36,5 @@ class About extends Model
     public function profile_kegiatan()
     {
         return $this->hasMany(profile_kegiatan::class, 'id_about')->withTrashed();
-    }
-    public function profile_sejarah()
-    {
-        return $this->hasMany(profile_sejarah::class, 'id_about')->withTrashed();
     }
 }
