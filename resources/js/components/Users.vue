@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <div class="row mt-3" v-if="$gate.isAdmin()">
         <div class="col md-12">
-          <div class="card card-info">
+          <div class="card card-info card-outline">
             <div class="card-header">
               <h3 class="card-title">
                 <i class="fas fa-users"></i>
@@ -12,7 +12,7 @@
 
               <div class="card-tools">
                 <button class="btn btn-primary" @click="newModal()">
-                  Add New
+                  Tambah Baru
                   <i class="fa fa-user-plus"></i>
                 </button>
               </div>
@@ -27,7 +27,7 @@
                     <th>Email</th>
                     <th>Type</th>
                     <th>Ditambahkan pada</th>
-                    <th>Action</th>
+                    <th>Ubah/Hapus</th>
                   </tr>
                   <tr v-for="user in users" :key="user.id">
                     <td>{{user.id}}</td>
@@ -36,7 +36,7 @@
                     <td>{{user.type | Uptext}}</td>
                     <td>{{user.created_at | myDate}}</td>
                     <td>
-                      <button type="button" class="btn btn-primary btn-sm" @click="editModal(user)">
+                      <button type="button" class="btn btn-success btn-sm" @click="editModal(user)">
                         <i class="fa fa-edit"></i>
                       </button>
                       <button
@@ -214,7 +214,7 @@
     </div>
   </section>
 </template>
-
+ 
 <script>
 export default {
   //Object of data User

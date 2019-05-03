@@ -82,7 +82,17 @@
                             <!-- Add the bg color to the header using any of the bg-* classes -->
                             <div class="widget-user-header text-white">
                               <div class="text-center">
-                                <div class="widget-user-image-anak">
+                                <div
+                                  v-if="this.form.Photo_anak === ''"
+                                  class="widget-user-image-anak"
+                                >
+                                  <img
+                                    class="profile-user-img img-fluid img-circle"
+                                    src="img/photo_anak/girl.png"
+                                    alt="User Avatar"
+                                  >
+                                </div>
+                                <div v-else class="widget-user-image-anak">
                                   <img
                                     class="profile-user-img img-fluid img-circle"
                                     :src="getProfilePhoto()"
@@ -896,6 +906,103 @@
           </div>
           <!-- /.card -->
         </div>
+        <!-- Modal Riwayat Pendidikan -->
+        <div
+          class="modal fade"
+          id="addNewPendidikan"
+          tabindex="-1"
+          role="dialog"
+          aria-labelledby="addNewLabel"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5
+                  v-show="!editmode"
+                  class="modal-title"
+                  id="addNewLabel"
+                >Tambah Riwayat Pendidikan</h5>
+                <h5 v-show="editmode" class="modal-title" id="addNewLabel">Ubah Riwayat Pendidikan</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <form
+                @submit.prevent="editmode ? updateRiwayatPendidikan() :createRiwayatPendidikan()"
+              >
+                <div class="modal-body"></div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-danger" data-dismiss="modal">Tutup</button>
+                  <button v-show="editmode" type="submit" class="btn btn-success">Ubah</button>
+                  <button v-show="!editmode" type="submit" class="btn btn-primary">Tambah</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <!-- Modal Saudara Anak -->
+        <div
+          class="modal fade"
+          id="addNewSaudara"
+          tabindex="-1"
+          role="dialog"
+          aria-labelledby="addNewLabel"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 v-show="!editmode" class="modal-title" id="addNewLabel">Tambah Detail Saudara</h5>
+                <h5 v-show="editmode" class="modal-title" id="addNewLabel">Ubah Detail Saudara</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <form
+                @submit.prevent="editmode ? updateRiwayatPendidikan() :createRiwayatPendidikan()"
+              >
+                <div class="modal-body"></div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-danger" data-dismiss="modal">Tutup</button>
+                  <button v-show="editmode" type="submit" class="btn btn-success">Ubah</button>
+                  <button v-show="!editmode" type="submit" class="btn btn-primary">Tambah</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <!-- Modal Document Anak -->
+        <div
+          class="modal fade"
+          id="addNewDocument"
+          tabindex="-1"
+          role="dialog"
+          aria-labelledby="addNewLabel"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 v-show="!editmode" class="modal-title" id="addNewLabel">Tambah Detail Document</h5>
+                <h5 v-show="editmode" class="modal-title" id="addNewLabel">Ubah Detail Document</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <form
+                @submit.prevent="editmode ? updateRiwayatPendidikan() :createRiwayatPendidikan()"
+              >
+                <div class="modal-body"></div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-danger" data-dismiss="modal">Tutup</button>
+                  <button v-show="editmode" type="submit" class="btn btn-success">Ubah</button>
+                  <button v-show="!editmode" type="submit" class="btn btn-primary">Tambah</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -907,6 +1014,7 @@ export default {
     return {
       editmode: false,
       childrens: {},
+      children_education: {},
       userauth: new Form({
         id: "",
         name: ""
@@ -963,6 +1071,27 @@ export default {
         Alergi_Minuman: "",
         Alergi_Obat: ""
       }),
+      form_education: new Form({
+        id_children: "",
+        Tahun_Ajaran: "",
+        Nama_Sekolah: "",
+        Alamat_Sekolah: ""
+      }),
+      form_detail_document: new Form({
+        id_children: "",
+        Document: "",
+        Asli_Fotocopy: "",
+        Keterangan: ""
+      }),
+      form_other_family: new Form({
+        id_children: "",
+        Nama: "",
+        Tempat_lahir: "",
+        Tgl_lahir: "",
+        Sekolah: "",
+        Kelas: "",
+        Keterangan: ""
+      }),
       options: {
         format: "YYYY/MM/DD",
         useCurrent: false
@@ -1003,6 +1132,41 @@ export default {
           : "img/photo_anak/" + this.form.Photo_anak;
       return photo;
     },
+    newModalRiwayatPendidikan() {
+      this.editmode = false;
+      this.form_education.reset();
+      $("#addNewPendidikan").modal("show");
+    },
+    editModalRiwayatPendidikan(edu) {
+      this.editmode = true;
+      this.form_education.reset();
+      $("#addNewPendidikan").modal("show");
+      this.form_education.fill(edu);
+    },
+    newModalSaudaraAnak() {
+      this.editmode = false;
+      this.form_other_family.reset();
+      $("#addNewSaudara").modal("show");
+    },
+    editModalSaudaraAnak(fam) {
+      this.editmode = true;
+      this.form_other_family.reset();
+      $("#addNewSaudara").modal("show");
+      this.form_other_family.fill(fam);
+    },
+    newModalDocument() {
+      this.editmode = false;
+      this.form_detail_document.reset();
+      $("#addNewDocument").modal("show");
+    },
+    editModalSaudaraAnak(fam) {
+      this.editmode = true;
+      this.form_detail_document.reset();
+      $("#addNewDocument").modal("show");
+      this.form_detail_document.fill(fam);
+    },
+    updateRiwayatPendidikan() {},
+    createRiwayatPendidikan() {},
     updateProfile(e) {
       let file = e.target.files[0];
       let reader = new FileReader();

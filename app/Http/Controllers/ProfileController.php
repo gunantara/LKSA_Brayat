@@ -10,6 +10,7 @@ use App\Contact;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Galery;
 
 class ProfileController extends Controller
 {
@@ -20,12 +21,18 @@ class ProfileController extends Controller
      */
     public function index()
     {
+        $detail_galery = DB::table('detail_galeries')
+            ->select('detail_galeries.*')
+            ->get();
+
         return view('index', [
             'abouts' => About::all(),
             'profile' => profile::all(),
             'profile_kegiatan' => profile_kegiatan::all(),
             'program' => Program::all(),
-            'contact' => Contact::all()
+            'contact' => Contact::all(),
+            'galery' => Galery::all(),
+            'detail_galery' => $detail_galery,
         ]);
     }
 

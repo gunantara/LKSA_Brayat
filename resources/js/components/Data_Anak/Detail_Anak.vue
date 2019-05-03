@@ -37,8 +37,49 @@
             <!-- /.card-body -->
           </div>
           <!-- /.card -->
+          <!-- Biodata Anak Box -->
+          <div class="card card-warning card-outline">
+            <div class="card-header">
+              <h3 class="card-title">Biodata Anak</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <strong>
+                <i class="fas fa-text-height mr-1"></i> Tinggi Badan
+              </strong>
+              <a class="float-right">{{this.form.Tinggi_Badan | Uptext}} Cm</a>
+              <hr>
+              <strong>
+                <i class="fas fa-weight mr-1"></i>
+                <span>Berat Badan</span>
+              </strong>
+              <a class="float-right">{{this.form.Berat_Badan | Uptext}} Kg</a>
+              <hr>
+              <strong>
+                <i class="fa fa-tint mr-1"></i> Golongan Darah
+              </strong>
+              <p class="float-right">{{this.form.Golongan_Darah | Uptext}}</p>
+              <hr>
+              <strong>
+                <i class="fas fa-map-pin mr-1"></i>
+                <span>Alergi</span>
+              </strong>
+              <p class="text-muted">
+                <b>Makanan :</b>
+                <span class="float-right">{{this.form.Alergi_Makanan | Uptext}}</span>
+                <br>
+                <b>Minuman :</b>
+                <span class="float-right">{{this.form.Alergi_Minuman| Uptext}}</span>
+                <br>
+                <b>Obat :</b>
+                <span class="float-right">{{this.form.Alergi_Obat | Uptext}}</span>
+              </p>
+            </div>
+            <!-- /.card-body -->
+          </div>
+          <!-- /.card -->
           <!-- Tentang Anak Box -->
-          <div class="card card-success">
+          <div class="card card-success card-outline">
             <div class="card-header">
               <h3 class="card-title">Tentang Anak</h3>
             </div>
@@ -90,6 +131,9 @@
                   <a class="nav-link" href="#Data_Detail_Ibu" data-toggle="tab">Detail Ibu</a>
                 </li>
                 <li class="nav-item">
+                  <a class="nav-link" href="#Detail_Saudara_Anak" data-toggle="tab">Detail Saudara</a>
+                </li>
+                <li class="nav-item">
                   <a class="nav-link" href="#Data_Permasalahan" data-toggle="tab">Masalah Anak</a>
                 </li>
               </ul>
@@ -97,7 +141,7 @@
             <!-- /.card-header -->
             <div class="card-body">
               <div class="tab-content">
-                <!-- /.tab-pane -->
+                <!-- /.tab-pane Detail Ayah-->
                 <div class="active tab-pane" id="Data_Detail_Ayah">
                   <!-- The timeline -->
                   <ul class="timeline timeline-inverse">
@@ -206,7 +250,7 @@
                     </li>
                   </ul>
                 </div>
-                <!-- /.tab-pane -->
+                <!-- /.tab-pane Detail Ibu-->
                 <div class="tab-pane" id="Data_Detail_Ibu">
                   <!-- The timeline -->
                   <ul class="timeline timeline-inverse">
@@ -289,8 +333,36 @@
                     </li>
                   </ul>
                 </div>
-                <!-- /.tab-pane -->
-                <!-- /.tab-pane -->
+                <!-- /.tab-pane Saudara Anak-->
+                <div class="tab-pane" id="Detail_Saudara_Anak">
+                  <!-- The timeline -->
+                  <ul class="timeline timeline-inverse">
+                    <!-- timeline time label -->
+                    <li class="time-label">
+                      <span class="bg-success">Diupdate : {{this.form.updated_at | myDate}}</span>
+                    </li>
+                    <!-- /.timeline-label -->
+                    <!-- timeline item -->
+                    <li v-for="other_families in children_other_families" :key="other_families.id">
+                      <i class="fa fa-user bg-warning"></i>
+                      <div class="timeline-item">
+                        <h3 class="timeline-header">
+                          <strong>Keterangan : {{other_families.Keterangan |Uptext}}</strong>
+                        </h3>
+                        <div class="timeline-body">Nama : {{other_families.Nama| Uptext}}</div>
+                        <div
+                          class="timeline-body"
+                        >Tanggal Lahir : {{other_families.Tgl_lahir| myDate}}</div>
+                        <div class="timeline-body">Sekolah : {{other_families.Sekolah| Uptext}}</div>
+                        <div class="timeline-body">Kelas : {{other_families.Kelas| Uptext}}</div>
+                      </div>
+                    </li>
+                    <li>
+                      <i class="fa fa-clock-o bg-gray"></i>
+                    </li>
+                  </ul>
+                </div>
+                <!-- /.tab-pane Permasalahan Anak -->
                 <div class="tab-pane" id="Data_Permasalahan">
                   <!-- The timeline -->
                   <ul class="timeline timeline-inverse">
@@ -327,12 +399,64 @@
                     </li>
                   </ul>
                 </div>
-                <!-- /.tab-pane -->
               </div>
               <!-- /.tab-content -->
             </div>
             <!-- /.card-body -->
           </div>
+          <div class="card card-success">
+            <div class="card-header">
+              <h3 class="card-title">Riwayat Pendidikan Anak</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body p-0">
+              <table class="table table-striped">
+                <tbody>
+                  <tr>
+                    <th>Tanggal Masuk</th>
+                    <th>Nama Sekolah</th>
+                    <th>Alamat Sekolah</th>
+                  </tr>
+                  <tr v-for="edu in children_education" :key="edu.id">
+                    <td>{{edu.Tahun_Ajaran | myDate}}</td>
+                    <td>{{edu.Nama_Sekolah | Uptext}}</td>
+                    <td>{{edu.Alamat_Sekolah | Uptext}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <!-- /.card-body -->
+          </div>
+          <div class="card card-danger">
+            <div class="card-header">
+              <h3 class="card-title">Detail Document Anak</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body p-0">
+              <table class="table table-striped">
+                <tbody>
+                  <tr>
+                    <th>Asli/Photo Copy</th>
+                    <th>Keterangan Document</th>
+                    <th>Document</th>
+                  </tr>
+                  <tr v-for="doc in children_detail_document" :key="doc.id">
+                    <td>{{doc.Asli_Fotocopy | Uptext}}</td>
+                    <td>{{doc.Keterangan | Uptext}}</td>
+                    <td>
+                      <img
+                        class="profile-user-img img-fluid"
+                        :src="'img/document/'+doc.Document"
+                        alt="User profile picture"
+                      >
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <!-- /.card-body -->
+          </div>
+
           <!-- /.nav-tabs-custom -->
         </div>
         <!-- /.col -->
@@ -343,6 +467,8 @@
   </section>
 </template>
 
+<style>
+</style>
 
 <script>
 export default {
@@ -353,6 +479,9 @@ export default {
         name: ""
       }),
       children: {},
+      children_education: {},
+      children_other_families: {},
+      children_detail_document: {},
       form: new Form({
         //Detail Anak
         id: "",
@@ -396,7 +525,15 @@ export default {
         Perumahan: "",
         Latar_Belakang_Permasalahan: "",
         Alamat_yg_menitipkan: "",
-        Alasan_yg_menitipkan: ""
+        Alasan_yg_menitipkan: "",
+
+        //Biodata Anak
+        Tinggi_Badan: "",
+        Berat_Badan: "",
+        Golongan_Darah: "",
+        Alergi_Makanan: "",
+        Alergi_Minuman: "",
+        Alergi_Obat: ""
       }),
       options: {
         format: "YYYY/MM/DD",
@@ -415,25 +552,41 @@ export default {
           : "img/photo_anak/" + this.form.Photo_anak;
       return photo;
     },
-    updateProfile(e) {
-      let file = e.target.files[0];
-      let reader = new FileReader();
-      let limit = 1024 * 1024 * 2;
-      if (file["size"] > limit) {
-        swal.fire({
-          type: "error",
-          title: "Oops...",
-          text: "You are uploading a large file"
-        });
-        return false;
+    loadRiwayatpendidikan() {
+      if (this.$gate.isAdmin()) {
+        axios
+          .get(`api/edit-anak/${this.$route.params.idanak}`)
+          .then(
+            ({ data }) => (this.children_education = data.children_education)
+          );
       }
-      reader.onloadend = file => {
-        this.form.Photo_anak = reader.result;
-      };
-      reader.readAsDataURL(file);
+    },
+    loadSaudaraAnak() {
+      if (this.$gate.isAdmin()) {
+        axios
+          .get(`api/edit-anak/${this.$route.params.idanak}`)
+          .then(
+            ({ data }) =>
+              (this.children_other_families =
+                data.children_detail_other_families)
+          );
+      }
+    },
+    loadDetailDocument() {
+      if (this.$gate.isAdmin()) {
+        axios
+          .get(`api/edit-anak/${this.$route.params.idanak}`)
+          .then(
+            ({ data }) =>
+              (this.children_detail_document = data.children_detail_document)
+          );
+      }
     }
   },
   created() {
+    this.loadRiwayatpendidikan();
+    this.loadSaudaraAnak();
+    this.loadDetailDocument();
     axios.get(`api/edit-anak/${this.$route.params.idanak}`).then(response => {
       this.form.fill(response.data.children[0]);
     });

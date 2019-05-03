@@ -7,7 +7,7 @@
           <div class="small-box bg-danger">
             <div class="inner">
               <h3>{{jumlahAnakKeluar}}</h3>
-              <p>Anak Panti yang keluar</p>
+              <p>Arsip Anak</p>
             </div>
             <div class="icon">
               <i class="fas fa-child"></i>
@@ -16,7 +16,7 @@
         </div>
         <div class="col-12">
           <!-- card Data Anak Panti-->
-          <div class="card card-danger">
+          <div class="card card-danger card-outline">
             <div class="card-header">
               <h3 class="card-title">
                 <i class="fas fa-child"></i>
@@ -31,14 +31,14 @@
                     <th>No. Induk</th>
                     <th>Nama Lengkap</th>
                     <th>Tempat/Tanggal Lahir</th>
-                    <th>Alamat</th>
+                    <th>Keluar Panti</th>
                     <th>Detail</th>
                   </tr>
                   <tr v-for="child in childrenOut" :key="child.id">
                     <td>{{child.No_induk }}</td>
                     <td>{{child.Nama_Lengkap | Uptext}}</td>
                     <td>{{child.Tempat_lahir | Uptext}} , {{child.Tgl_lahir | myDate}}</td>
-                    <td>{{child.Alamat | Uptext}}</td>
+                    <td>{{child.deleted_at | myDate}}</td>
                     <td>
                       <router-link :to="`anak-keluar${child.id_children}`">
                         <button type="button" class="btn btn-outline-warning btn-sm">Lihat Detail</button>

@@ -1,6 +1,7 @@
 import AdminHome from './components/Dashboard.vue'
 import Dashboard from './components/Dashboard.vue'
 import Profile_LKSA from './components/Profile_LKSA.vue'
+import Galeri from './components/Galeri.vue'
 import User from './components/Users.vue'
 import Karyawan from './components/Karyawan.vue'
 import Data_Anak from './components/Data_Anak/Data_Anak.vue'
@@ -12,7 +13,7 @@ import Edit_Anak from './components/Data_Anak/Edit_Anak.vue'
 import Inventaris from './components/Inventories.vue'
 import Profile from './components/Profile.vue'
 import Developer from './components/Developer.vue'
-
+ 
 export const routes = [{
         path: '/home',
         component: AdminHome
@@ -24,6 +25,10 @@ export const routes = [{
     {
         path: '/profile-lksa',
         component: Profile_LKSA
+    },
+    {
+        path: '/galeri',
+        component: Galeri
     },
     {
         path: '/pengguna',

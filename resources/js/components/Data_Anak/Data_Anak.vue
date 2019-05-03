@@ -28,7 +28,7 @@
         </div>
         <div class="col-12">
           <!-- card Data Anak Panti-->
-          <div class="card card-info">
+          <div class="card card-info card-outline">
             <div class="card-header">
               <h3 class="card-title">
                 <i class="fas fa-child"></i>
@@ -37,7 +37,7 @@
               <div class="card-tools">
                 <router-link to="/tambah-anak" class="nav-link">
                   <button class="btn btn-primary">
-                    Add New
+                    Tambah Baru
                     <i class="fa fa-user-plus"></i>
                   </button>
                 </router-link>
@@ -51,7 +51,7 @@
                     <th>No. Induk</th>
                     <th>Nama Lengkap</th>
                     <th>Tempat/Tanggal Lahir</th>
-                    <th>Alamat</th>
+                    <th>Masuk Panti</th>
                     <th>Detail</th>
                     <th>Modify</th>
                   </tr>
@@ -59,7 +59,7 @@
                     <td>{{child.No_induk }}</td>
                     <td>{{child.Nama_Lengkap | Uptext}}</td>
                     <td>{{child.Tempat_lahir | Uptext}} , {{child.Tgl_lahir | myDate}}</td>
-                    <td>{{child.Alamat | Uptext}}</td>
+                    <td>{{child.Tgl_masuk_PA | myDate}}</td>
                     <td>
                       <router-link :to="`detail-anak${child.id_children}`">
                         <button type="button" class="btn btn-outline-warning btn-sm">Lihat Detail</button>
@@ -67,7 +67,7 @@
                     </td>
                     <td>
                       <router-link :to="`edit-anak${child.id_children}`">
-                        <button type="button" class="btn btn-primary btn-sm">
+                        <button type="button" class="btn btn-success btn-sm">
                           <i class="fa fa-edit"></i>
                         </button>
                       </router-link>
@@ -89,7 +89,7 @@
           <!-- /.card Data Anak Panti-->
 
           <!-- card Data Anak Non Panti-->
-          <div class="card card-success">
+          <div class="card card-success card-outline">
             <div class="card-header">
               <h3 class="card-title">
                 <i class="fas fa-child"></i>
@@ -104,7 +104,7 @@
                     <th>No. Induk</th>
                     <th>Nama Lengkap</th>
                     <th>Tempat/Tanggal Lahir</th>
-                    <th>Alamat</th>
+                    <th>Masuk Panti</th>
                     <th>Detail</th>
                     <th>Modify</th>
                   </tr>
@@ -112,7 +112,7 @@
                     <td>{{child.No_induk }}</td>
                     <td>{{child.Nama_Lengkap | Uptext}}</td>
                     <td>{{child.Tempat_lahir | Uptext}} , {{child.Tgl_lahir | myDate}}</td>
-                    <td>{{child.Alamat | Uptext}}</td>
+                    <td>{{child.Tgl_masuk_PA | myDate}}</td>
                     <td>
                       <router-link :to="`detail-anak${child.id_children}`">
                         <button type="button" class="btn btn-outline-warning btn-sm">Lihat Detail</button>
@@ -120,7 +120,7 @@
                     </td>
                     <td>
                       <router-link :to="`edit-anak${child.id_children}`">
-                        <button type="button" class="btn btn-primary btn-sm">
+                        <button type="button" class="btn btn-success btn-sm">
                           <i class="fa fa-edit"></i>
                         </button>
                       </router-link>

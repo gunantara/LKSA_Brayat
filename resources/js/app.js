@@ -82,7 +82,6 @@ Vue.filter('Uptext', function (value) {
     return value.charAt(0).toUpperCase() + value.slice(1)
 })
 
-
 //adding filter for timestamp
 Vue.filter('myDate', function (date) {
     return moment(date).locale('id').format('LL');

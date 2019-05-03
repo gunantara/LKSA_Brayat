@@ -38,7 +38,7 @@
           </div>
           <!-- /.card -->
           <!-- Tentang Anak Box -->
-          <div class="card card-success">
+          <div class="card card-success card-outline">
             <div class="card-header">
               <h3 class="card-title">Tentang Anak</h3>
             </div>
@@ -73,6 +73,48 @@
                 <i class="fas fa-file-alt"></i> Keterangan Anak
               </strong>
               <p class="text-muted">{{this.form.Keterangan_anak | Uptext}}</p>
+            </div>
+            <!-- /.card-body -->
+          </div>
+          <!-- /.card -->
+
+          <!-- Biodata Anak Box -->
+          <div class="card card-warning card-outline">
+            <div class="card-header">
+              <h3 class="card-title">Biodata Anak</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <strong>
+                <i class="fas fa-text-height mr-1"></i> Tinggi Badan
+              </strong>
+              <a class="float-right">{{this.form.Tinggi_Badan | Uptext}} Cm</a>
+              <hr>
+              <strong>
+                <i class="fas fa-weight mr-1"></i>
+                <span>Berat Badan</span>
+              </strong>
+              <a class="float-right">{{this.form.Berat_Badan | Uptext}} Kg</a>
+              <hr>
+              <strong>
+                <i class="fa fa-tint mr-1"></i> Golongan Darah
+              </strong>
+              <p class="float-right">{{this.form.Golongan_Darah | Uptext}}</p>
+              <hr>
+              <strong>
+                <i class="fas fa-map-pin mr-1"></i>
+                <span>Alergi</span>
+              </strong>
+              <p class="text-muted">
+                <b>Makanan :</b>
+                <span class="float-right">{{this.form.Alergi_Makanan | Uptext}}</span>
+                <br>
+                <b>Minuman :</b>
+                <span class="float-right">{{this.form.Alergi_Minuman| Uptext}}</span>
+                <br>
+                <b>Obat :</b>
+                <span class="float-right">{{this.form.Alergi_Obat | Uptext}}</span>
+              </p>
             </div>
             <!-- /.card-body -->
           </div>
@@ -343,7 +385,7 @@
   </section>
 </template>
 
-
+ 
 <script>
 export default {
   data() {
@@ -396,7 +438,15 @@ export default {
         Perumahan: "",
         Latar_Belakang_Permasalahan: "",
         Alamat_yg_menitipkan: "",
-        Alasan_yg_menitipkan: ""
+        Alasan_yg_menitipkan: "",
+
+        //Biodata Anak
+        Tinggi_Badan: "",
+        Berat_Badan: "",
+        Golongan_Darah: "",
+        Alergi_Makanan: "",
+        Alergi_Minuman: "",
+        Alergi_Obat: ""
       }),
       options: {
         format: "YYYY/MM/DD",

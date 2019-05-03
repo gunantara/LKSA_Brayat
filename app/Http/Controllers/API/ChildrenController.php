@@ -117,6 +117,21 @@ class ChildrenController extends Controller
             ->orderBy('childrens.No_induk')
             ->get();
 
+        $children_detail_educations = DB::table('children_detail_educations')
+            ->select('children_detail_educations.*')
+            ->where('children_detail_educations.id_children', '=', $id)
+            ->get();
+
+        $children_detail_document = DB::table('children_detail_documents')
+            ->select('children_detail_documents.*')
+            ->where('children_detail_documents.id_children', '=', $id)
+            ->get();
+
+        $children_detail_other_families = DB::table('children__other__families')
+            ->select('children__other__families.*')
+            ->where('children__other__families.id_children', '=', $id)
+            ->get();
+
         $childrenOut = DB::table('childrens')
             ->join('children__details', 'childrens.id', '=', 'children__details.id_children')
             ->join('children_detail_healths', 'childrens.id', '=', 'children_detail_healths.id_children')
@@ -128,7 +143,10 @@ class ChildrenController extends Controller
 
         return response()->json([
             'children' => $children,
-            'childrenOut' => $childrenOut
+            'children_education' => $children_detail_educations,
+            'children_detail_other_families' => $children_detail_other_families,
+            'children_detail_document' => $children_detail_document,
+            'childrenOut' => $childrenOut,
         ], 200);
     }
 

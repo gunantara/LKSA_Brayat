@@ -1,7 +1,7 @@
 <template>
   <section class="content">
     <div class="container-fluid">
-      <div class="row mt-2" v-if="$gate.isAdmin()">
+      <div class="row mt-2">
         <div class="col md-12">
           <!-- general form elements -->
 

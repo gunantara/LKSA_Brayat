@@ -49,8 +49,18 @@ class Children extends Model
         return $this->hasOne(Children_Detail::class, 'id_children')->withTrashed();
     }
 
-    public function children__healts()
+    public function children__educations()
     {
-        return $this->hasOne(Children_detail_health::class, 'id_children')->withTrashed();
+        return $this->hasMany(Children_detail_education::class, 'id_children')->withTrashed();
+    }
+
+    public function children__detaildocument()
+    {
+        return $this->hasMany(Children_detail_document::class, 'id_children')->withTrashed();
+    }
+
+    public function children__other_family()
+    {
+        return $this->hasMany(Children_Other_Family::class, 'id_children')->withTrashed();
     }
 }

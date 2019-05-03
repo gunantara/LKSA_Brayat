@@ -110,7 +110,7 @@ class EmployeeController extends Controller
     {
         //delete the user
         $employee = Employee::FindOrFail($id);
-        $employee->delete();
+        $employee->forceDelete();
         return ['message' => 'user deleted'];
     }
 }

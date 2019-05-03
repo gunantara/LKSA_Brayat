@@ -22,7 +22,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::apiResource('user', 'API\UserController');
 Route::apiResource('employee', 'API\EmployeeController');
 Route::apiResource('children', 'API\ChildrenController');
+Route::apiResource('children_education', 'API\Education_Controller');
+Route::apiResource('children_document', 'API\Document_Controller');
+Route::apiResource('children_family', 'API\Other_Family__Controller');
 Route::get('/edit-anak/{id}', 'API\ChildrenController@edit_anak');
+
 
 //api for dashboard admin
 Route::get('banyak_users', 'API\Dashboardcontroller@banyak_User');
@@ -35,3 +39,4 @@ Route::put('profile', 'API\UserController@UpdateProfile');
 
 //api for profile LKSA
 Route::apiResource('profile_lksa', 'API\ProfileController');
+Route::apiResource('galeri', 'API\Galeri_Controller');

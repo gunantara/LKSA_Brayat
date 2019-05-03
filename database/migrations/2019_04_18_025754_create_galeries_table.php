@@ -3,7 +3,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateGaleriesTable extends Migration {
+class CreateGaleriesTable extends Migration
+{
 
 	/**
 	 * Run the migrations.
@@ -12,11 +13,10 @@ class CreateGaleriesTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('galeries', function(Blueprint $table)
-		{
+		Schema::create('galeries', function (Blueprint $table) {
 			$table->increments('id');
 			$table->integer('id_user')->unsigned()->nullable()->index('id_user');
-			$table->string('Kegiatan', 191);
+			$table->string('Kegiatan', 191)->nullable();
 			$table->timestamps();
 			$table->softDeletes()->index();
 		});
@@ -32,5 +32,4 @@ class CreateGaleriesTable extends Migration {
 	{
 		Schema::drop('galeries');
 	}
-
 }

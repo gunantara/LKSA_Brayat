@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <div class="row mt-3" v-if="$gate.isAdmin()">
         <div class="col md-12">
-          <div class="card card-warning">
+          <div class="card card-warning card-outline">
             <div class="card-header">
               <h3 class="card-title">
                 <i class="fas fa-user-tie"></i>
@@ -12,7 +12,7 @@
 
               <div class="card-tools">
                 <button class="btn btn-primary" @click="newModal()">
-                  Add New
+                  Tambah Baru
                   <i class="fa fa-user-plus"></i>
                 </button>
               </div>
@@ -25,13 +25,13 @@
                     <th>Nama Lengkap</th>
                     <th>NIK</th>
                     <th>Jenis Kelamin</th>
-                    <th>Tempat / Tanggal Lahir</th>
+                    <th>Tempat/Tanggal Lahir</th>
                     <th>Jabatan</th>
                     <th>Status Kepegawaian</th>
                     <th>Mulai Bekerja</th>
-                    <th>Pendidikan Terakhir</th>
-                    <th>Pernah Mengikuti Pelatihan</th>
-                    <th>Modify</th>
+                    <th>Pendidikan</th>
+                    <th>Mengikuti Pelatihan</th>
+                    <th>Ubah/Hapus</th>
                   </tr>
                   <tr v-for="employee in employees" :key="employee.id">
                     <td>{{employee.Nama_lengkap | Uptext}}</td>
@@ -46,7 +46,7 @@
                     <td>
                       <button
                         type="button"
-                        class="btn btn-primary btn-sm"
+                        class="btn btn-success btn-sm"
                         @click="editModal(employee)"
                       >
                         <i class="fa fa-edit"></i>
@@ -361,7 +361,7 @@ export default {
           $("#addNew").modal("hide");
           toast.fire({
             type: "success",
-            title: "User created successfully"
+            title: "Pegawai baru berhasil ditambahkan"
           });
           this.$Progress.finish();
         })

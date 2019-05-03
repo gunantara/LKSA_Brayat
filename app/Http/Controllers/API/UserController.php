@@ -109,7 +109,7 @@ class UserController extends Controller
     {
         $user = User::FindOrFail($id);
         //delete the user
-        $user->delete();
+        $user->forceDelete();
         return ['message' => 'user deleted'];
     }
     public function UpdateProfile(Request $request)
