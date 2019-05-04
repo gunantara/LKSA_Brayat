@@ -61,4 +61,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(About::class, 'id_user')->withTrashed();
     }
+    public function inventory()
+    {
+        return $this->hasMany(Inventory::class, 'id_user')->withTrashed();
+    }
 }

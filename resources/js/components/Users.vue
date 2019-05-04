@@ -2,6 +2,21 @@
   <section class="content">
     <div class="container-fluid">
       <div class="row mt-3" v-if="$gate.isAdmin()">
+        <!-- Widget Jumlah Pengguna -->
+        <div class="col-lg-3 col-6">
+          <div class="small-box bg-info">
+            <div class="inner">
+              <h3>{{getJumlahUser}}</h3>
+              <p>Jumlah Pengguna</p>
+            </div>
+            <div class="icon">
+              <i class="fa fa-user-tie"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-0" v-if="$gate.isAdmin()">
+        <!-- Tabel Pengguna -->
         <div class="col md-12">
           <div class="card card-info card-outline">
             <div class="card-header">
@@ -9,7 +24,6 @@
                 <i class="fas fa-users"></i>
                 Data Pengguna
               </h3>
-
               <div class="card-tools">
                 <button class="btn btn-primary" @click="newModal()">
                   Tambah Baru
@@ -56,7 +70,6 @@
           <!-- /.card -->
         </div>
       </div>
-
       <!-- Modal -->
       <div
         class="modal fade"
@@ -236,10 +249,14 @@ export default {
   },
   mounted() {
     this.$store.dispatch("allEmployee");
+    this.$store.dispatch("AllJumlah_Users");
   },
   computed: {
     getEmployee() {
       return this.$store.getters.getEmployee;
+    },
+    getJumlahUser() {
+      return this.$store.getters.getJumlahUser;
     }
   },
   methods: {
@@ -247,6 +264,11 @@ export default {
       if (this.$gate.isAdmin()) {
         axios.get("api/user").then(({ data }) => (this.users = data));
         this.$store.dispatch("allEmployee");
+      }
+    },
+    loadJumlah() {
+      if (this.$gate.isAdmin()) {
+        this.$store.dispatch("AllJumlah_Users");
       }
     },
     getResults(page = 1) {
@@ -330,8 +352,10 @@ export default {
   },
   created() {
     this.loadUser();
+    this.loadJumlah();
     Fire.$on("AfterCreated", () => {
       this.loadUser();
+      this.loadJumlah();
     });
     //setInterval(() =>  this.loadUser(), 3000);
     //console.log("Component mounted.");

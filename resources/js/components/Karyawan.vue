@@ -2,6 +2,20 @@
   <section class="content">
     <div class="container-fluid">
       <div class="row mt-3" v-if="$gate.isAdmin()">
+        <!-- Widget Jumlah Karyawan -->
+        <div class="col-lg-3 col-6">
+          <!-- small card -->
+          <div class="small-box bg-warning">
+            <div class="inner">
+              <h3>{{getJumlahEmployee}}</h3>
+              <p>Jumlah Karyawan</p>
+            </div>
+            <div class="icon">
+              <i class="fa fa-user-tie"></i>
+            </div>
+          </div>
+        </div>
+        <!-- Tabel Karyawan -->
         <div class="col md-12">
           <div class="card card-warning card-outline">
             <div class="card-header">
@@ -307,7 +321,7 @@
     </div>
   </section>
 </template>
-
+ 
 
 <script>
 export default {
@@ -338,6 +352,7 @@ export default {
 
   mounted() {
     this.$store.dispatch("allEmployee");
+    this.$store.dispatch("AllJumlah_Employees");
   },
   computed: {
     getEmployee() {
@@ -350,6 +365,11 @@ export default {
         axios
           .get("api/employee")
           .then(({ data }) => (this.employees = data.employees));
+      }
+    },
+    loadJumlah() {
+      if (this.$gate.isAdmin()) {
+        this.$store.dispatch("AllJumlah_Employees");
       }
     },
     createEmployee() {
@@ -426,10 +446,17 @@ export default {
       this.form.fill(employee);
     }
   },
+  computed: {
+    getJumlahEmployee() {
+      return this.$store.getters.getJumlahEmployee;
+    }
+  },
   created() {
+    this.loadJumlah();
     this.loadKaryawan();
     Fire.$on("AfterCreated", () => {
       this.loadKaryawan();
+      this.loadJumlah();
     });
   }
 };

@@ -6729,9 +6729,340 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
+  //Object of data User
+  data: function data() {
+    return {
+      editmode: false,
+      inventories: {},
+      userauth: new Form({
+        id: "",
+        name: ""
+      }),
+      form: new Form({
+        id: "",
+        id_user: "",
+        Nama_Fasilitas: "",
+        Jumlah: "",
+        Bantuan: "",
+        Manfaat: "",
+        Kepemilikan: "",
+        Kondisi: ""
+      })
+    };
+  },
   mounted: function mounted() {
-    console.log('Component mounted.');
+    console.log("Component mounted.");
+  },
+  created: function created() {
+    var _this = this;
+
+    this.LoadInvetories();
+    this.loaduserAuth();
+    Fire.$on("AfterCreated", function () {
+      _this.LoadInvetories();
+
+      _this.loaduserAuth();
+    });
+  },
+  methods: {
+    LoadInvetories: function LoadInvetories() {
+      var _this2 = this;
+
+      if (this.$gate.isAdmin()) {
+        axios.get("api/inventorie").then(function (_ref) {
+          var data = _ref.data;
+          return _this2.inventories = data.inventorie;
+        });
+      }
+    },
+    loaduserAuth: function loaduserAuth() {
+      var _this3 = this;
+
+      axios.get("api/profile").then(function (_ref2) {
+        var data = _ref2.data;
+        return _this3.userauth.fill(data);
+      });
+    },
+    newModal: function newModal() {
+      this.editmode = false;
+      this.form.reset();
+      $("#addNew").modal("show");
+    },
+    editModal: function editModal(inventori) {
+      this.editmode = true;
+      this.form.reset();
+      $("#addNew").modal("show");
+      this.form.fill(inventori);
+    },
+    createInventories: function createInventories() {
+      var _this4 = this;
+
+      // store Children
+      this.form.id_user = this.userauth.id;
+      this.$Progress.start();
+      this.form.post("api/inventorie").then(function () {
+        Fire.$emit("AfterCreated");
+        $("#addNew").modal("hide");
+        toast.fire({
+          type: "success",
+          title: "Data Inventaris berhasil ditambahkan"
+        });
+
+        _this4.$Progress.finish();
+      }).catch(function () {
+        toast.fire({
+          type: "error",
+          title: "Something wrong "
+        });
+      });
+    },
+    updateInventories: function updateInventories() {
+      var _this5 = this;
+
+      //console.log("Editing Data");
+      this.$Progress.start();
+      this.form.put("api/inventorie/" + this.form.id).then(function () {
+        $("#addNew").modal("hide");
+        swal.fire("Updated!", "Your file has been Updated.", "success");
+        Fire.$emit("AfterCreated");
+
+        _this5.$Progress.finish();
+      }).catch(function () {
+        swal.fire("Fail!", "Something Wrong", "warning");
+
+        _this5.$Progress.fail();
+      });
+    },
+    deleteInventories: function deleteInventories(id) {
+      var _this6 = this;
+
+      swal.fire({
+        title: "Anda yakin Menghapus Data ini?",
+        text: "You won't be able to revert this!",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+      }).then(function (result) {
+        //send request to the server
+        if (result.value) {
+          _this6.form.delete("api/inventorie/" + id).then(function () {
+            swal.fire("Deleted!", "Your file has been deleted.", "success");
+            Fire.$emit("AfterCreated");
+          }).catch(function () {
+            swal.fire("Fail!", "Something Wrong", "warning");
+          });
+        }
+      });
+    }
   }
 });
 
@@ -6746,6 +7077,10 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+var _data$mounted$compute;
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -7057,7 +7392,21 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-/* harmony default export */ __webpack_exports__["default"] = ({
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = (_data$mounted$compute = {
   data: function data() {
     return {
       editmode: false,
@@ -7084,6 +7433,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     this.$store.dispatch("allEmployee");
+    this.$store.dispatch("AllJumlah_Employees");
   },
   computed: {
     getEmployee: function getEmployee() {
@@ -7099,6 +7449,11 @@ __webpack_require__.r(__webpack_exports__);
           var data = _ref.data;
           return _this.employees = data.employees;
         });
+      }
+    },
+    loadJumlah: function loadJumlah() {
+      if (this.$gate.isAdmin()) {
+        this.$store.dispatch("AllJumlah_Employees");
       }
     },
     createEmployee: function createEmployee() {
@@ -7172,16 +7527,22 @@ __webpack_require__.r(__webpack_exports__);
       $("#addNew").modal("show");
       this.form.fill(employee);
     }
-  },
-  created: function created() {
-    var _this5 = this;
-
-    this.loadKaryawan();
-    Fire.$on("AfterCreated", function () {
-      _this5.loadKaryawan();
-    });
   }
-});
+}, _defineProperty(_data$mounted$compute, "computed", {
+  getJumlahEmployee: function getJumlahEmployee() {
+    return this.$store.getters.getJumlahEmployee;
+  }
+}), _defineProperty(_data$mounted$compute, "created", function created() {
+  var _this5 = this;
+
+  this.loadJumlah();
+  this.loadKaryawan();
+  Fire.$on("AfterCreated", function () {
+    _this5.loadKaryawan();
+
+    _this5.loadJumlah();
+  });
+}), _data$mounted$compute);
 
 /***/ }),
 
@@ -8135,6 +8496,19 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   //Object of data User
   data: function data() {
@@ -8155,10 +8529,14 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     this.$store.dispatch("allEmployee");
+    this.$store.dispatch("AllJumlah_Users");
   },
   computed: {
     getEmployee: function getEmployee() {
       return this.$store.getters.getEmployee;
+    },
+    getJumlahUser: function getJumlahUser() {
+      return this.$store.getters.getJumlahUser;
     }
   },
   methods: {
@@ -8171,6 +8549,11 @@ __webpack_require__.r(__webpack_exports__);
           return _this.users = data;
         });
         this.$store.dispatch("allEmployee");
+      }
+    },
+    loadJumlah: function loadJumlah() {
+      if (this.$gate.isAdmin()) {
+        this.$store.dispatch("AllJumlah_Users");
       }
     },
     getResults: function getResults() {
@@ -8257,8 +8640,11 @@ __webpack_require__.r(__webpack_exports__);
     var _this6 = this;
 
     this.loadUser();
+    this.loadJumlah();
     Fire.$on("AfterCreated", function () {
       _this6.loadUser();
+
+      _this6.loadJumlah();
     }); //setInterval(() =>  this.loadUser(), 3000);
     //console.log("Component mounted.");
   }
@@ -83528,29 +83914,689 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("section", { staticClass: "content" }, [
+    _c("div", { staticClass: "container-fluid" }, [
+      _c("div", { staticClass: "row mt-3" }, [
+        _c("div", { staticClass: "col-md-12" }, [
+          _c("div", { staticClass: "card" }, [
+            _c("div", { staticClass: "card-header" }, [
+              _c("h3", { staticClass: "card-title" }, [
+                _vm._v("Data Inventaris")
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "card-tools" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-primary",
+                    on: {
+                      click: function($event) {
+                        return _vm.newModal()
+                      }
+                    }
+                  },
+                  [
+                    _vm._v("\n                Tambah Baru\n                "),
+                    _c("i", { staticClass: "fas fa-plus" })
+                  ]
+                )
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "card-body p-0" }, [
+              _c("table", { staticClass: "table table-hover" }, [
+                _c(
+                  "tbody",
+                  [
+                    _vm._m(0),
+                    _vm._v(" "),
+                    _vm._l(_vm.inventories, function(inventori) {
+                      return _c("tr", { key: inventori.id }, [
+                        _c("td", [
+                          _vm._v(
+                            _vm._s(_vm._f("Uptext")(inventori.Nama_Fasilitas))
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [_vm._v(_vm._s(inventori.Jumlah))]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(_vm._s(_vm._f("Uptext")(inventori.Bantuan)))
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(_vm._s(_vm._f("Uptext")(inventori.Manfaat)))
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(
+                            _vm._s(_vm._f("Uptext")(inventori.Kepemilikan))
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          inventori.Kondisi <= 100 && inventori.Kondisi >= 80
+                            ? _c("span", { staticClass: "badge bg-success" }, [
+                                _vm._v(_vm._s(inventori.Kondisi) + "%")
+                              ])
+                            : inventori.Kondisi <= 79 && inventori.Kondisi >= 60
+                            ? _c("span", { staticClass: "badge bg-primary" }, [
+                                _vm._v(_vm._s(inventori.Kondisi) + "%")
+                              ])
+                            : inventori.Kondisi <= 59 && inventori.Kondisi >= 35
+                            ? _c("span", { staticClass: "badge bg-warning" }, [
+                                _vm._v(_vm._s(inventori.Kondisi) + "%")
+                              ])
+                            : _c("span", { staticClass: "badge bg-danger" }, [
+                                _vm._v(_vm._s(inventori.Kondisi) + "%")
+                              ])
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-success btn-sm",
+                              attrs: { type: "button" },
+                              on: {
+                                click: function($event) {
+                                  return _vm.editModal(inventori)
+                                }
+                              }
+                            },
+                            [_c("i", { staticClass: "fa fa-edit" })]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-danger btn-sm",
+                              attrs: { type: "button" },
+                              on: {
+                                click: function($event) {
+                                  return _vm.deleteInventories(inventori.id)
+                                }
+                              }
+                            },
+                            [_c("i", { staticClass: "fa fa-trash" })]
+                          )
+                        ])
+                      ])
+                    })
+                  ],
+                  2
+                )
+              ])
+            ])
+          ])
+        ]),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass: "modal fade",
+            attrs: {
+              id: "addNew",
+              tabindex: "-1",
+              role: "dialog",
+              "aria-labelledby": "addNewLabel",
+              "aria-hidden": "true"
+            }
+          },
+          [
+            _c(
+              "div",
+              {
+                staticClass: "modal-dialog modal-lg modal-dialog-centered",
+                attrs: { role: "document" }
+              },
+              [
+                _c("div", { staticClass: "modal-content" }, [
+                  _c("div", { staticClass: "modal-header" }, [
+                    _c(
+                      "h5",
+                      {
+                        directives: [
+                          {
+                            name: "show",
+                            rawName: "v-show",
+                            value: !_vm.editmode,
+                            expression: "!editmode"
+                          }
+                        ],
+                        staticClass: "modal-title",
+                        attrs: { id: "addNewLabel" }
+                      },
+                      [_vm._v("Tambah Inventaris")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "h5",
+                      {
+                        directives: [
+                          {
+                            name: "show",
+                            rawName: "v-show",
+                            value: _vm.editmode,
+                            expression: "editmode"
+                          }
+                        ],
+                        staticClass: "modal-title",
+                        attrs: { id: "addNewLabel" }
+                      },
+                      [_vm._v("Ubah Inventaris")]
+                    ),
+                    _vm._v(" "),
+                    _vm._m(1)
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "form",
+                    {
+                      on: {
+                        submit: function($event) {
+                          $event.preventDefault()
+                          _vm.editmode
+                            ? _vm.updateInventories()
+                            : _vm.createInventories()
+                        }
+                      }
+                    },
+                    [
+                      _c("div", { staticClass: "modal-body" }, [
+                        _c("div", { staticClass: "form-row" }, [
+                          _c("div", { staticClass: "col" }, [
+                            _c("div", { staticClass: "form-group" }, [
+                              _c(
+                                "label",
+                                { attrs: { for: "inputNamaFasilitas" } },
+                                [_vm._v("Nama Fasilitas")]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "input-group" },
+                                [
+                                  _vm._m(2),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Nama_Fasilitas,
+                                        expression: "form.Nama_Fasilitas"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Nama_Fasilitas"
+                                      )
+                                    },
+                                    attrs: {
+                                      type: "text",
+                                      name: "Nama_Fasilitas",
+                                      placeholder: "Nama Fasilitas"
+                                    },
+                                    domProps: {
+                                      value: _vm.form.Nama_Fasilitas
+                                    },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Nama_Fasilitas",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Nama_Fasilitas"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            { staticClass: "col-2" },
+                            [
+                              _c(
+                                "label",
+                                { attrs: { for: "inputJumlahFasilitas" } },
+                                [_vm._v("Jumlah (Qnt)")]
+                              ),
+                              _vm._v(" "),
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.form.Jumlah,
+                                    expression: "form.Jumlah"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                class: {
+                                  "is-invalid": _vm.form.errors.has(
+                                    "Jumlah_Fasilitas"
+                                  )
+                                },
+                                attrs: {
+                                  type: "number",
+                                  name: "Jumlah_Fasilitas",
+                                  min: "1",
+                                  max: "100",
+                                  step: "2",
+                                  placeholder: "1"
+                                },
+                                domProps: { value: _vm.form.Jumlah },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.$set(
+                                      _vm.form,
+                                      "Jumlah",
+                                      $event.target.value
+                                    )
+                                  }
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c("has-error", {
+                                attrs: {
+                                  form: _vm.form,
+                                  field: "Jumlah_Fasilitas"
+                                }
+                              })
+                            ],
+                            1
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-row" }, [
+                          _c("div", { staticClass: "col" }, [
+                            _c("div", { staticClass: "form-group" }, [
+                              _c(
+                                "label",
+                                { attrs: { for: "inputNamaFasilitas" } },
+                                [_vm._v("Kepemilikan")]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "input-group" },
+                                [
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Kepemilikan,
+                                        expression: "form.Kepemilikan"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Kepemilikan"
+                                      )
+                                    },
+                                    attrs: {
+                                      type: "text",
+                                      name: "Kepemilikan",
+                                      placeholder: "Kepemilikan"
+                                    },
+                                    domProps: { value: _vm.form.Kepemilikan },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Kepemilikan",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: {
+                                      form: _vm.form,
+                                      field: "Kepemilikan"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            { staticClass: "col-2" },
+                            [
+                              _c(
+                                "label",
+                                { attrs: { for: "inputJumlahFasilitas" } },
+                                [_vm._v("Kondisi (%)")]
+                              ),
+                              _vm._v(" "),
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.form.Kondisi,
+                                    expression: "form.Kondisi"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                class: {
+                                  "is-invalid": _vm.form.errors.has(
+                                    "Kondisi_Fasilitas"
+                                  )
+                                },
+                                attrs: {
+                                  type: "number",
+                                  name: "Kondisi_Fasilitas",
+                                  min: "1",
+                                  max: "100",
+                                  step: "2",
+                                  placeholder: "1"
+                                },
+                                domProps: { value: _vm.form.Kondisi },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.$set(
+                                      _vm.form,
+                                      "Kondisi",
+                                      $event.target.value
+                                    )
+                                  }
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c("has-error", {
+                                attrs: {
+                                  form: _vm.form,
+                                  field: "Kondisi_Fasilitas"
+                                }
+                              })
+                            ],
+                            1
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-row" }, [
+                          _c("div", { staticClass: "col" }, [
+                            _c("div", { staticClass: "form-group" }, [
+                              _c("label", { attrs: { for: "inputBantuan" } }, [
+                                _vm._v("Bantuan dari")
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "input-group" },
+                                [
+                                  _vm._m(3),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Bantuan,
+                                        expression: "form.Bantuan"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Bantuan"
+                                      )
+                                    },
+                                    attrs: {
+                                      type: "text",
+                                      name: "Bantuan",
+                                      placeholder: "Bantuan"
+                                    },
+                                    domProps: { value: _vm.form.Bantuan },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Bantuan",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: { form: _vm.form, field: "Bantuan" }
+                                  })
+                                ],
+                                1
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col" }, [
+                            _c("div", { staticClass: "form-group" }, [
+                              _c("label", { attrs: { for: "inputBantuan" } }, [
+                                _vm._v("Manfaat")
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "input-group" },
+                                [
+                                  _vm._m(4),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.Manfaat,
+                                        expression: "form.Manfaat"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    class: {
+                                      "is-invalid": _vm.form.errors.has(
+                                        "Manfaat"
+                                      )
+                                    },
+                                    attrs: {
+                                      type: "text",
+                                      name: "Manfaat",
+                                      placeholder: "Manfaat"
+                                    },
+                                    domProps: { value: _vm.form.Manfaat },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Manfaat",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("has-error", {
+                                    attrs: { form: _vm.form, field: "Manfaat" }
+                                  })
+                                ],
+                                1
+                              )
+                            ])
+                          ])
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "modal-footer" }, [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-danger",
+                            attrs: { type: "button", "data-dismiss": "modal" }
+                          },
+                          [_vm._v("Tutup")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            directives: [
+                              {
+                                name: "show",
+                                rawName: "v-show",
+                                value: _vm.editmode,
+                                expression: "editmode"
+                              }
+                            ],
+                            staticClass: "btn btn-success",
+                            attrs: { type: "submit" }
+                          },
+                          [_vm._v("Ubah")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            directives: [
+                              {
+                                name: "show",
+                                rawName: "v-show",
+                                value: !_vm.editmode,
+                                expression: "!editmode"
+                              }
+                            ],
+                            staticClass: "btn btn-primary",
+                            attrs: { type: "submit" }
+                          },
+                          [_vm._v("Tambah")]
+                        )
+                      ])
+                    ]
+                  )
+                ])
+              ]
+            )
+          ]
+        )
+      ])
+    ])
+  ])
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "container" }, [
-      _c("div", { staticClass: "row justify-content-center" }, [
-        _c("div", { staticClass: "col-md-8" }, [
-          _c("div", { staticClass: "card" }, [
-            _c("div", { staticClass: "card-header" }, [
-              _vm._v("Example Component")
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "card-body" }, [
-              _vm._v(
-                "\n                    I'm an inventories component.\n                "
-              )
-            ])
-          ])
-        ])
-      ])
+    return _c("tr", [
+      _c("th", [_vm._v("Nama Barang")]),
+      _vm._v(" "),
+      _c("th", { staticStyle: { width: "10px" } }, [_vm._v("Jumlah")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Bantuan Dari")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Manfaat")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Kepemilikan")]),
+      _vm._v(" "),
+      _c("th", { staticStyle: { width: "10px" } }, [_vm._v("Kondisi")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Ubah/Hapus")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      {
+        staticClass: "close",
+        attrs: {
+          type: "button",
+          "data-dismiss": "modal",
+          "aria-label": "Close"
+        }
+      },
+      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "input-group-prepend" }, [
+      _c(
+        "span",
+        {
+          staticClass: "input-group-text",
+          attrs: { id: "validationTooltipNamaFasilitas" }
+        },
+        [_c("i", { staticClass: "fas fa-warehouse" })]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "input-group-prepend" }, [
+      _c(
+        "span",
+        {
+          staticClass: "input-group-text",
+          attrs: { id: "validationTooltipBantuan" }
+        },
+        [_c("i", { staticClass: "fas fa-hand-holding-heart" })]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "input-group-prepend" }, [
+      _c(
+        "span",
+        {
+          staticClass: "input-group-text",
+          attrs: { id: "validationTooltipManfaat" }
+        },
+        [_c("i", { staticClass: "fas fa-warehouse" })]
+      )
     ])
   }
 ]
@@ -83579,10 +84625,22 @@ var render = function() {
     _c("div", { staticClass: "container-fluid" }, [
       _vm.$gate.isAdmin()
         ? _c("div", { staticClass: "row mt-3" }, [
+            _c("div", { staticClass: "col-lg-3 col-6" }, [
+              _c("div", { staticClass: "small-box bg-warning" }, [
+                _c("div", { staticClass: "inner" }, [
+                  _c("h3", [_vm._v(_vm._s(_vm.getJumlahEmployee))]),
+                  _vm._v(" "),
+                  _c("p", [_vm._v("Jumlah Karyawan")])
+                ]),
+                _vm._v(" "),
+                _vm._m(0)
+              ])
+            ]),
+            _vm._v(" "),
             _c("div", { staticClass: "col md-12" }, [
               _c("div", { staticClass: "card card-warning card-outline" }, [
                 _c("div", { staticClass: "card-header" }, [
-                  _vm._m(0),
+                  _vm._m(1),
                   _vm._v(" "),
                   _c("div", { staticClass: "card-tools" }, [
                     _c(
@@ -83610,7 +84668,7 @@ var render = function() {
                     _c(
                       "tbody",
                       [
-                        _vm._m(1),
+                        _vm._m(2),
                         _vm._v(" "),
                         _vm._l(_vm.employees, function(employee) {
                           return _c("tr", { key: employee.id }, [
@@ -83773,7 +84831,7 @@ var render = function() {
                     [_vm._v("Edit User Karyawan Info")]
                   ),
                   _vm._v(" "),
-                  _vm._m(2)
+                  _vm._m(3)
                 ]),
                 _vm._v(" "),
                 _c(
@@ -83799,7 +84857,7 @@ var render = function() {
                           "div",
                           { staticClass: "input-group" },
                           [
-                            _vm._m(3),
+                            _vm._m(4),
                             _vm._v(" "),
                             _c("input", {
                               directives: [
@@ -83855,7 +84913,7 @@ var render = function() {
                               "div",
                               { staticClass: "input-group" },
                               [
-                                _vm._m(4),
+                                _vm._m(5),
                                 _vm._v(" "),
                                 _c("input", {
                                   directives: [
@@ -83911,7 +84969,7 @@ var render = function() {
                               "div",
                               { staticClass: "input-group" },
                               [
-                                _vm._m(5),
+                                _vm._m(6),
                                 _vm._v(" "),
                                 _c(
                                   "select",
@@ -84001,7 +85059,7 @@ var render = function() {
                               "div",
                               { staticClass: "input-group" },
                               [
-                                _vm._m(6),
+                                _vm._m(7),
                                 _vm._v(" "),
                                 _c("input", {
                                   directives: [
@@ -84060,7 +85118,7 @@ var render = function() {
                               "div",
                               { staticClass: "input-group" },
                               [
-                                _vm._m(7),
+                                _vm._m(8),
                                 _vm._v(" "),
                                 _c("date-picker", {
                                   attrs: { config: _vm.options },
@@ -84090,7 +85148,7 @@ var render = function() {
                               "div",
                               { staticClass: "input-group" },
                               [
-                                _vm._m(8),
+                                _vm._m(9),
                                 _vm._v(" "),
                                 _c("input", {
                                   directives: [
@@ -84230,7 +85288,7 @@ var render = function() {
                               "div",
                               { staticClass: "input-group" },
                               [
-                                _vm._m(9),
+                                _vm._m(10),
                                 _vm._v(" "),
                                 _c("date-picker", {
                                   attrs: { config: _vm.options },
@@ -84262,7 +85320,7 @@ var render = function() {
                               "div",
                               { staticClass: "input-group" },
                               [
-                                _vm._m(10),
+                                _vm._m(11),
                                 _vm._v(" "),
                                 _c(
                                   "select",
@@ -84356,7 +85414,7 @@ var render = function() {
                               "div",
                               { staticClass: "input-group" },
                               [
-                                _vm._m(11),
+                                _vm._m(12),
                                 _vm._v(" "),
                                 _c("input", {
                                   directives: [
@@ -84464,6 +85522,14 @@ var render = function() {
   ])
 }
 var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "icon" }, [
+      _c("i", { staticClass: "fa fa-user-tie" })
+    ])
+  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
@@ -85849,10 +86915,26 @@ var render = function() {
     _c("div", { staticClass: "container-fluid" }, [
       _vm.$gate.isAdmin()
         ? _c("div", { staticClass: "row mt-3" }, [
+            _c("div", { staticClass: "col-lg-3 col-6" }, [
+              _c("div", { staticClass: "small-box bg-info" }, [
+                _c("div", { staticClass: "inner" }, [
+                  _c("h3", [_vm._v(_vm._s(_vm.getJumlahUser))]),
+                  _vm._v(" "),
+                  _c("p", [_vm._v("Jumlah Pengguna")])
+                ]),
+                _vm._v(" "),
+                _vm._m(0)
+              ])
+            ])
+          ])
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.$gate.isAdmin()
+        ? _c("div", { staticClass: "row mt-0" }, [
             _c("div", { staticClass: "col md-12" }, [
               _c("div", { staticClass: "card card-info card-outline" }, [
                 _c("div", { staticClass: "card-header" }, [
-                  _vm._m(0),
+                  _vm._m(1),
                   _vm._v(" "),
                   _c("div", { staticClass: "card-tools" }, [
                     _c(
@@ -85880,7 +86962,7 @@ var render = function() {
                     _c(
                       "tbody",
                       [
-                        _vm._m(1),
+                        _vm._m(2),
                         _vm._v(" "),
                         _vm._l(_vm.users, function(user) {
                           return _c("tr", { key: user.id }, [
@@ -85997,7 +87079,7 @@ var render = function() {
                     [_vm._v("Edit User Profile Info")]
                   ),
                   _vm._v(" "),
-                  _vm._m(2)
+                  _vm._m(3)
                 ]),
                 _vm._v(" "),
                 _c(
@@ -86023,7 +87105,7 @@ var render = function() {
                               "div",
                               { staticClass: "input-group" },
                               [
-                                _vm._m(3),
+                                _vm._m(4),
                                 _vm._v(" "),
                                 _c(
                                   "select",
@@ -86127,7 +87209,7 @@ var render = function() {
                               "div",
                               { staticClass: "input-group" },
                               [
-                                _vm._m(4),
+                                _vm._m(5),
                                 _vm._v(" "),
                                 _c(
                                   "select",
@@ -86220,7 +87302,7 @@ var render = function() {
                           "div",
                           { staticClass: "input-group" },
                           [
-                            _vm._m(5),
+                            _vm._m(6),
                             _vm._v(" "),
                             _c("input", {
                               directives: [
@@ -86272,7 +87354,7 @@ var render = function() {
                           "div",
                           { staticClass: "input-group" },
                           [
-                            _vm._m(6),
+                            _vm._m(7),
                             _vm._v(" "),
                             _c("input", {
                               directives: [
@@ -86366,7 +87448,7 @@ var render = function() {
                           "div",
                           { staticClass: "input-group" },
                           [
-                            _vm._m(7),
+                            _vm._m(8),
                             _vm._v(" "),
                             _c("input", {
                               directives: [
@@ -86466,6 +87548,14 @@ var render = function() {
   ])
 }
 var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "icon" }, [
+      _c("i", { staticClass: "fa fa-user-tie" })
+    ])
+  },
   function() {
     var _vm = this
     var _h = _vm.$createElement

@@ -21,6 +21,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 //api resource for retrieving data
 Route::apiResource('user', 'API\UserController');
 Route::apiResource('employee', 'API\EmployeeController');
+Route::apiResource('inventorie', 'API\inventorie_Controller');
 Route::apiResource('children', 'API\ChildrenController');
 Route::apiResource('children_education', 'API\Education_Controller');
 Route::apiResource('children_document', 'API\Document_Controller');
