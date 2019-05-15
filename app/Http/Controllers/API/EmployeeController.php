@@ -49,6 +49,19 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validate($request, [
+            'Nama_lengkap' => 'required|string|max:191',
+            'NIK' => 'required|numeric',
+            'Jenis_Kelamin' => 'required|string|max:191',
+            'Tempat_lahir' => 'required|string|max:191',
+            'Tgl_lahir' => 'required|date',
+            'Mulai_Bekerja' => 'required|date',
+            'Jabatan' => 'required|string|max:191',
+            'Status_Kepegawaian' => 'required|string|max:191',
+            'Pendidikan_Terakhir' => 'required|string|max:191',
+            'Pelatihan_yg_diikuti' => 'required|string|max:191'
+        ]);
+
         $employee = new Employee();
         $employee->Nama_lengkap = $request->input("Nama_lengkap");
         $employee->NIK = $request->input("NIK");
@@ -61,6 +74,7 @@ class EmployeeController extends Controller
         $employee->Pendidikan_Terakhir = $request->input("Pendidikan_Terakhir");
         $employee->Pelatihan_yg_diikuti = $request->input("Pelatihan_yg_diikuti");
         $employee->save();
+
         return ['message' => 'employee created'];
     }
 

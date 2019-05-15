@@ -1,7 +1,7 @@
 <template>
   <section class="content">
     <div class="container-fluid">
-      <div class="row mt-2" v-if="$gate.isAdmin()">
+      <div class="row mt-2" v-if="$gate.isAdminOrUser()">
         <div class="col md-12">
           <!-- general form elements -->
           <div class="card card-primary">
@@ -27,7 +27,7 @@
             </div>
             <!-- Tab pick -->
             <!-- form start -->
-            <form role="form">
+            <form role="form" v-on:submit.prevent="createDataAnak">
               <div class="card-body">
                 <div class="tab-content">
                   <!-- Data Anak Tab -->
@@ -104,9 +104,11 @@
                             <input
                               type="file"
                               @change="updateProfile"
-                              name="photo"
-                              class="form-input"
+                              name="Photo_anak"
+                              class="form-control"
+                              :class="{ 'is-invalid': form.errors.has('Photo_anak') }"
                             >
+                            <has-error :form="form" field="Photo_anak"></has-error>
                           </div>
                         </div>
                       </div>
@@ -149,7 +151,7 @@
                                   <option value="hindu">Hindu</option>
                                   <option value="budha">Budha</option>
                                 </select>
-                                <has-error :form="form" field="Jenis_Kelamin"></has-error>
+                                <has-error :form="form" field="Agama"></has-error>
                               </div>
                             </div>
                           </div>
@@ -165,12 +167,12 @@
                                 <input
                                   v-model="form.Tempat_lahir"
                                   type="text"
-                                  name="tempat_lahir"
+                                  name="Tempat_lahir"
                                   placeholder="Tempat Lahir"
                                   class="form-control"
-                                  :class="{ 'is-invalid': form.errors.has('tempat_lahir') }"
+                                  :class="{ 'is-invalid': form.errors.has('Tempat_lahir') }"
                                 >
-                                <has-error :form="form" field="tempat_lahir"></has-error>
+                                <has-error :form="form" field="Tempat_lahir"></has-error>
                               </div>
                             </div>
                           </div>
@@ -183,7 +185,15 @@
                                     <i class="fas fa-calendar-week"></i>
                                   </span>
                                 </div>
-                                <date-picker v-model="form.Tgl_lahir" :config="options"></date-picker>
+                                <date-picker
+                                  v-model="form.Tgl_lahir"
+                                  name="Tgl_lahir"
+                                  :config="options"
+                                  placeholder="Masukkan Tanggal"
+                                  class="form-control"
+                                  :class="{ 'is-invalid': form.errors.has('Tgl_lahir') }"
+                                ></date-picker>
+                                <has-error :form="form" field="Tgl_lahir"></has-error>
                               </div>
                             </div>
                           </div>
@@ -198,7 +208,14 @@
                                     <i class="fas fa-calendar-week"></i>
                                   </span>
                                 </div>
-                                <date-picker v-model="form.Tgl_masuk_PA" :config="options"></date-picker>
+                                <date-picker
+                                  v-model="form.Tgl_masuk_PA"
+                                  :config="options"
+                                  placeholder="Masukkan Tanggal"
+                                  class="form-control"
+                                  :class="{ 'is-invalid': form.errors.has('Tgl_masuk_PA') }"
+                                ></date-picker>
+                                <has-error :form="form" field="Tgl_masuk_PA"></has-error>
                               </div>
                             </div>
                           </div>
@@ -250,7 +267,14 @@
                                 <i class="fas fa-calendar-week"></i>
                               </span>
                             </div>
-                            <date-picker v-model="form.Mulai_masuk_sekolah" :config="options"></date-picker>
+                            <date-picker
+                              v-model="form.Mulai_masuk_sekolah"
+                              :config="options"
+                              placeholder="Masukkan Tanggal"
+                              class="form-control"
+                              :class="{ 'is-invalid': form.errors.has('Mulai_masuk_sekolah') }"
+                            ></date-picker>
+                            <has-error :form="form" field="Mulai_masuk_sekolah"></has-error>
                           </div>
                         </div>
                       </div>
@@ -353,6 +377,38 @@
                             >
                             <has-error :form="form" field="Nomor_telp_wali"></has-error>
                           </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="col">
+                        <div class="form-group">
+                          <label for="inputAlamat">Alamat Yang Menitipkan Anak</label>
+                          <textarea
+                            v-model="form.Alamat_yg_menitipkan"
+                            rows="4"
+                            class="form-control"
+                            type="text"
+                            name="Alamat_yg_menitipkan"
+                            placeholder="Alamat Yang Menitipkan Anak . . ."
+                            :class="{ 'is-invalid': form.errors.has('Alamat_yg_menitipkan') }"
+                          ></textarea>
+                          <has-error :form="form" field="Alamat_yg_menitipkan"></has-error>
+                        </div>
+                      </div>
+                      <div class="col">
+                        <div class="form-group">
+                          <label for="inputAlamat">Alasan Yang Menitipkan Anak</label>
+                          <textarea
+                            v-model="form.Alasan_yg_menitipkan"
+                            rows="4"
+                            class="form-control"
+                            type="text"
+                            name="Alasan_yg_menitipkan"
+                            placeholder="Alasan Yang Menitipkan Anak . . . "
+                            :class="{ 'is-invalid': form.errors.has('Alasan_yg_menitipkan') }"
+                          ></textarea>
+                          <has-error :form="form" field="Alasan_yg_menitipkan"></has-error>
                         </div>
                       </div>
                     </div>
@@ -724,38 +780,6 @@
                       ></textarea>
                       <has-error :form="form" field="Latar_Belakang_Permasalahan"></has-error>
                     </div>
-                    <div class="form-row">
-                      <div class="col">
-                        <div class="form-group">
-                          <label for="inputAlamat">Alamat Yang Menitipkan Anak</label>
-                          <textarea
-                            v-model="form.Alamat_yg_menitipkan"
-                            rows="4"
-                            class="form-control"
-                            type="text"
-                            name="Alamat_yg_menitipkan"
-                            placeholder="Alamat Yang Menitipkan Anak . . ."
-                            :class="{ 'is-invalid': form.errors.has('Alamat_yg_menitipkan') }"
-                          ></textarea>
-                          <has-error :form="form" field="Alamat_yg_menitipkan"></has-error>
-                        </div>
-                      </div>
-                      <div class="col">
-                        <div class="form-group">
-                          <label for="inputAlamat">Alasan Yang Menitipkan Anak</label>
-                          <textarea
-                            v-model="form.Alasan_yg_menitipkan"
-                            rows="4"
-                            class="form-control"
-                            type="text"
-                            name="Alasan_yg_menitipkan"
-                            placeholder="Alasan Yang Menitipkan Anak . . . "
-                            :class="{ 'is-invalid': form.errors.has('Alasan_yg_menitipkan') }"
-                          ></textarea>
-                          <has-error :form="form" field="Alasan_yg_menitipkan"></has-error>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                   <!-- Biodata Anak -->
                   <div class="tab-pane" id="biodata">
@@ -894,114 +918,11 @@
               </div>
               <!-- /.card-body -->
               <div class="card-footer">
-                <router-link to="/data-anak">
-                  <button
-                    type="submit"
-                    class="btn btn-primary float-right"
-                    @click="createDataAnak()"
-                  >Tambah Data Anak</button>
-                </router-link>
+                <button type="submit" class="btn btn-primary float-right">Tambah Data Anak</button>
               </div>
             </form>
           </div>
           <!-- /.card -->
-        </div>
-        <!-- Modal Riwayat Pendidikan -->
-        <div
-          class="modal fade"
-          id="addNewPendidikan"
-          tabindex="-1"
-          role="dialog"
-          aria-labelledby="addNewLabel"
-          aria-hidden="true"
-        >
-          <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5
-                  v-show="!editmode"
-                  class="modal-title"
-                  id="addNewLabel"
-                >Tambah Riwayat Pendidikan</h5>
-                <h5 v-show="editmode" class="modal-title" id="addNewLabel">Ubah Riwayat Pendidikan</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <form
-                @submit.prevent="editmode ? updateRiwayatPendidikan() :createRiwayatPendidikan()"
-              >
-                <div class="modal-body"></div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-danger" data-dismiss="modal">Tutup</button>
-                  <button v-show="editmode" type="submit" class="btn btn-success">Ubah</button>
-                  <button v-show="!editmode" type="submit" class="btn btn-primary">Tambah</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-        <!-- Modal Saudara Anak -->
-        <div
-          class="modal fade"
-          id="addNewSaudara"
-          tabindex="-1"
-          role="dialog"
-          aria-labelledby="addNewLabel"
-          aria-hidden="true"
-        >
-          <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 v-show="!editmode" class="modal-title" id="addNewLabel">Tambah Detail Saudara</h5>
-                <h5 v-show="editmode" class="modal-title" id="addNewLabel">Ubah Detail Saudara</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <form
-                @submit.prevent="editmode ? updateRiwayatPendidikan() :createRiwayatPendidikan()"
-              >
-                <div class="modal-body"></div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-danger" data-dismiss="modal">Tutup</button>
-                  <button v-show="editmode" type="submit" class="btn btn-success">Ubah</button>
-                  <button v-show="!editmode" type="submit" class="btn btn-primary">Tambah</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-        <!-- Modal Document Anak -->
-        <div
-          class="modal fade"
-          id="addNewDocument"
-          tabindex="-1"
-          role="dialog"
-          aria-labelledby="addNewLabel"
-          aria-hidden="true"
-        >
-          <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 v-show="!editmode" class="modal-title" id="addNewLabel">Tambah Detail Document</h5>
-                <h5 v-show="editmode" class="modal-title" id="addNewLabel">Ubah Detail Document</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <form
-                @submit.prevent="editmode ? updateRiwayatPendidikan() :createRiwayatPendidikan()"
-              >
-                <div class="modal-body"></div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-danger" data-dismiss="modal">Tutup</button>
-                  <button v-show="editmode" type="submit" class="btn btn-success">Ubah</button>
-                  <button v-show="!editmode" type="submit" class="btn btn-primary">Tambah</button>
-                </div>
-              </form>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -1027,19 +948,21 @@ export default {
         Nama_Lengkap: "",
         Agama: "",
         Tempat_lahir: "",
-        Tgl_lahir: new Date(),
+        Tgl_lahir: new Date().useCurrent,
         Surat_Kelahiran_Akta: "",
         Alamat: "",
-        Mulai_masuk_sekolah: new Date(),
+        Mulai_masuk_sekolah: new Date().useCurrent,
         Nama_sekolah: "",
         Kelas: "",
-        Tgl_masuk_PA: new Date(),
+        Tgl_masuk_PA: new Date().useCurrent,
         Administrasi_sekolah: "",
         Sebab_masuk_PA: "",
         Keterangan_anak: "",
         Nama_Wali: "",
         Nomor_telp_wali: "",
         Photo_anak: "",
+        Alamat_yg_menitipkan: "",
+        Alasan_yg_menitipkan: "",
 
         // Detail Ortu
         id_children: "",
@@ -1060,8 +983,6 @@ export default {
         Tanggungan: "",
         Perumahan: "",
         Latar_Belakang_Permasalahan: "",
-        Alamat_yg_menitipkan: "",
-        Alasan_yg_menitipkan: "",
 
         //Biodata Anak
         Tinggi_Badan: "",
@@ -1094,7 +1015,7 @@ export default {
       }),
       options: {
         format: "YYYY/MM/DD",
-        useCurrent: false
+        useCurrent: true
       }
     };
   },
@@ -1116,6 +1037,7 @@ export default {
             type: "success",
             title: "Data Anak created successfully"
           });
+          this.$router.push("data-anak");
           this.$Progress.finish();
         })
         .catch(() => {
@@ -1132,41 +1054,6 @@ export default {
           : "img/photo_anak/" + this.form.Photo_anak;
       return photo;
     },
-    newModalRiwayatPendidikan() {
-      this.editmode = false;
-      this.form_education.reset();
-      $("#addNewPendidikan").modal("show");
-    },
-    editModalRiwayatPendidikan(edu) {
-      this.editmode = true;
-      this.form_education.reset();
-      $("#addNewPendidikan").modal("show");
-      this.form_education.fill(edu);
-    },
-    newModalSaudaraAnak() {
-      this.editmode = false;
-      this.form_other_family.reset();
-      $("#addNewSaudara").modal("show");
-    },
-    editModalSaudaraAnak(fam) {
-      this.editmode = true;
-      this.form_other_family.reset();
-      $("#addNewSaudara").modal("show");
-      this.form_other_family.fill(fam);
-    },
-    newModalDocument() {
-      this.editmode = false;
-      this.form_detail_document.reset();
-      $("#addNewDocument").modal("show");
-    },
-    editModalSaudaraAnak(fam) {
-      this.editmode = true;
-      this.form_detail_document.reset();
-      $("#addNewDocument").modal("show");
-      this.form_detail_document.fill(fam);
-    },
-    updateRiwayatPendidikan() {},
-    createRiwayatPendidikan() {},
     updateProfile(e) {
       let file = e.target.files[0];
       let reader = new FileReader();

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 
+
 class ChildrenController extends Controller
 {
     /**
@@ -23,75 +24,77 @@ class ChildrenController extends Controller
 
     public function index()
     {
-        $this->authorize('isAdmin');
-        /** untuk data anak di dalam panti */
-        $children = DB::table('childrens')
-            ->join('children__details', 'childrens.id', '=', 'children__details.id_children')
-            ->join('children_detail_healths', 'childrens.id', '=', 'children_detail_healths.id_children')
-            ->select('childrens.*', 'children__details.*', 'children_detail_healths.*')
-            ->where('childrens.Keterangan_anak', '=', 'Panti')
-            ->where('childrens.deleted_at', null)
-            ->where('children__details.deleted_at', null)
-            ->where('children_detail_healths.deleted_at', null)
-            ->orderBy('childrens.No_induk')
-            ->get();
-        $countChildren = DB::table('childrens')
-            ->join('children__details', 'childrens.id', '=', 'children__details.id_children')
-            ->join('children_detail_healths', 'childrens.id', '=', 'children_detail_healths.id_children')
-            ->select('childrens.*', 'children__details.*', 'children_detail_healths.*')
-            ->where('childrens.Keterangan_anak', '=', 'Panti')
-            ->where('childrens.deleted_at', null)
-            ->where('children__details.deleted_at', null)
-            ->where('children_detail_healths.deleted_at', null)
-            ->orderBy('childrens.No_induk')
-            ->count();
+        if (\Gate::allows('isAdmin') || \Gate::allows('isUser') || \Gate::allows('isKepala')) {
 
-        /** untuk data anak diluar panti */
-        $childrennon = DB::table('childrens')
-            ->join('children__details', 'childrens.id', '=', 'children__details.id_children')
-            ->join('children_detail_healths', 'childrens.id', '=', 'children_detail_healths.id_children')
-            ->select('childrens.*', 'children__details.*', 'children_detail_healths.*')
-            ->where('childrens.Keterangan_anak', '=', 'Non-Panti')
-            ->where('childrens.deleted_at', null)
-            ->where('children__details.deleted_at', null)
-            ->where('children_detail_healths.deleted_at', null)
-            ->orderBy('childrens.No_induk')
-            ->get();
-        $countChildrennon = DB::table('childrens')
-            ->join('children__details', 'childrens.id', '=', 'children__details.id_children')
-            ->join('children_detail_healths', 'childrens.id', '=', 'children_detail_healths.id_children')
-            ->select('childrens.*', 'children__details.*', 'children_detail_healths.*')
-            ->where('childrens.Keterangan_anak', '=', 'Non-Panti')
-            ->where('childrens.deleted_at', null)
-            ->where('children__details.deleted_at', null)
-            ->where('children_detail_healths.deleted_at', null)
-            ->orderBy('childrens.No_induk')
-            ->count();
+            /** untuk data anak di dalam panti */
+            $children = DB::table('childrens')
+                ->join('children__details', 'childrens.id', '=', 'children__details.id_children')
+                ->join('children_detail_healths', 'childrens.id', '=', 'children_detail_healths.id_children')
+                ->select('childrens.*', 'children__details.*', 'children_detail_healths.*')
+                ->where('childrens.Keterangan_anak', '=', 'Panti')
+                ->where('childrens.deleted_at', null)
+                ->where('children__details.deleted_at', null)
+                ->where('children_detail_healths.deleted_at', null)
+                ->orderBy('childrens.No_induk')
+                ->paginate(5);
+            $countChildren = DB::table('childrens')
+                ->join('children__details', 'childrens.id', '=', 'children__details.id_children')
+                ->join('children_detail_healths', 'childrens.id', '=', 'children_detail_healths.id_children')
+                ->select('childrens.*', 'children__details.*', 'children_detail_healths.*')
+                ->where('childrens.Keterangan_anak', '=', 'Panti')
+                ->where('childrens.deleted_at', null)
+                ->where('children__details.deleted_at', null)
+                ->where('children_detail_healths.deleted_at', null)
+                ->orderBy('childrens.No_induk')
+                ->count();
 
-        /** Untuk data anak yang sudah keluar panti atau data arsip anak */
-        $childrenOut = DB::table('childrens')
-            ->rightJoin('children__details', 'childrens.id', '=', 'children__details.id_children')
-            ->select('childrens.*', 'children__details.*')
-            ->whereNotNull('childrens.deleted_at')
-            ->whereNotNull('children__details.deleted_at')
-            ->orderBy('childrens.No_induk')
-            ->get();
-        $countchildrenOut = DB::table('childrens')
-            ->rightJoin('children__details', 'childrens.id', '=', 'children__details.id_children')
-            ->select('childrens.*', 'children__details.*')
-            ->whereNotNull('childrens.deleted_at')
-            ->whereNotNull('children__details.deleted_at')
-            ->orderBy('childrens.No_induk')
-            ->count();
+            /** untuk data anak diluar panti */
+            $childrennon = DB::table('childrens')
+                ->join('children__details', 'childrens.id', '=', 'children__details.id_children')
+                ->join('children_detail_healths', 'childrens.id', '=', 'children_detail_healths.id_children')
+                ->select('childrens.*', 'children__details.*', 'children_detail_healths.*')
+                ->where('childrens.Keterangan_anak', '=', 'Non-Panti')
+                ->where('childrens.deleted_at', null)
+                ->where('children__details.deleted_at', null)
+                ->where('children_detail_healths.deleted_at', null)
+                ->orderBy('childrens.No_induk')
+                ->paginate(5);
+            $countChildrennon = DB::table('childrens')
+                ->join('children__details', 'childrens.id', '=', 'children__details.id_children')
+                ->join('children_detail_healths', 'childrens.id', '=', 'children_detail_healths.id_children')
+                ->select('childrens.*', 'children__details.*', 'children_detail_healths.*')
+                ->where('childrens.Keterangan_anak', '=', 'Non-Panti')
+                ->where('childrens.deleted_at', null)
+                ->where('children__details.deleted_at', null)
+                ->where('children_detail_healths.deleted_at', null)
+                ->orderBy('childrens.No_induk')
+                ->count();
 
-        return response()->json([
-            'childrens' => $children,
-            'childrennon' => $childrennon,
-            'childrenOut' => $childrenOut,
-            'countChildren' => $countChildren,
-            'countChildrennon' => $countChildrennon,
-            'countChildrenOut' => $countchildrenOut,
-        ], 200);
+            /** Untuk data anak yang sudah keluar panti atau data arsip anak */
+            $childrenOut = DB::table('childrens')
+                ->rightJoin('children__details', 'childrens.id', '=', 'children__details.id_children')
+                ->select('childrens.*', 'children__details.*')
+                ->whereNotNull('childrens.deleted_at')
+                ->whereNotNull('children__details.deleted_at')
+                ->orderBy('childrens.No_induk')
+                ->get();
+            $countchildrenOut = DB::table('childrens')
+                ->rightJoin('children__details', 'childrens.id', '=', 'children__details.id_children')
+                ->select('childrens.*', 'children__details.*')
+                ->whereNotNull('childrens.deleted_at')
+                ->whereNotNull('children__details.deleted_at')
+                ->orderBy('childrens.No_induk')
+                ->count();
+
+            return response()->json([
+                'childrens' => $children,
+                'countChildren' => $countChildren,
+                'childrennon' => $childrennon,
+                'countChildrennon' => $countChildrennon,
+                'childrenOut' => $childrenOut,
+                'countChildrenOut' => $countchildrenOut,
+            ], 200);
+        }
     }
     /**
      * Show the form for creating a new resource.
@@ -106,48 +109,51 @@ class ChildrenController extends Controller
 
     public function edit_anak($id)
     {
-        $children = DB::table('childrens')
-            ->join('children__details', 'childrens.id', '=', 'children__details.id_children')
-            ->join('children_detail_healths', 'childrens.id', '=', 'children_detail_healths.id_children')
-            ->select('childrens.*', 'children__details.*', 'children_detail_healths.*')
-            ->where('childrens.deleted_at', null)
-            ->where('children__details.deleted_at', null)
-            ->where('children_detail_healths.deleted_at', null)
-            ->where('childrens.id', '=', $id)
-            ->orderBy('childrens.No_induk')
-            ->get();
+        if (\Gate::allows('isAdmin') || \Gate::allows('isUser') || \Gate::allows('isKepala')) {
 
-        $children_detail_educations = DB::table('children_detail_educations')
-            ->select('children_detail_educations.*')
-            ->where('children_detail_educations.id_children', '=', $id)
-            ->get();
+            $children = DB::table('childrens')
+                ->join('children__details', 'childrens.id', '=', 'children__details.id_children')
+                ->join('children_detail_healths', 'childrens.id', '=', 'children_detail_healths.id_children')
+                ->select('childrens.*', 'children__details.*', 'children_detail_healths.*')
+                ->where('childrens.deleted_at', null)
+                ->where('children__details.deleted_at', null)
+                ->where('children_detail_healths.deleted_at', null)
+                ->where('childrens.id', '=', $id)
+                ->orderBy('childrens.No_induk')
+                ->get();
 
-        $children_detail_document = DB::table('children_detail_documents')
-            ->select('children_detail_documents.*')
-            ->where('children_detail_documents.id_children', '=', $id)
-            ->get();
+            $children_detail_educations = DB::table('children_detail_educations')
+                ->select('children_detail_educations.*')
+                ->where('children_detail_educations.id_children', '=', $id)
+                ->get();
 
-        $children_detail_other_families = DB::table('children__other__families')
-            ->select('children__other__families.*')
-            ->where('children__other__families.id_children', '=', $id)
-            ->get();
+            $children_detail_document = DB::table('children_detail_documents')
+                ->select('children_detail_documents.*')
+                ->where('children_detail_documents.id_children', '=', $id)
+                ->get();
 
-        $childrenOut = DB::table('childrens')
-            ->join('children__details', 'childrens.id', '=', 'children__details.id_children')
-            ->join('children_detail_healths', 'childrens.id', '=', 'children_detail_healths.id_children')
-            ->select('childrens.*', 'children__details.*', 'children_detail_healths.*')
-            ->whereNotNull('childrens.deleted_at')
-            ->where('childrens.id', '=', $id)
-            ->orderBy('childrens.No_induk')
-            ->get();
+            $children_detail_other_families = DB::table('children__other__families')
+                ->select('children__other__families.*')
+                ->where('children__other__families.id_children', '=', $id)
+                ->get();
 
-        return response()->json([
-            'children' => $children,
-            'children_education' => $children_detail_educations,
-            'children_detail_other_families' => $children_detail_other_families,
-            'children_detail_document' => $children_detail_document,
-            'childrenOut' => $childrenOut,
-        ], 200);
+            $childrenOut = DB::table('childrens')
+                ->join('children__details', 'childrens.id', '=', 'children__details.id_children')
+                ->join('children_detail_healths', 'childrens.id', '=', 'children_detail_healths.id_children')
+                ->select('childrens.*', 'children__details.*', 'children_detail_healths.*')
+                ->whereNotNull('childrens.deleted_at')
+                ->where('childrens.id', '=', $id)
+                ->orderBy('childrens.No_induk')
+                ->get();
+
+            return response()->json([
+                'children' => $children,
+                'children_education' => $children_detail_educations,
+                'children_detail_other_families' => $children_detail_other_families,
+                'children_detail_document' => $children_detail_document,
+                'childrenOut' => $childrenOut,
+            ], 200);
+        }
     }
 
     /**
@@ -158,6 +164,27 @@ class ChildrenController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validate($request, [
+            'No_induk' => 'required|numeric|unique:childrens,No_induk',
+            'Nama_Lengkap' => 'required|string|max:191',
+            'Agama' => 'required|string|max:191',
+            'Tempat_lahir' => 'required|string|max:191',
+            'Tgl_lahir' => 'required|string|max:191',
+            'Surat_Kelahiran_Akta' => 'required|string|max:191',
+            'Alamat' => 'required|string|max:191',
+            'Mulai_masuk_sekolah' => 'required|string|max:191',
+            'Nama_sekolah' => 'required|string|max:191',
+            'Kelas' => 'required|string|max:191',
+            'Tgl_masuk_PA' => 'required|string|max:191',
+            'Sebab_masuk_PA' => 'required|string|max:191',
+            'Keterangan_anak' => 'required|string|max:191',
+            'Nama_Wali' => 'required|string|max:191',
+            'Nomor_telp_wali' => 'required|string|max:191',
+            'Photo_anak' => 'required',
+            'Alamat_yg_menitipkan' => 'required',
+            'Alasan_yg_menitipkan' => 'required',
+        ]);
+
         $children = new Children();
         $children->id_user = $request->input("id_user");
         $children->No_induk = $request->input("No_induk");
@@ -226,8 +253,28 @@ class ChildrenController extends Controller
 
     public function update(Request $request, $id)
     {
-
         $children = Children::FindOrFail($id);
+
+        $this->validate($request, [
+            'No_induk' => 'required|numeric|unique:childrens,No_induk,' . $children->id,
+            'Nama_Lengkap' => 'required|string|max:191',
+            'Agama' => 'required|string|max:191',
+            'Tempat_lahir' => 'required|string|max:191',
+            'Tgl_lahir' => 'required|string|max:191',
+            'Surat_Kelahiran_Akta' => 'required|string|max:191',
+            'Alamat' => 'required|string|max:191',
+            'Mulai_masuk_sekolah' => 'required|string|max:191',
+            'Nama_sekolah' => 'required|string|max:191',
+            'Kelas' => 'required|string|max:191',
+            'Tgl_masuk_PA' => 'required|string|max:191',
+            'Keterangan_anak' => 'required|string|max:191',
+            'Nama_Wali' => 'required|string|max:191',
+            'Nomor_telp_wali' => 'required|string|max:191',
+            'Photo_anak' => 'required',
+            'Alamat_yg_menitipkan' => 'required',
+            'Alasan_yg_menitipkan' => 'required',
+        ]);
+
         $currentPhoto = $children->Photo_anak;
         if ($request->Photo_anak != $currentPhoto) {
             $name = time() . '.' . explode('/', explode(':', substr($request->Photo_anak, 0, strpos($request->Photo_anak, ';')))[1])[1];
@@ -300,5 +347,41 @@ class ChildrenController extends Controller
         $children_biodata->delete();
 
         return ['message' => 'children has been deleted'];
+    }
+
+    public function search()
+    {
+        if ($search = \Request::get('q')) {
+            $children = Children::where(function ($query) use ($search) {
+                $query->where('Keterangan_anak', 'Panti')
+                    ->where('Nama_Lengkap', 'LIKE', "%$search%");
+            })->paginate(5);
+        } else {
+            $children = DB::table('childrens')
+                ->select('childrens.*')
+                ->where('Keterangan_anak', '=', 'Panti')
+                ->where('deleted_at', null)
+                ->orderBy('No_induk')
+                ->paginate(5);
+        }
+        return $children;
+    }
+
+    public function searchNon()
+    {
+        if ($search = \Request::get('q')) {
+            $children = Children::where(function ($query) use ($search) {
+                $query->where('Keterangan_anak', 'Non-Panti')
+                    ->where('Nama_Lengkap', 'LIKE', "%$search%");
+            })->paginate(5);
+        } else {
+            $children = DB::table('childrens')
+                ->select('childrens.*')
+                ->where('Keterangan_anak', '=', 'Non-Panti')
+                ->where('deleted_at', null)
+                ->orderBy('No_induk')
+                ->paginate(5);
+        }
+        return $children;
     }
 }

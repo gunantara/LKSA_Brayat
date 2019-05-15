@@ -136,8 +136,8 @@
                         >
                           <option value disabled selected>Select User Role</option>
                           <option value="admin">Admin</option>
-                          <option value="Pengelola">Pengelola</option>
-                          <option value="Kepala LKSA">Kepala LKSA</option>
+                          <option value="pengelola">Pengelola</option>
+                          <option value="kepala LKSA">Kepala LKSA</option>
                         </select>
                         <has-error :form="form" field="type"></has-error>
                       </div>
@@ -266,16 +266,13 @@ export default {
         this.$store.dispatch("allEmployee");
       }
     },
+
     loadJumlah() {
       if (this.$gate.isAdmin()) {
         this.$store.dispatch("AllJumlah_Users");
       }
     },
-    getResults(page = 1) {
-      axios.get("api/user?page=" + page).then(response => {
-        this.users = response.data;
-      });
-    },
+
     updateUser() {
       //console.log("Editing Data");
       this.$Progress.start();

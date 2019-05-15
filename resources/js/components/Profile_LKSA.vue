@@ -48,7 +48,14 @@
                                 </div>
                               </div>
                             </div>
-                            <input type="file" @change="updateLogo" name="photo" class="form-input">
+                            <input
+                              type="file"
+                              @change="updateLogo"
+                              name="Logo_LKSA"
+                              class="form-control"
+                              :class="{ 'is-invalid': form.errors.has('Logo_LKSA') }"
+                            >
+                            <has-error :form="form" field="Logo_LKSA"></has-error>
                           </div>
                         </div>
                       </div>
@@ -110,9 +117,11 @@
                             <input
                               type="file"
                               @change="updatePhotoProfile"
-                              name="photo"
-                              class="form-input"
+                              name="Photo_about"
+                              class="form-control"
+                              :class="{ 'is-invalid': form.errors.has('Photo_about') }"
                             >
+                            <has-error :form="form" field="Photo_about"></has-error>
                           </div>
                         </div>
                       </div>
@@ -137,9 +146,11 @@
                             <input
                               type="file"
                               @change="updatePhotoKegiatan"
-                              name="photo"
-                              class="form-input"
+                              name="Photo_kegiatan"
+                              class="form-control"
+                              :class="{ 'is-invalid': form.errors.has('Photo_kegiatan') }"
                             >
+                            <has-error :form="form" field="Photo_kegiatan"></has-error>
                           </div>
                         </div>
                       </div>
@@ -177,7 +188,7 @@
                       </div>
                       <div class="col-3">
                         <div class="form-group">
-                          <label for="photo" class="control-label">Photo Kegiatan LKSA</label>
+                          <label for="photo" class="control-label">Photo Kunjungan</label>
                           <div class="card card-widget widget-user">
                             <!-- Add the bg color to the header using any of the bg-* classes -->
                             <div class="widget-user-header text-white">
@@ -194,9 +205,11 @@
                             <input
                               type="file"
                               @change="updatePhotoSumberDana"
-                              name="photo"
-                              class="form-input"
+                              name="Photo_profiles"
+                              class="form-control"
+                              :class="{ 'is-invalid': form.errors.has('Photo_profiles') }"
                             >
+                            <has-error :form="form" field="Photo_profiles"></has-error>
                           </div>
                         </div>
                       </div>
@@ -272,11 +285,11 @@
                             rows="6"
                             class="form-control"
                             type="text"
-                            name="Nomor_Rekening"
+                            name="No_Rekening"
                             placeholder="Nomor Rekening ..."
-                            :class="{ 'is-invalid': form.errors.has('Nomor_Rekening') }"
+                            :class="{ 'is-invalid': form.errors.has('No_Rekening') }"
                           ></textarea>
-                          <has-error :form="form" field="Nomor_Rekening"></has-error>
+                          <has-error :form="form" field="No_Rekening"></has-error>
                         </div>
                       </div>
                     </div>

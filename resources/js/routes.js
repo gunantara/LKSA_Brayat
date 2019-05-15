@@ -2,6 +2,7 @@ import AdminHome from './components/Dashboard.vue'
 import Dashboard from './components/Dashboard.vue'
 import Profile_LKSA from './components/Profile_LKSA.vue'
 import Galeri from './components/Galeri.vue'
+import Detail_Galeri from './components/Detail_Galeri.vue'
 import User from './components/Users.vue'
 import Karyawan from './components/Karyawan.vue'
 import Data_Anak from './components/Data_Anak/Data_Anak.vue'
@@ -11,9 +12,10 @@ import Detail_Anak_Keluar from './components/Data_Anak/Detail_Anak_Keluar.vue'
 import Tambah_Anak from './components/Data_Anak/Tambah_Anak.vue'
 import Edit_Anak from './components/Data_Anak/Edit_Anak.vue'
 import Inventaris from './components/Inventories.vue'
+import Statistik from './components/DataStatistik.vue'
 import Profile from './components/Profile.vue'
 import Developer from './components/Developer.vue'
- 
+
 export const routes = [{
         path: '/home',
         component: AdminHome
@@ -31,6 +33,11 @@ export const routes = [{
         component: Galeri
     },
     {
+        path: '/detail-galery:idgaleri',
+        name: 'detail-galery',
+        component: Detail_Galeri
+    },
+    {
         path: '/pengguna',
         component: User
     },
@@ -40,11 +47,17 @@ export const routes = [{
     },
     {
         path: '/data-anak',
+        name: 'data-anak',
         component: Data_Anak
     },
     {
         path: '/data-anak-keluar',
         component: Data_Anak_Keluar
+    },
+    {
+        path: '/anak-keluar:idanak',
+        name: 'anak_keluar',
+        component: Detail_Anak_Keluar
     },
     {
         path: '/tambah-anak',
@@ -60,14 +73,14 @@ export const routes = [{
         name: 'detail_anak',
         component: Detail_Anak
     },
-    {
-        path: '/anak-keluar:idanak',
-        name: 'anak_keluar',
-        component: Detail_Anak_Keluar
-    },
+
     {
         path: '/inventaris',
         component: Inventaris
+    },
+    {
+        path: '/data-statistik',
+        component: Statistik
     },
     {
         path: '/profile',

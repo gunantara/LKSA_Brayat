@@ -44,6 +44,11 @@ class Document_Controller extends Controller
      */
     public function store(Request $request)
     {
+        $this->validate($request, [
+            'Document' => 'required|string',
+            'Asli_Fotocopy' => 'required|string|max:191',
+            'Keterangan' => 'required|string|max:191',
+        ]);
 
 
         $children_document = new Children_detail_document();
@@ -83,7 +88,7 @@ class Document_Controller extends Controller
      */
     public function edit($id)
     {
-        //
+        // 
     }
 
     /**
@@ -95,6 +100,12 @@ class Document_Controller extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->validate($request, [
+            'Document' => 'required|string',
+            'Asli_Fotocopy' => 'required|string|max:191',
+            'Keterangan' => 'required|string|max:191',
+        ]);
+
         $children_document = Children_detail_document::FindOrFail($id);
         $currentDoc = $children_document->Document;
         if ($request->Document != $currentDoc) {

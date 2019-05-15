@@ -1,7 +1,7 @@
 <template>
   <section class="content">
     <div class="container-fluid">
-      <div class="row mt-3">
+      <div class="row mt-3" v-if="$gate.isAdminOrUserOrKepala()">
         <div class="col-md-4">
           <!-- Profile of Child Image -->
           <div class="card card-primary card-outline">
@@ -25,12 +25,20 @@
                   <a class="float-right">{{this.form.Tgl_lahir | myDate}}</a>
                 </li>
                 <li class="list-group-item">
+                  <b>Umur</b>
+                  <a class="float-right">{{this.form.Tgl_lahir | myAge}} Tahun</a>
+                </li>
+                <li class="list-group-item">
                   <b>Agama</b>
                   <a class="float-right">{{this.form.Agama | Uptext}}</a>
                 </li>
                 <li class="list-group-item">
                   <b>Masuk Panti Asuhan</b>
                   <a class="float-right">{{this.form.Tgl_masuk_PA | myDate}}</a>
+                </li>
+                <li class="list-group-item">
+                  <b>Angkatan</b>
+                  <a class="float-right">{{this.form.Tgl_masuk_PA | myYear}}</a>
                 </li>
               </ul>
             </div>
@@ -553,7 +561,7 @@ export default {
       return photo;
     },
     loadRiwayatpendidikan() {
-      if (this.$gate.isAdmin()) {
+      if (this.$gate.isAdminOrUserOrKepala()) {
         axios
           .get(`api/edit-anak/${this.$route.params.idanak}`)
           .then(
@@ -562,7 +570,7 @@ export default {
       }
     },
     loadSaudaraAnak() {
-      if (this.$gate.isAdmin()) {
+      if (this.$gate.isAdminOrUserOrKepala()) {
         axios
           .get(`api/edit-anak/${this.$route.params.idanak}`)
           .then(
@@ -573,7 +581,7 @@ export default {
       }
     },
     loadDetailDocument() {
-      if (this.$gate.isAdmin()) {
+      if (this.$gate.isAdminOrUserOrKepala()) {
         axios
           .get(`api/edit-anak/${this.$route.params.idanak}`)
           .then(

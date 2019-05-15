@@ -31,17 +31,6 @@
                     <a class="nav-link" href="/" target="_blank"><i class="fas fa-home"></i></a>
                 </li>
             </ul>
-            <!-- SEARCH FORM -->
-            <form class="form-inline ml-3">
-                <div class="input-group input-group-sm">
-                    <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
-                    <div class="input-group-append">
-                        <button class="btn btn-navbar" type="submit">
-                            <i class="fa fa-search"></i>
-                        </button>
-                    </div>
-                </div>
-            </form>
 
             <!-- Log Out User -->
             <ul class="navbar-nav ml-auto">
@@ -89,7 +78,7 @@
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                         <!-- Add icons to the links using the .nav-icon class with font-awesome or any other icon font library -->
-
+                        @can('isAdminOrUser')
                         <li class="nav-item">
                             <router-link to="/dashboard" class="nav-link">
                                 <i class="nav-icon fa fa-tachometer-alt"></i>
@@ -98,7 +87,7 @@
                                 </p>
                             </router-link>
                         </li>
-                        <li class="nav-item has-treeview menu-open">
+                        <li class="nav-item has-treeview menu-close">
                             <a href="#" class="nav-link ">
                                 <i class="nav-icon fas fa-cogs"></i>
                                 <p>
@@ -123,7 +112,7 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="nav-item has-treeview menu-open">
+                        <li class="nav-item has-treeview menu-close">
                             <a href="#" class="nav-link ">
                                 <i class="nav-icon fas fa-cog"></i>
                                 <p>
@@ -147,6 +136,9 @@
                                     </router-link>
                                 </li>
                             </ul>
+                            @endcan
+
+                            @can('isAdmin')
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
                                     <router-link to="/data-karyawan" class="nav-link">
@@ -155,24 +147,48 @@
                                     </router-link>
                                 </li>
                             </ul>
+                            @endcan
+                            @can('isAdminOrUser')
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
                                     <router-link to="/inventaris" class="nav-link">
-                                        <i class="fas fa-warehouse nav-icon purple"></i>
+                                        <i class="fas fa-warehouse nav-icon red"></i>
                                         <p>Data inventaris</p>
                                     </router-link>
                                 </li>
                             </ul>
+                        </li>
+                        @endcan
+                        @can('isKepala')
+                        <li class="nav-item has-treeview menu-close">
+                            <a href="#" class="nav-link ">
+                                <i class="nav-icon fas fa-cog"></i>
+                                <p>
+                                    Lihat Statistik
+                                    <i class="right fa fa-angle-left "></i>
+                                </p>
+                            </a>
+
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <router-link to="/pengguna" class="nav-link">
-                                        <i class="fas fa-users-cog nav-icon cyan"></i>
-                                        <p>Data Pengguna</p>
+                                    <router-link to="/data-anak" class="nav-link">
+                                        <i class="fas fa-child nav-icon green"></i>
+                                        <p>Data Anak</p>
                                     </router-link>
                                 </li>
                             </ul>
 
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <router-link to="/data-statistik" class="nav-link">
+                                        <i class="fas fa-chart-bar nav-icon"></i>
+                                        <p>Data Statistik</p>
+                                    </router-link>
+                                </li>
+                            </ul>
                         </li>
+                        @endcan
+
                         <li class="nav-item has-treeview menu-close">
                             <a href="#" class="nav-link ">
                                 <i class="nav-icon fas fa-sliders-h"></i>
@@ -181,6 +197,16 @@
                                     <i class="right fa fa-angle-left "></i>
                                 </p>
                             </a>
+                            @can('isAdmin')
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <router-link to="/pengguna" class="nav-link">
+                                        <i class="fas fa-users-cog nav-icon cyan"></i>
+                                        <p>Data Pengguna</p>
+                                    </router-link>
+                                </li>
+                            </ul>
+                            @endcan
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
                                     <router-link to="/profile" class="nav-link">
@@ -190,6 +216,7 @@
                                         </p>
                                     </router-link>
                                 </li>
+                                @can('isAdmin')
                                 <li class="nav-item">
                                     <router-link to="/developer" class="nav-link">
                                         <i class="nav-icon fas fa-cogs"></i>
@@ -198,6 +225,7 @@
                                         </p>
                                     </router-link>
                                 </li>
+                                @endcan
                             </ul>
                         </li>
                         </li>

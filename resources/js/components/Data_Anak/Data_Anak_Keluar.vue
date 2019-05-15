@@ -1,7 +1,7 @@
 <template>
   <section class="content">
     <div class="container-fluid">
-      <div class="row mt-3" v-if="$gate.isAdmin()">
+      <div class="row mt-3" v-if="$gate.isAdminOrUser()">
         <div class="col-lg-3 col-6">
           <!-- small card -->
           <div class="small-box bg-danger">
@@ -125,7 +125,7 @@ export default {
   computed: {},
   methods: {
     LoadChildren() {
-      if (this.$gate.isAdmin()) {
+      if (this.$gate.isAdminOrUser()) {
         axios
           .get("api/children")
           .then(({ data }) => (this.childrenOut = data.childrenOut));
@@ -133,7 +133,7 @@ export default {
     },
 
     LoadJumlahAnakKeluar() {
-      if (this.$gate.isAdmin()) {
+      if (this.$gate.isAdminOrUser()) {
         axios
           .get("api/children")
           .then(({ data }) => (this.jumlahAnakKeluar = data.countChildrenOut));

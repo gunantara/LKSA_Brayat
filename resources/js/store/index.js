@@ -4,6 +4,7 @@ export default {
         jumlah_users: [],
         jumlah_employees: [],
         jumlah_childrens: [],
+        jumlah_inventories: [],
     },
     getters: {
         getEmployee(state) {
@@ -17,6 +18,9 @@ export default {
         },
         getJumlahChildren(state) {
             return state.jumlah_childrens
+        },
+        getJumlahInventories(state) {
+            return state.jumlah_inventories
         },
     },
     actions: {
@@ -40,6 +44,11 @@ export default {
                 context.commit('jumlah_childrens', response.data.jumlah_childrens)
             })
         },
+        AllJumlah_Inventories(context) {
+            axios.get("api/banyak_inventaris").then((response) => {
+                context.commit('jumlah_inventories', response.data.jumlah_inventories)
+            })
+        },
     },
     mutations: {
         employees(state, data) {
@@ -53,6 +62,9 @@ export default {
         },
         jumlah_childrens(state, data) {
             return state.jumlah_childrens = data
+        },
+        jumlah_inventories(state, data) {
+            return state.jumlah_inventories = data
         },
 
     }

@@ -70,6 +70,9 @@ const toast = swal.mixin({
 });
 window.toast = toast;
 
+//pagination component
+Vue.component('pagination', require('laravel-vue-pagination'));
+
 //route any path in web with history in laravel
 const router = new VueRouter({
     mode: 'history',
@@ -86,6 +89,12 @@ Vue.filter('Uptext', function (value) {
 //adding filter for timestamp
 Vue.filter('myDate', function (date) {
     return moment(date).locale('id').format('LL');
+});
+Vue.filter('myYear', function (date) {
+    return moment(date).format('YYYY');
+});
+Vue.filter('myAge', function (date) {
+    return moment().diff(date, 'years');
 });
 
 //create custom even for http request
@@ -123,6 +132,15 @@ Vue.component(
     require('./components/passport/PersonalAccessTokens.vue').default
 );
 
+Vue.component(
+    'Bar-Chart',
+    require('./components/Chart/BarChart_Panti.vue').default
+);
+Vue.component(
+    'Pie-Chart',
+    require('./components/Chart/PieChart_Panti.vue').default
+);
+
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -134,5 +152,4 @@ const app = new Vue({
     el: '#app',
     router,
     store,
-
 });

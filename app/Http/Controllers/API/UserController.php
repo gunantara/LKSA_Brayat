@@ -27,17 +27,9 @@ class UserController extends Controller
 
     public function index()
     {
-        /*
-        $users = DB::table('users')
-            ->select('users.*')
-            ->where('users.type', '!=', 'admin')
-            ->get();
-
-        return response()->json([
-            'users' => $users
-        ], 200);
-        */
-        return User::all();
+        if (\Gate::allows('isAdmin')) {
+            return User::all();
+        }
     }
     /**
      * Store a newly created resource in storage.
@@ -47,6 +39,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('isAdmin');
         $this->validate($request, [
             'id_employee' => 'required|max:191|unique:users',
             'name' => 'required|string|max:191|unique:users',
@@ -84,6 +77,7 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->authorize('isAdmin');
         $user = User::FindOrFail($id);
 
         $this->validate($request, [
@@ -107,6 +101,7 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
+        $this->authorize('isAdmin');
         $user = User::FindOrFail($id);
         //delete the user
         $user->forceDelete();

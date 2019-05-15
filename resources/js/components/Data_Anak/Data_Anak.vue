@@ -1,7 +1,7 @@
 <template>
   <section class="content">
     <div class="container-fluid">
-      <div class="row mt-3" v-if="$gate.isAdmin()">
+      <div class="row mt-3" v-if="$gate.isAdminOrUserOrKepala()">
         <div class="col-lg-3 col-6">
           <!-- small card -->
           <div class="small-box bg-info">
@@ -26,6 +26,7 @@
             </div>
           </div>
         </div>
+
         <div class="col-12">
           <!-- card Data Anak Panti-->
           <div class="card card-info card-outline">
@@ -34,13 +35,103 @@
                 <i class="fas fa-child"></i>
                 Data Anak Panti
               </h3>
-              <div class="card-tools">
-                <router-link to="/tambah-anak" class="nav-link">
+              <div class="card-tools" v-if="$gate.isAdminOrUser()">
+                <router-link to="/tambah-anak" class="nav-link float-right">
                   <button class="btn btn-primary">
                     Tambah Baru
                     <i class="fa fa-user-plus"></i>
                   </button>
                 </router-link>
+              </div>
+            </div>
+            <div class="card-tools">
+              <div class="input-group input-group-sm float-right" style="width: 400px;">
+                <div class="input-group-append">
+                  <button type="submit" class="btn btn-default" @click="searchingAnakPanti()">
+                    <i class="fa fa-search"></i>
+                  </button>
+                </div>
+                <input
+                  @keyup="searchingAnakPanti()"
+                  v-model="search"
+                  type="text"
+                  name="table_search"
+                  class="form-control float-right"
+                  placeholder="Cari Anak"
+                >
+              </div>
+            </div>
+
+            <!-- /.card-header -->
+            <div class="card-body table-responsive p-0">
+              <table class="table table-hover">
+                <tbody>
+                  <tr>
+                    <th>No. Induk</th>
+                    <th>Nama Lengkap</th>
+                    <th>Tempat/Tanggal Lahir</th>
+                    <th>Masuk Panti</th>
+                    <th>Detail</th>
+                    <th v-if="$gate.isAdminOrUser()">Modify</th>
+                  </tr>
+                  <tr v-for="child in childrens.data" :key="child.id">
+                    <td>{{child.No_induk }}</td>
+                    <td>{{child.Nama_Lengkap | Uptext}}</td>
+                    <td>{{child.Tempat_lahir | Uptext}} , {{child.Tgl_lahir | myDate}}</td>
+                    <td>{{child.Tgl_masuk_PA | myDate}}</td>
+                    <td>
+                      <router-link :to="`detail-anak${child.id}`">
+                        <button type="button" class="btn btn-outline-warning btn-sm">Lihat Detail</button>
+                      </router-link>
+                    </td>
+                    <td v-if="$gate.isAdminOrUser()">
+                      <router-link :to="`edit-anak${child.id}`">
+                        <button type="button" class="btn btn-success btn-sm">
+                          <i class="fa fa-edit"></i>
+                        </button>
+                      </router-link>
+                      <button
+                        type="button"
+                        class="btn btn-danger btn-sm"
+                        @click="deleteChildren(child.id)"
+                      >
+                        <i class="fa fa-archive"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
+              <pagination :data="childrens" @pagination-change-page="getResults"></pagination>
+            </div>
+          </div>
+          <!-- /.card Data Anak Panti-->
+
+          <!-- card Data Anak Non Panti-->
+          <div class="card card-success card-outline">
+            <div class="card-header">
+              <h3 class="card-title">
+                <i class="fas fa-child"></i>
+                Data Anak Non-Panti
+              </h3>
+            </div>
+            <div class="card-tools">
+              <div class="input-group input-group-sm float-right" style="width: 400px;">
+                <div class="input-group-append">
+                  <button type="submit" class="btn btn-default" @click="searchingNonAnakPanti()">
+                    <i class="fa fa-search"></i>
+                  </button>
+                </div>
+                <input
+                  @keyup="searchingNonAnakPanti()"
+                  v-model="searchnon"
+                  type="text"
+                  name="table_search"
+                  class="form-control float-right"
+                  placeholder="Cari Anak"
+                >
               </div>
             </div>
             <!-- /.card-header -->
@@ -53,20 +144,20 @@
                     <th>Tempat/Tanggal Lahir</th>
                     <th>Masuk Panti</th>
                     <th>Detail</th>
-                    <th>Modify</th>
+                    <th v-if="$gate.isAdminOrUser()">Modify</th>
                   </tr>
-                  <tr v-for="child in childrens" :key="child.id">
+                  <tr v-for="child in childrennon.data" :key="child.id">
                     <td>{{child.No_induk }}</td>
                     <td>{{child.Nama_Lengkap | Uptext}}</td>
                     <td>{{child.Tempat_lahir | Uptext}} , {{child.Tgl_lahir | myDate}}</td>
                     <td>{{child.Tgl_masuk_PA | myDate}}</td>
                     <td>
-                      <router-link :to="`detail-anak${child.id_children}`">
+                      <router-link :to="`detail-anak${child.id}`">
                         <button type="button" class="btn btn-outline-warning btn-sm">Lihat Detail</button>
                       </router-link>
                     </td>
-                    <td>
-                      <router-link :to="`edit-anak${child.id_children}`">
+                    <td v-if="$gate.isAdminOrUser()">
+                      <router-link :to="`edit-anak${child.id}`">
                         <button type="button" class="btn btn-success btn-sm">
                           <i class="fa fa-edit"></i>
                         </button>
@@ -84,60 +175,9 @@
               </table>
             </div>
             <!-- /.card-body -->
-            <div class="card-footer"></div>
-          </div>
-          <!-- /.card Data Anak Panti-->
-
-          <!-- card Data Anak Non Panti-->
-          <div class="card card-success card-outline">
-            <div class="card-header">
-              <h3 class="card-title">
-                <i class="fas fa-child"></i>
-                Data Anak Non-Panti
-              </h3>
+            <div class="card-footer">
+              <pagination :data="childrennon" @pagination-change-page="getResultsNon"></pagination>
             </div>
-            <!-- /.card-header -->
-            <div class="card-body table-responsive p-0">
-              <table class="table table-hover">
-                <tbody>
-                  <tr>
-                    <th>No. Induk</th>
-                    <th>Nama Lengkap</th>
-                    <th>Tempat/Tanggal Lahir</th>
-                    <th>Masuk Panti</th>
-                    <th>Detail</th>
-                    <th>Modify</th>
-                  </tr>
-                  <tr v-for="child in childrennon" :key="child.id">
-                    <td>{{child.No_induk }}</td>
-                    <td>{{child.Nama_Lengkap | Uptext}}</td>
-                    <td>{{child.Tempat_lahir | Uptext}} , {{child.Tgl_lahir | myDate}}</td>
-                    <td>{{child.Tgl_masuk_PA | myDate}}</td>
-                    <td>
-                      <router-link :to="`detail-anak${child.id_children}`">
-                        <button type="button" class="btn btn-outline-warning btn-sm">Lihat Detail</button>
-                      </router-link>
-                    </td>
-                    <td>
-                      <router-link :to="`edit-anak${child.id_children}`">
-                        <button type="button" class="btn btn-success btn-sm">
-                          <i class="fa fa-edit"></i>
-                        </button>
-                      </router-link>
-                      <button
-                        type="button"
-                        class="btn btn-danger btn-sm"
-                        @click="deleteChildren(child.id)"
-                      >
-                        <i class="fa fa-archive"></i>
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <!-- /.card-body -->
-            <div class="card-footer"></div>
           </div>
           <!-- /.card Data Anak Panti-->
         </div>
@@ -207,6 +247,8 @@ export default {
         Alergi_Minuman: "",
         Alergi_Obat: ""
       }),
+      search: "",
+      searchnon: "",
       date: new Date(),
       options: {
         format: "YYYY/MM/DD",
@@ -220,34 +262,72 @@ export default {
   computed: {},
   methods: {
     LoadChildren() {
-      if (this.$gate.isAdmin()) {
+      if (this.$gate.isAdminOrUserOrKepala()) {
         axios
           .get("api/children")
           .then(({ data }) => (this.childrens = data.childrens));
       }
     },
+    getResults(page = 1) {
+      axios.get("api/children?page=" + page).then(response => {
+        this.childrens = response.data.childrens;
+      });
+    },
     LoadChildrenNonPanti() {
-      if (this.$gate.isAdmin()) {
+      if (this.$gate.isAdminOrUserOrKepala()) {
         axios
           .get("api/children")
           .then(({ data }) => (this.childrennon = data.childrennon));
       }
     },
+    getResultsNon(page = 1) {
+      axios.get("api/children?page=" + page).then(response => {
+        this.childrennon = response.data.childrennon;
+      });
+    },
     LoadJumlahAnakPanti() {
-      if (this.$gate.isAdmin()) {
+      if (this.$gate.isAdminOrUserOrKepala()) {
         axios
           .get("api/children")
           .then(({ data }) => (this.jumlahAnakPanti = data.countChildren));
       }
     },
     LoadJumlahAnakNonPanti() {
-      if (this.$gate.isAdmin()) {
+      if (this.$gate.isAdminOrUserOrKepala()) {
         axios
           .get("api/children")
           .then(
             ({ data }) => (this.jumlahAnakNonPanti = data.countChildrennon)
           );
       }
+    },
+    searchingAnakPanti() {
+      let query = this.search;
+      axios
+        .get("api/findChildren?q=" + query)
+        .then(response => {
+          this.childrens = response.data;
+          _.debounce(() => {
+            Fire.$emit("AfterCreated");
+          }, 1000);
+        })
+        .catch(() => {
+          swal.fire("Gagal!", "Ada sesuatu yang salah", "warning");
+        });
+    },
+    searchingNonAnakPanti() {
+      let query = this.searchnon;
+      axios
+        .get("api/findChildrenNon?q=" + query)
+        .then(response => {
+          this.childrennon = response.data;
+          _.debounce(() => {
+            Fire.$emit("AfterCreated");
+          }, 1000);
+        })
+        .catch(() => {
+          swal.fire("Gagal!", "Ada sesuatu yang salah", "warning");
+        });
     },
     deleteChildren(id) {
       swal
@@ -286,6 +366,8 @@ export default {
     this.LoadJumlahAnakPanti();
     this.LoadJumlahAnakNonPanti();
     Fire.$on("AfterCreated", () => {
+      this.searchingAnakPanti();
+      this.searchingNonAnakPanti();
       this.LoadChildren();
       this.LoadChildrenNonPanti();
       this.LoadJumlahAnakPanti();

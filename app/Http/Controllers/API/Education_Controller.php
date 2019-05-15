@@ -12,7 +12,7 @@ class Education_Controller extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response 
      */
     public function __construct()
     {
@@ -45,6 +45,13 @@ class Education_Controller extends Controller
      */
     public function store(Request $request)
     {
+
+        $this->validate($request, [
+            'Tahun_Ajaran' => 'required|date',
+            'Nama_Sekolah' => 'required|string|max:191',
+            'Alamat_Sekolah' => 'required|string|max:191',
+        ]);
+
         $children_education = new Children_detail_education();
         $children_education->id_children = $request->input("id_children");
         $children_education->Tahun_Ajaran = $request->input("Tahun_Ajaran");
@@ -84,6 +91,11 @@ class Education_Controller extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->validate($request, [
+            'Tahun_Ajaran' => 'required|date',
+            'Nama_Sekolah' => 'required|string|max:191',
+            'Alamat_Sekolah' => 'required|string|max:191',
+        ]);
         $children_education = Children_detail_education::FindOrFail($id);
         $children_education->update($request->all());
     }

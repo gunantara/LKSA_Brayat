@@ -1,11 +1,11 @@
 <template>
   <section class="content">
     <div class="container-fluid">
-      <div class="row mt-3" v-if="$gate.isAdmin()">
+      <div class="row mt-3" v-if="$gate.isAdminOrUser()">
         <!-- ./col -->
-        <div class="col-lg-3 col-6">
+        <div v-if="$gate.isAdmin()" class="col-lg-3 col-6">
           <!-- small box -->
-          <div class="small-box bg-info">
+          <div  class="small-box bg-info">
             <div class="inner">
               <h3>{{getJumlahUser}}</h3>
               <p>Data Pengguna</p>
@@ -21,7 +21,7 @@
         </div>
         <!-- ./col -->
         <!-- ./col -->
-        <div class="col-lg-3 col-6">
+        <div v-if="$gate.isAdmin()" class="col-lg-3 col-6">
           <!-- small box -->
           <div class="small-box bg-warning">
             <div class="inner">
@@ -59,7 +59,7 @@
           <!-- small box -->
           <div class="small-box bg-danger">
             <div class="inner">
-              <h3>9</h3>
+              <h3>{{getJumlahInventories}}</h3>
               <p>Data Inventaris</p>
             </div>
             <div class="icon">
@@ -73,9 +73,44 @@
         </div>
         <!-- ./col -->
       </div>
-    </div>
-    <div v-if="!$gate.isAdmin()">
-      <not-found></not-found>
+      <div class="row mt-1" v-if="$gate.isAdminOrKepala()">
+        <div class="col-lg-6 col-col-6">
+          <div class="card card-success">
+            <div class="card-header">
+              <h3 class="card-title">Grafik Anak Panti</h3>
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-widget="collapse">
+                  <i class="fa fa-minus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="chart">
+                <Bar-Chart></Bar-Chart>
+              </div>
+            </div>
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <div class="col-lg-6 col-col-6">
+          <div class="card card-warning">
+            <div class="card-header">
+              <h3 class="card-title">Grafik Umur Anak</h3>
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-widget="collapse">
+                  <i class="fa fa-minus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="chart">
+                <Pie-Chart></Pie-Chart>
+              </div>
+            </div>
+          </div>
+          <!-- /.card-body -->
+        </div>
+      </div>
     </div>
   </section>
 </template>
@@ -86,6 +121,7 @@ export default {
     this.$store.dispatch("AllJumlah_Users");
     this.$store.dispatch("AllJumlah_Employees");
     this.$store.dispatch("AllJumlah_Childrens");
+    this.$store.dispatch("AllJumlah_Inventories");
   },
   methods: {
     loadJumlah() {
@@ -93,6 +129,7 @@ export default {
         this.$store.dispatch("AllJumlah_Users");
         this.$store.dispatch("AllJumlah_Employees");
         this.$store.dispatch("AllJumlah_Childrens");
+        this.$store.dispatch("AllJumlah_Inventories");
       }
     }
   },
@@ -105,6 +142,9 @@ export default {
     },
     getJumlahChildren() {
       return this.$store.getters.getJumlahChildren;
+    },
+    getJumlahInventories() {
+      return this.$store.getters.getJumlahInventories;
     }
   },
   created() {

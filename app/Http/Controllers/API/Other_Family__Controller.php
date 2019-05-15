@@ -44,7 +44,14 @@ class Other_Family__Controller extends Controller
      */
     public function store(Request $request)
     {
-
+        $this->validate($request, [
+            'Nama' => 'required|string|max:191',
+            'Tempat_lahir' => 'required|string|max:191',
+            'Tgl_lahir' => 'required|string|max:191',
+            'Sekolah' => 'required|string|max:191',
+            'Kelas' => 'required|string|max:191',
+            'Keterangan' => 'required|string|max:191',
+        ]);
         $children_fam = new Children_Other_Family();
         $children_fam->id_children = $request->input("id_children");
         $children_fam->Nama = $request->input("Nama");
@@ -87,6 +94,14 @@ class Other_Family__Controller extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->validate($request, [
+            'Nama' => 'required|string|max:191',
+            'Tempat_lahir' => 'required|string|max:191',
+            'Tgl_lahir' => 'required|string|max:191',
+            'Sekolah' => 'required|string|max:191',
+            'Kelas' => 'required|string|max:191',
+            'Keterangan' => 'required|string|max:191',
+        ]);
         $children_fam = Children_Other_Family::FindOrFail($id);
         $children_fam->update($request->all());
     }

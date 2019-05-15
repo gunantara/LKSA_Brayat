@@ -29,7 +29,6 @@ class ProfileController extends Controller
             ->get();
         return response()->json([
             'about' => $about,
-
         ], 200);
     }
 
@@ -62,7 +61,7 @@ class ProfileController extends Controller
      */
     public function show($id)
     {
-        //
+        // 
     }
 
     /**
@@ -85,6 +84,16 @@ class ProfileController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->validate($request, [
+            'Logo_LKSA' => 'required|string',
+            'Photo_about' => 'required|string',
+            'Photo_profiles' => 'required|string',
+            'Photo_kegiatan' => 'required|string',
+            'Nama_LKSA' => 'required|string|max:191',
+            'Quote' => 'required|string',
+            'Profile' => 'required|string',
+            'Profile_kegiatan' => 'required|string',
+        ]);
 
         $about = About::FindOrFail($id);
         //For change Logo
@@ -151,7 +160,13 @@ class ProfileController extends Controller
         $profile_kegiatan->update($request->all());
         //end update Profile Kegiatan
 
-        //for Contact update
+        $this->validate($request, [
+            'email' => 'required|string',
+            'Telp' => 'required|numeric',
+            'Alamat' => 'required|string',
+            'No_Rekening' => 'required|string',
+        ]);
+
         $contact = Contact::FindOrFail($id);
         $contact->update($request->all());
     }

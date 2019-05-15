@@ -1,7 +1,7 @@
 <template>
   <section class="content">
     <div class="container-fluid">
-      <div class="row mt-2" v-if="$gate.isAdmin()">
+      <div class="row mt-2" v-if="$gate.isAdminOrUser()">
         <div class="col md-12">
           <!-- general form elements -->
           <div class="card card-success">
@@ -40,7 +40,7 @@
             </div>
             <!-- Tab pick -->
             <!-- form start -->
-            <form role="form">
+            <form role="form" v-on:submit.prevent="UpdateAnak">
               <div class="card-body">
                 <div class="tab-content">
                   <!-- Detail Anak -->
@@ -356,6 +356,38 @@
                             >
                             <has-error :form="form" field="Nomor_telp_wali"></has-error>
                           </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="col">
+                        <div class="form-group">
+                          <label for="inputAlamat">Alamat Yang Menitipkan Anak</label>
+                          <textarea
+                            v-model="form.Alamat_yg_menitipkan"
+                            rows="4"
+                            class="form-control"
+                            type="text"
+                            name="Alamat_yg_menitipkan"
+                            placeholder="Alamat Yang Menitipkan Anak . . ."
+                            :class="{ 'is-invalid': form.errors.has('Alamat_yg_menitipkan') }"
+                          ></textarea>
+                          <has-error :form="form" field="Alamat_yg_menitipkan"></has-error>
+                        </div>
+                      </div>
+                      <div class="col">
+                        <div class="form-group">
+                          <label for="inputAlamat">Alasan Yang Menitipkan Anak</label>
+                          <textarea
+                            v-model="form.Alasan_yg_menitipkan"
+                            rows="4"
+                            class="form-control"
+                            type="text"
+                            name="Alasan_yg_menitipkan"
+                            placeholder="Alasan Yang Menitipkan Anak . . . "
+                            :class="{ 'is-invalid': form.errors.has('Alasan_yg_menitipkan') }"
+                          ></textarea>
+                          <has-error :form="form" field="Alasan_yg_menitipkan"></has-error>
                         </div>
                       </div>
                     </div>
@@ -728,38 +760,6 @@
                       ></textarea>
                       <has-error :form="form" field="Latar_Belakang_Permasalahan"></has-error>
                     </div>
-                    <div class="form-row">
-                      <div class="col">
-                        <div class="form-group">
-                          <label for="inputAlamat">Alamat Yang Menitipkan Anak</label>
-                          <textarea
-                            v-model="form.Alamat_yg_menitipkan"
-                            rows="4"
-                            class="form-control"
-                            type="text"
-                            name="Alamat_yg_menitipkan"
-                            placeholder="Sebab masuk PA . . ."
-                            :class="{ 'is-invalid': form.errors.has('Alamat_yg_menitipkan') }"
-                          ></textarea>
-                          <has-error :form="form" field="Alamat_yg_menitipkan"></has-error>
-                        </div>
-                      </div>
-                      <div class="col">
-                        <div class="form-group">
-                          <label for="inputAlamat">Alasan Yang Menitipkan Anak</label>
-                          <textarea
-                            v-model="form.Alasan_yg_menitipkan"
-                            rows="4"
-                            class="form-control"
-                            type="text"
-                            name="Alasan_yg_menitipkan"
-                            placeholder="Alasan Yang Menitipkan Anak . . . "
-                            :class="{ 'is-invalid': form.errors.has('Alasan_yg_menitipkan') }"
-                          ></textarea>
-                          <has-error :form="form" field="Alasan_yg_menitipkan"></has-error>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                   <!-- Biodata Anak -->
                   <div class="tab-pane" id="biodata">
@@ -1055,13 +1055,11 @@
               </div>
               <!-- /.card-body -->
               <div class="card-footer">
-                <router-link to="/data-anak">
-                  <button
-                    type="submit"
-                    class="btn btn-success float-right"
-                    @click="UpdateAnak()"
-                  >Ubah Data Anak</button>
-                </router-link>
+                <button
+                  type="submit"
+                  class="btn btn-success float-right"
+                  @click="UpdateAnak()"
+                >Ubah Data Anak</button>
               </div>
             </form>
           </div>
@@ -1101,16 +1099,16 @@
                           <select
                             v-model="form_other_family.Keterangan"
                             type="text"
-                            name="Keterangan_Saudara"
+                            name="Keterangan"
                             placeholder="Keterangan Saudara"
                             class="form-control"
-                            :class="{ 'is-invalid': form.errors.has('Keterangan_Saudara') }"
+                            :class="{ 'is-invalid': form_other_family.errors.has('Keterangan') }"
                           >
                             <option value disabled selected>Pilih</option>
                             <option value="adik">Adik</option>
                             <option value="kakak">Kakak</option>
                           </select>
-                          <has-error :form="form_other_family" field="Keterangan_Saudara"></has-error>
+                          <has-error :form="form_other_family" field="Keterangan"></has-error>
                         </div>
                       </div>
                     </div>
@@ -1126,12 +1124,12 @@
                           <input
                             v-model="form_other_family.Nama"
                             type="text"
-                            name="Nama_Saudara"
+                            name="Nama"
                             placeholder="Nama Saudara"
                             class="form-control"
-                            :class="{ 'is-invalid': form.errors.has('Nama_Saudara') }"
+                            :class="{ 'is-invalid': form_other_family.errors.has('Nama') }"
                           >
-                          <has-error :form="form_other_family" field="Nama_Saudara"></has-error>
+                          <has-error :form="form_other_family" field="Nama"></has-error>
                         </div>
                       </div>
                     </div>
@@ -1149,12 +1147,12 @@
                           <input
                             v-model="form_other_family.Tempat_lahir"
                             type="text"
-                            name="Tempat_lahir_saudara"
+                            name="Tempat_lahir"
                             placeholder="Tempat lahir saudara"
                             class="form-control"
-                            :class="{ 'is-invalid': form.errors.has('Tempat_lahir_saudara') }"
+                            :class="{ 'is-invalid': form_other_family.errors.has('Tempat_lahir') }"
                           >
-                          <has-error :form="form_other_family" field="Tempat_lahir_saudara"></has-error>
+                          <has-error :form="form_other_family" field="Tempat_lahir"></has-error>
                         </div>
                       </div>
                     </div>
@@ -1167,7 +1165,15 @@
                               <i class="fas fa-calendar-week"></i>
                             </span>
                           </div>
-                          <date-picker v-model="form_other_family.Tgl_lahir" :config="options"></date-picker>
+                          <date-picker
+                            v-model="form_other_family.Tgl_lahir"
+                            :config="options"
+                            name="Tgl_lahir"
+                            placeholder="Masukkan Tanggal"
+                            class="form-control"
+                            :class="{ 'is-invalid': form_other_family.errors.has('Tgl_lahir') }"
+                          ></date-picker>
+                          <has-error :form="form_other_family" field="Tgl_lahir"></has-error>
                         </div>
                       </div>
                     </div>
@@ -1185,10 +1191,10 @@
                           <select
                             v-model="form_other_family.Sekolah"
                             type="text"
-                            name="Sekolah_saudara"
+                            name="Sekolah"
                             placeholder="Sekolah saudara"
                             class="form-control"
-                            :class="{ 'is-invalid': form.errors.has('Sekolah_saudara') }"
+                            :class="{ 'is-invalid': form_other_family.errors.has('Sekolah') }"
                           >
                             <option value disabled selected>Pilih</option>
                             <option value="Belum Sekolah">Belum Sekolah</option>
@@ -1196,7 +1202,7 @@
                             <option value="Sekolah Menengah Pertama">SMP</option>
                             <option value="Sekolah Menengah Atas">SMA</option>
                           </select>
-                          <has-error :form="form_other_family" field="Sekolah_saudara"></has-error>
+                          <has-error :form="form_other_family" field="Sekolah"></has-error>
                         </div>
                       </div>
                     </div>
@@ -1215,7 +1221,7 @@
                             name="Kelas"
                             placeholder="Kelas"
                             class="form-control"
-                            :class="{ 'is-invalid': form.errors.has('Kelas') }"
+                            :class="{ 'is-invalid': form_other_family.errors.has('Kelas') }"
                           >
                           <has-error :form="form_other_family" field="Kelas"></has-error>
                         </div>
@@ -1282,9 +1288,11 @@
                           <input
                             type="file"
                             @change="updatePhotoDocument"
-                            name="photo"
-                            class="form-input"
+                            name="Document"
+                            class="form-control"
+                            :class="{ 'is-invalid': form_detail_document.errors.has('Document') }"
                           >
+                          <has-error :form="form_detail_document" field="Document"></has-error>
                         </div>
                       </div>
                     </div>
@@ -1303,7 +1311,7 @@
                             name="Asli_Fotocopy"
                             placeholder="Asli_Fotocopy"
                             class="form-control"
-                            :class="{ 'is-invalid': form.errors.has('Asli_Fotocopy') }"
+                            :class="{ 'is-invalid': form_detail_document.errors.has('Asli_Fotocopy') }"
                           >
                             <option value disabled selected>Pilih</option>
                             <option value="asli">Asli</option>
@@ -1330,7 +1338,7 @@
                               name="Keterangan"
                               placeholder="Keterangan"
                               class="form-control"
-                              :class="{ 'is-invalid': form.errors.has('Keterangan') }"
+                              :class="{ 'is-invalid': form_detail_document.errors.has('Keterangan') }"
                             >
                             <has-error :form="form_detail_document" field="Keterangan"></has-error>
                           </div>
@@ -1384,7 +1392,15 @@
                               <i class="fas fa-calendar-week"></i>
                             </span>
                           </div>
-                          <date-picker v-model="form_education.Tahun_Ajaran" :config="options"></date-picker>
+                          <date-picker
+                            v-model="form_education.Tahun_Ajaran"
+                            :config="options"
+                            name="Tahun_Ajaran"
+                            placeholder="Masukkan Tanggal"
+                            class="form-control"
+                            :class="{ 'is-invalid': form_education.errors.has('Tahun_Ajaran') }"
+                          ></date-picker>
+                          <has-error :form="form_education" field="Tahun_Ajaran"></has-error>
                         </div>
                       </div>
                     </div>
@@ -1403,7 +1419,7 @@
                             name="Nama_Sekolah"
                             placeholder="Nama Sekolah"
                             class="form-control"
-                            :class="{ 'is-invalid': form.errors.has('Nama_Sekolah') }"
+                            :class="{ 'is-invalid': form_education.errors.has('Nama_Sekolah') }"
                           >
                           <has-error :form="form_education" field="Nama_Sekolah"></has-error>
                         </div>
@@ -1419,7 +1435,7 @@
                       type="text"
                       name="Alamat_Sekolah"
                       placeholder="Alamat Sekolah ..."
-                      :class="{ 'is-invalid': form.errors.has('Alamat_Sekolah') }"
+                      :class="{ 'is-invalid': form_education.errors.has('Alamat_Sekolah') }"
                     ></textarea>
                     <has-error :form="form_education" field="Alamat_Sekolah"></has-error>
                   </div>
@@ -1460,13 +1476,13 @@ export default {
         Nama_Lengkap: "",
         Agama: "",
         Tempat_lahir: "",
-        Tgl_lahir: new Date(),
+        Tgl_lahir: new Date().useCurrent,
         Surat_Kelahiran_Akta: "",
         Alamat: "",
-        Mulai_masuk_sekolah: new Date(),
+        Mulai_masuk_sekolah: new Date().useCurrent,
         Nama_sekolah: "",
         Kelas: "",
-        Tgl_masuk_PA: new Date(),
+        Tgl_masuk_PA: new Date().useCurrent,
         Administrasi_sekolah: "",
         Sebab_masuk_PA: "",
         Keterangan_anak: "",
@@ -1507,7 +1523,7 @@ export default {
       form_education: new Form({
         id: "",
         id_children: "",
-        Tahun_Ajaran: new Date(),
+        Tahun_Ajaran: new Date().useCurrent,
         Nama_Sekolah: "",
         Alamat_Sekolah: ""
       }),
@@ -1523,14 +1539,14 @@ export default {
         id_children: "",
         Nama: "",
         Tempat_lahir: "",
-        Tgl_lahir: new Date(),
+        Tgl_lahir: new Date().useCurrent,
         Sekolah: "",
         Kelas: "",
         Keterangan: ""
       }),
       options: {
         format: "YYYY/MM/DD",
-        useCurrent: false
+        useCurrent: true
       }
     };
   },
@@ -1560,6 +1576,7 @@ export default {
             type: "success",
             title: "Data Anak Update successfully"
           });
+          this.$router.push("data-anak");
           this.$Progress.finish();
         })
         .catch(() => {
@@ -1594,7 +1611,7 @@ export default {
       reader.readAsDataURL(file);
     },
     loadRiwayatpendidikan() {
-      if (this.$gate.isAdmin()) {
+      if (this.$gate.isAdminOrUser()) {
         axios
           .get(`api/edit-anak/${this.$route.params.idanak}`)
           .then(
@@ -1676,7 +1693,7 @@ export default {
         });
     },
     loadSaudaraAnak() {
-      if (this.$gate.isAdmin()) {
+      if (this.$gate.isAdminOrUser()){
         axios
           .get(`api/edit-anak/${this.$route.params.idanak}`)
           .then(
@@ -1759,7 +1776,7 @@ export default {
         });
     },
     loadDocument() {
-      if (this.$gate.isAdmin()) {
+      if (this.$gate.isAdminOrUser()) {
         axios
           .get(`api/edit-anak/${this.$route.params.idanak}`)
           .then(

@@ -1,9 +1,23 @@
 <template>
   <section class="content">
     <div class="container-fluid">
-      <div class="row mt-3">
+      <div class="row mt-3" v-if="$gate.isAdminOrUser()">
+        <!-- Widget Jumlah Inventaris -->
+        <div class="col-lg-3 col-6">
+          <div class="small-box bg-danger">
+            <div class="inner">
+              <h3>{{getJumlahInventories}}</h3>
+              <p>Jumlah Inventaris</p>
+            </div>
+            <div class="icon">
+              <i class="fa fa-warehouse"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-0">
         <div class="col-md-12">
-          <div class="card">
+          <div class="card card-outline card-danger">
             <div class="card-header">
               <h3 class="card-title">Data Inventaris</h3>
               <div class="card-tools">
@@ -14,7 +28,7 @@
               </div>
             </div>
             <!-- /.card-header -->
-            <div class="card-body p-0">
+            <div class="card-body table-responsive p-0">
               <table class="table table-hover">
                 <tbody>
                   <tr>
@@ -26,7 +40,7 @@
                     <th style="width: 10px">Kondisi</th>
                     <th>Ubah/Hapus</th>
                   </tr>
-                  <tr v-for="inventori in inventories" :key="inventori.id">
+                  <tr v-for="inventori in inventories.data" :key="inventori.id">
                     <td>{{inventori.Nama_Fasilitas | Uptext}}</td>
                     <td>{{inventori.Jumlah}}</td>
                     <td>{{inventori.Bantuan | Uptext}}</td>
@@ -34,7 +48,7 @@
                     <td>{{inventori.Kepemilikan | Uptext}}</td>
                     <td>
                       <span
-                        v-if="inventori.Kondisi <= 100 && inventori.Kondisi >= 80 "
+                        v-if="inventori.Kondisi <= 101 && inventori.Kondisi >= 80 "
                         class="badge bg-success"
                       >{{inventori.Kondisi}}%</span>
                       <span
@@ -68,6 +82,9 @@
               </table>
             </div>
             <!-- /.card-body -->
+            <div class="card-footer">
+              <pagination :data="inventories" @pagination-change-page="getResults"></pagination>
+            </div>
           </div>
         </div>
         <!-- Modal -->
@@ -117,15 +134,15 @@
                       <input
                         v-model="form.Jumlah"
                         type="number"
-                        name="Jumlah_Fasilitas"
+                        name="Jumlah"
                         min="1"
                         max="100"
-                        step="2"
+                        step="1"
                         placeholder="1"
                         class="form-control"
-                        :class="{ 'is-invalid': form.errors.has('Jumlah_Fasilitas') }"
+                        :class="{ 'is-invalid': form.errors.has('Jumlah') }"
                       >
-                      <has-error :form="form" field="Jumlah_Fasilitas"></has-error>
+                      <has-error :form="form" field="Jumlah"></has-error>
                     </div>
                   </div>
                   <div class="form-row">
@@ -150,15 +167,15 @@
                       <input
                         v-model="form.Kondisi"
                         type="number"
-                        name="Kondisi_Fasilitas"
+                        name="Kondisi"
                         min="1"
                         max="100"
-                        step="2"
+                        step="1"
                         placeholder="1"
                         class="form-control"
-                        :class="{ 'is-invalid': form.errors.has('Kondisi_Fasilitas') }"
+                        :class="{ 'is-invalid': form.errors.has('Kondisi') }"
                       >
-                      <has-error :form="form" field="Kondisi_Fasilitas"></has-error>
+                      <has-error :form="form" field="Kondisi"></has-error>
                     </div>
                   </div>
                   <div class="form-row">
@@ -244,23 +261,36 @@ export default {
     };
   },
   mounted() {
+    this.$store.dispatch("AllJumlah_Inventories");
     console.log("Component mounted.");
   },
   created() {
     this.LoadInvetories();
     this.loaduserAuth();
+    this.loadJumlah();
     Fire.$on("AfterCreated", () => {
       this.LoadInvetories();
       this.loaduserAuth();
+      this.loadJumlah();
     });
   },
   methods: {
+    loadJumlah() {
+      if (this.$gate.isAdminOrUser()) {
+        this.$store.dispatch("AllJumlah_Inventories");
+      }
+    },
     LoadInvetories() {
-      if (this.$gate.isAdmin()) {
+      if (this.$gate.isAdminOrUser()) {
         axios
           .get("api/inventorie")
           .then(({ data }) => (this.inventories = data.inventorie));
       }
+    },
+    getResults(page = 1) {
+      axios.get("api/inventorie?page=" + page).then(response => {
+        this.inventories = response.data.inventorie;
+      });
     },
     loaduserAuth() {
       axios.get("api/profile").then(({ data }) => this.userauth.fill(data));
@@ -339,6 +369,11 @@ export default {
               });
           }
         });
+    }
+  },
+  computed: {
+    getJumlahInventories() {
+      return this.$store.getters.getJumlahInventories;
     }
   }
 };

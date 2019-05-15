@@ -34,6 +34,7 @@ class Children extends Model
         'Photo_anak',
     ];
 
+
     public static function boot()
     {
         parent::boot();

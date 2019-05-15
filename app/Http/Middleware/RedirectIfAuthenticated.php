@@ -18,7 +18,12 @@ class RedirectIfAuthenticated
     public function handle($request, Closure $next, $guard = null)
     {
         if (Auth::guard($guard)->check()) {
+            if (\Gate::allows('isAdmin') || \Gate::allows('isUser') ){
             return redirect('/home');
+            }
+            else{
+                return redirect('/data-statistik');
+            }
         }
 
         return $next($request);

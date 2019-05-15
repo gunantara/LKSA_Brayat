@@ -116,9 +116,9 @@
                       name="Nama_lengkap"
                       placeholder="Nama Lengkap"
                       class="form-control"
-                      :class="{ 'is-invalid': form.errors.has('Nama_Lengkap') }"
+                      :class="{ 'is-invalid': form.errors.has('Nama_lengkap') }"
                     >
-                    <has-error :form="form" field="Nama_Lengkap"></has-error>
+                    <has-error :form="form" field="Nama_lengkap"></has-error>
                   </div>
                 </div>
                 <div class="form-row">
@@ -160,7 +160,7 @@
                           class="form-control"
                           :class="{ 'is-invalid': form.errors.has('Jenis_Kelamin') }"
                         >
-                          <option value>Pilih Jenis Kelamin</option>
+                          <option value disabled selected>Pilih Jenis Kelamin</option>
                           <option value="pria">Pria</option>
                           <option value="Wanita">Wanita</option>
                         </select>
@@ -182,12 +182,12 @@
                         <input
                           v-model="form.Tempat_lahir"
                           type="text"
-                          name="tempat_lahir"
+                          name="Tempat_lahir"
                           placeholder="Tempat Lahir"
                           class="form-control"
-                          :class="{ 'is-invalid': form.errors.has('tempat_lahir') }"
+                          :class="{ 'is-invalid': form.errors.has('Tempat_lahir') }"
                         >
-                        <has-error :form="form" field="tempat_lahir"></has-error>
+                        <has-error :form="form" field="Tempat_lahir"></has-error>
                       </div>
                     </div>
                   </div>
@@ -200,7 +200,14 @@
                             <i class="fas fa-calendar-week"></i>
                           </span>
                         </div>
-                        <date-picker v-model="form.Tgl_lahir" :config="options"></date-picker>
+                        <date-picker
+                          v-model="form.Tgl_lahir"
+                          :config="options"
+                          placeholder="Masukkan Tanggal"
+                          class="form-control"
+                          :class="{ 'is-invalid': form.errors.has('Tgl_lahir') }"
+                        ></date-picker>
+                        <has-error :form="form" field="Tgl_lahir"></has-error>
                       </div>
                     </div>
                   </div>
@@ -238,7 +245,7 @@
                         class="form-control"
                         :class="{ 'is-invalid': form.errors.has('Status_Kepegawaian') }"
                       >
-                        <option value>Status Kepegawaian</option>
+                        <option value disabled selected>Status Kepegawaian</option>
                         <option value="Pegawai Tetap">Tetap</option>
                         <option value="Pegawai Honorer">Honorer</option>
                       </select>
@@ -254,7 +261,14 @@
                             <i class="fas fa-calendar-week"></i>
                           </span>
                         </div>
-                        <date-picker v-model="form.Mulai_Bekerja" :config="options"></date-picker>
+                        <date-picker
+                          v-model="form.Mulai_Bekerja"
+                          :config="options"
+                          placeholder="Masukkan Tanggal"
+                          class="form-control"
+                          :class="{ 'is-invalid': form.errors.has('Mulai_Bekerja') }"
+                        ></date-picker>
+                        <has-error :form="form" field="Mulai_Bekerja"></has-error>
                       </div>
                     </div>
                   </div>
@@ -277,7 +291,7 @@
                           class="form-control"
                           :class="{ 'is-invalid': form.errors.has('Pendidikan_Terakhir') }"
                         >
-                          <option value>Pendidikan Terakhir</option>
+                          <option value disabled selected>Pendidikan Terakhir</option>
                           <option value="SMA">SMA</option>
                           <option value="Strata-1">Strata-1</option>
                           <option value="Strata-2">Strata-2</option>
@@ -335,8 +349,8 @@ export default {
         NIK: "",
         Jenis_Kelamin: "",
         Tempat_lahir: "",
-        Tgl_lahir: new Date(),
-        Mulai_Bekerja: new Date(),
+        Tgl_lahir: new Date().useCurrent,
+        Mulai_Bekerja: new Date().useCurrent,
         Jabatan: "",
         Status_Kepegawaian: "",
         Pendidikan_Terakhir: "",
@@ -345,7 +359,7 @@ export default {
       date: new Date(),
       options: {
         format: "YYYY/MM/DD",
-        useCurrent: false
+        useCurrent: true
       }
     };
   },
