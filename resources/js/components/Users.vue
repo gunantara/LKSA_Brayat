@@ -107,7 +107,7 @@
                           class="form-control"
                           :class="{ 'is-invalid': form.errors.has('id_employee') }"
                         >
-                          <option value disabled selected>Select Karyawan</option>
+                          <option value disabled selected>Pilih Karyawan</option>
                           <option
                             :value="employees.id"
                             v-for="employees in getEmployee"
@@ -134,7 +134,7 @@
                           class="form-control"
                           :class="{ 'is-invalid': form.errors.has('type') }"
                         >
-                          <option value disabled selected>Select User Role</option>
+                          <option value disabled selected>Pilih Role Pengguna</option>
                           <option value="admin">Admin</option>
                           <option value="pengelola">Pengelola</option>
                           <option value="kepala LKSA">Kepala LKSA</option>
@@ -216,9 +216,9 @@
                 </div>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                <button v-show="editmode" type="submit" class="btn btn-success">Update</button>
-                <button v-show="!editmode" type="submit" class="btn btn-primary">Create</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Tutup</button>
+                <button v-show="editmode" type="submit" class="btn btn-success">Ubah</button>
+                <button v-show="!editmode" type="submit" class="btn btn-primary">Tambah</button>
               </div>
             </form>
           </div>
@@ -272,7 +272,6 @@ export default {
         this.$store.dispatch("AllJumlah_Users");
       }
     },
-
     updateUser() {
       //console.log("Editing Data");
       this.$Progress.start();
@@ -280,12 +279,12 @@ export default {
         .put("api/user/" + this.form.id)
         .then(() => {
           $("#addNew").modal("hide");
-          swal.fire("Updated!", "Your file has been Updated.", "success");
+          swal.fire("Diubah!", "Data Pengguna berhasil diubah.", "success");
           Fire.$emit("AfterCreated");
           this.$Progress.finish();
         })
         .catch(() => {
-          swal.fire("Fail!", "Something Wrong", "warning");
+          swal.fire("Gagal!", "Ada yang salah cek kembali form", "warning");
           this.$Progress.fail();
         });
     },
@@ -304,12 +303,11 @@ export default {
       swal
         .fire({
           title: "Anda yakin Menghapus Data ini?",
-          text: "You won't be able to revert this!",
           type: "warning",
           showCancelButton: true,
           confirmButtonColor: "#3085d6",
           cancelButtonColor: "#d33",
-          confirmButtonText: "Yes, delete it!"
+          confirmButtonText: "Ya, Hapus!"
         })
         .then(result => {
           //send request to the server
@@ -317,11 +315,11 @@ export default {
             this.form
               .delete("api/user/" + id)
               .then(() => {
-                swal.fire("Deleted!", "Your file has been deleted.", "success");
+                swal.fire("Terhapus!", "Data berhasil dihapus.", "success");
                 Fire.$emit("AfterCreated");
               })
               .catch(() => {
-                swal.fire("Fail!", "Something Wrong", "warning");
+                swal.fire("Gagal!", "Ada yang salah", "warning");
               });
           }
         });
@@ -335,14 +333,14 @@ export default {
           $("#addNew").modal("hide");
           toast.fire({
             type: "success",
-            title: "User created successfully"
+            title: "User berhasil ditambahkan"
           });
           this.$Progress.finish();
         })
         .catch(() => {
           toast.fire({
             type: "error",
-            title: "Something wrong"
+            title: "ada yang salah cek kembali form"
           });
         });
     }

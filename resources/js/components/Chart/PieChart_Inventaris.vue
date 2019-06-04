@@ -1,9 +1,9 @@
 <script>
 // CommitChart.js
-import { Doughnut } from "vue-chartjs";
+import { Pie } from "vue-chartjs";
 
 export default {
-  extends: Doughnut,
+  extends: Pie,
   mounted() {
     // Overwriting base render method with actual data.
     let uri = "api/tampil_umur";

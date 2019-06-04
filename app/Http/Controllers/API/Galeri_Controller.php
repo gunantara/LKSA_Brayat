@@ -39,7 +39,10 @@ class Galeri_Controller extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $galeri = new Galery();
+        $galeri->id_user = $request->input("id_user");
+        $galeri->kegiatan = $request->input("Kegiatan");
+        $galeri->save();
     }
 
     /**
@@ -73,7 +76,8 @@ class Galeri_Controller extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $galeri = Galery::FindOrFail($id);
+        $galeri->update($request->all());
     }
 
     /**
@@ -84,6 +88,8 @@ class Galeri_Controller extends Controller
      */
     public function destroy($id)
     {
-        //
+        $galeri = Galery::FindOrFail($id);
+        $galeri->forceDelete();
+        return ['message' => 'galeri deleted'];
     }
 }

@@ -45,6 +45,8 @@ class Detail_Gallery extends Controller
             'jumlah_photos' => $countPhotos
         ], 200);
     }
+
+
     public function create()
     {
         //
@@ -108,7 +110,19 @@ class Detail_Gallery extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $detail_galeri = Detail_galeries::FindOrFail($id);
+        $currentPhoto = $detail_galeri->Photo;
+        if ($request->Photo != $currentPhoto) {
+            $name = time() . '.' . explode('/', explode(':', substr($request->Photo, 0, strpos($request->Photo, ';')))[1])[1];
+            \Image::make($request->Photo)->save(public_path('img/galeri/') . $name);
+            $request->merge(['Photo' => $name]);
+            $PhotoGaleri = public_path('img/galeri/') . $currentPhoto;
+            if (file_exists($PhotoGaleri)) {
+                @unlink($PhotoGaleri);
+            }
+        }
+        $detail_galeri->update($request->all());
+        return ['message' => 'photo updated'];
     }
 
     /**

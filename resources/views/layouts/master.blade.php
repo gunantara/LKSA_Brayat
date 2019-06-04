@@ -159,7 +159,8 @@
                             </ul>
                         </li>
                         @endcan
-                        @can('isKepala')
+
+                        @can('isAdminOrKepala')
                         <li class="nav-item has-treeview menu-close">
                             <a href="#" class="nav-link ">
                                 <i class="nav-icon fas fa-cog"></i>
@@ -168,16 +169,6 @@
                                     <i class="right fa fa-angle-left "></i>
                                 </p>
                             </a>
-
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <router-link to="/data-anak" class="nav-link">
-                                        <i class="fas fa-child nav-icon green"></i>
-                                        <p>Data Anak</p>
-                                    </router-link>
-                                </li>
-                            </ul>
-
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
                                     <router-link to="/data-statistik" class="nav-link">
@@ -186,8 +177,18 @@
                                     </router-link>
                                 </li>
                             </ul>
+                            @endcan
+                            @can('isKepala')
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <router-link to="/data-anak" class="nav-link">
+                                        <i class="fas fa-child nav-icon green"></i>
+                                        <p>Data Anak</p>
+                                    </router-link>
+                                </li>
+                            </ul>
+                            @endcan
                         </li>
-                        @endcan
 
                         <li class="nav-item has-treeview menu-close">
                             <a href="#" class="nav-link ">

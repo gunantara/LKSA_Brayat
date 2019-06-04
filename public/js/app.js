@@ -1832,6 +1832,57 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Chart/PieChart_Inventaris.vue?vue&type=script&lang=js&":
+/*!************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Chart/PieChart_Inventaris.vue?vue&type=script&lang=js& ***!
+  \************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vue_chartjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-chartjs */ "./node_modules/vue-chartjs/es/index.js");
+// CommitChart.js
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  extends: vue_chartjs__WEBPACK_IMPORTED_MODULE_0__["Pie"],
+  mounted: function mounted() {
+    var _this = this;
+
+    // Overwriting base render method with actual data.
+    var uri = "api/tampil_umur";
+    var Years = new Array();
+    var Labels = new Array();
+    var Count = new Array();
+    axios.get(uri).then(function (response) {
+      var data = response.data.tampil_umur;
+
+      if (data) {
+        data.forEach(function (element) {
+          Years.push(element.umur);
+          Labels.push(element.name);
+          Count.push(element.jumlah);
+        });
+
+        _this.renderChart({
+          labels: Years,
+          datasets: [{
+            backgroundColor: ["#f56954", "#ffc107", "#00a65a", "#00c0ef", "#3c8dbc"],
+            data: Count
+          }]
+        }, {
+          responsive: true,
+          maintainAspectRatio: false
+        });
+      } else {
+        console.log("No data");
+      }
+    });
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Chart/PieChart_Panti.vue?vue&type=script&lang=js&":
 /*!*******************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Chart/PieChart_Panti.vue?vue&type=script&lang=js& ***!
@@ -1867,7 +1918,6 @@ __webpack_require__.r(__webpack_exports__);
         _this.renderChart({
           labels: Years,
           datasets: [{
-            label: "Non Panti",
             backgroundColor: ["#f56954", "#ffc107", "#00a65a", "#00c0ef", "#3c8dbc"],
             data: Count
           }]
@@ -5418,7 +5468,7 @@ __webpack_require__.r(__webpack_exports__);
       this.form.put("api/children/" + this.$route.params.idanak).then(function () {
         toast.fire({
           type: "success",
-          title: "Data Anak Update successfully"
+          title: "Data Anak Berhasil diubah"
         });
 
         _this2.$router.push("data-anak");
@@ -5427,7 +5477,7 @@ __webpack_require__.r(__webpack_exports__);
       }).catch(function () {
         toast.fire({
           type: "error",
-          title: "Something wrong when update Data Anak"
+          title: "Ada yang salah cek kembai form"
         });
       });
     },
@@ -5446,7 +5496,7 @@ __webpack_require__.r(__webpack_exports__);
         swal.fire({
           type: "error",
           title: "Oops...",
-          text: "You are uploading a large file"
+          text: "File terlalu besar pilih yang lain"
         });
         return false;
       }
@@ -5505,12 +5555,12 @@ __webpack_require__.r(__webpack_exports__);
       this.$Progress.start();
       this.form_education.put("api/children_education/" + this.form_education.id).then(function () {
         $("#addNewPendidikan").modal("hide");
-        swal.fire("Updated!", "Your file has been Updated.", "success");
+        swal.fire("Diubah!", "Riwayat Pendidikan berhasil diubah.", "success");
         Fire.$emit("AfterCreated");
 
         _this6.$Progress.finish();
       }).catch(function () {
-        swal.fire("Fail!", "Something Wrong", "warning");
+        swal.fire("Gagal!", "Ada yang salah cek kembali form", "warning");
 
         _this6.$Progress.fail();
       });
@@ -5655,7 +5705,7 @@ __webpack_require__.r(__webpack_exports__);
         swal.fire({
           type: "error",
           title: "Oops...",
-          text: "You are uploading a large file"
+          text: "File terlalu besar"
         });
         return false;
       }
@@ -6779,7 +6829,7 @@ __webpack_require__.r(__webpack_exports__);
       this.form.post("api/children").then(function () {
         toast.fire({
           type: "success",
-          title: "Data Anak created successfully"
+          title: "Data Anak berhasil ditambahkan"
         });
 
         _this2.$router.push("data-anak");
@@ -6788,7 +6838,7 @@ __webpack_require__.r(__webpack_exports__);
       }).catch(function () {
         toast.fire({
           type: "error",
-          title: "Something wrong when create a Data Anak"
+          title: "Ada yang salah cek kembali form"
         });
       });
     },
@@ -6807,7 +6857,7 @@ __webpack_require__.r(__webpack_exports__);
         swal.fire({
           type: "error",
           title: "Oops...",
-          text: "You are uploading a large file"
+          text: "File terlalu besar pilih yang lain"
         });
         return false;
       }
@@ -7052,12 +7102,32 @@ __webpack_require__.r(__webpack_exports__);
       }).catch(function () {
         toast.fire({
           type: "error",
-          title: "Something wrong"
+          title: "Ada yang salah"
+        });
+      });
+    },
+    updatePhotoGaleri: function updatePhotoGaleri() {
+      var _this5 = this;
+
+      this.$Progress.start();
+      this.form.put("api/detail_galeri/" + this.form.id).then(function () {
+        Fire.$emit("AfterCreated");
+        $("#addNew").modal("hide");
+        toast.fire({
+          type: "success",
+          title: "Photo berhasil diubah"
+        });
+
+        _this5.$Progress.finish();
+      }).catch(function () {
+        toast.fire({
+          type: "error",
+          title: "Ada yang salah"
         });
       });
     },
     deletePhoto: function deletePhoto(id) {
-      var _this5 = this;
+      var _this6 = this;
 
       swal.fire({
         title: "Anda yakin Menghapus Data ini?",
@@ -7070,7 +7140,7 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (result) {
         //send request to the server
         if (result.value) {
-          _this5.form.delete("api/detail_galeri/" + id).then(function () {
+          _this6.form.delete("api/detail_galeri/" + id).then(function () {
             swal.fire("Deleted!", "Your file has been deleted.", "success");
             Fire.$emit("AfterCreated");
           }).catch(function () {
@@ -7081,14 +7151,14 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   created: function created() {
-    var _this6 = this;
+    var _this7 = this;
 
     this.loadListPhoto();
     this.loadJumlahPhoto();
     Fire.$on("AfterCreated", function () {
-      _this6.loadListPhoto();
+      _this7.loadListPhoto();
 
-      _this6.loadJumlahPhoto();
+      _this7.loadJumlahPhoto();
     });
   }
 });
@@ -7213,27 +7283,188 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      galeri: {}
+      editmode: false,
+      userauth: new Form({
+        id: "",
+        name: ""
+      }),
+      galeri: {},
+      form: new Form({
+        id: "",
+        id_user: "",
+        Kegiatan: ""
+      })
     };
   },
   mounted: function mounted() {
     console.log("Component mounted.");
   },
   methods: {
-    loadGaleri: function loadGaleri() {
+    loaduserAuth: function loaduserAuth() {
       var _this = this;
 
-      axios.get("api/galeri").then(function (_ref) {
+      axios.get("api/profile").then(function (_ref) {
         var data = _ref.data;
-        return _this.galeri = data.galeri;
+        return _this.userauth.fill(data);
+      });
+    },
+    loadGaleri: function loadGaleri() {
+      var _this2 = this;
+
+      axios.get("api/galeri").then(function (_ref2) {
+        var data = _ref2.data;
+        return _this2.galeri = data.galeri;
+      });
+    },
+    newModal: function newModal() {
+      this.editmode = false;
+      this.form.reset();
+      $("#addNew").modal("show");
+    },
+    editModal: function editModal(gal) {
+      this.editmode = true;
+      this.form.reset();
+      $("#addNew").modal("show");
+      this.form.fill(gal);
+    },
+    createGaleri: function createGaleri() {
+      var _this3 = this;
+
+      this.form.id_user = this.userauth.id;
+      this.$Progress.start();
+      this.form.post("api/galeri").then(function () {
+        Fire.$emit("AfterCreated");
+        $("#addNew").modal("hide");
+        toast.fire({
+          type: "success",
+          title: "Galeri berhasil ditambahkan"
+        });
+
+        _this3.$Progress.finish();
+      }).catch(function () {
+        toast.fire({
+          type: "error",
+          title: "ada yang salah"
+        });
+      });
+    },
+    updateGaleri: function updateGaleri() {
+      var _this4 = this;
+
+      //console.log("Editing Data");
+      this.$Progress.start();
+      this.form.put("api/galeri/" + this.form.id).then(function () {
+        $("#addNew").modal("hide");
+        swal.fire("Diubah!", "Nama Galeri berhasil diubah.", "success");
+        Fire.$emit("AfterCreated");
+
+        _this4.$Progress.finish();
+      }).catch(function () {
+        swal.fire("Gagal!", "Ada yang salah cek kembali form", "warning");
+
+        _this4.$Progress.fail();
+      });
+    },
+    deleteGaleri: function deleteGaleri(id) {
+      var _this5 = this;
+
+      swal.fire({
+        title: "Anda yakin Menghapus Galeri ini?",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Ya, Hapus!"
+      }).then(function (result) {
+        //send request to the server
+        if (result.value) {
+          _this5.form.delete("api/galeri/" + id).then(function () {
+            swal.fire("Terhapus!", "Galeri berhasil dihapus.", "success");
+            Fire.$emit("AfterCreated");
+          }).catch(function () {
+            swal.fire("Gagal!", "Ada yang salah", "warning");
+          });
+        }
       });
     }
   },
   created: function created() {
+    var _this6 = this;
+
     this.loadGaleri();
+    this.loaduserAuth();
+    Fire.$on("AfterCreated", function () {
+      _this6.loadGaleri();
+
+      _this6.loaduserAuth();
+    });
   }
 });
 
@@ -8060,7 +8291,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }).catch(function () {
         toast.fire({
           type: "error",
-          title: "Something wrong"
+          title: "Ada yang salah cek kembali form"
         });
       });
     },
@@ -8071,12 +8302,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.$Progress.start();
       this.form.put("api/employee/" + this.form.id).then(function () {
         $("#addNew").modal("hide");
-        swal.fire("Updated!", "Your file has been Updated.", "success");
+        swal.fire("Diubah!", "Data Karyawan Berhasih Diubah.", "success");
         Fire.$emit("AfterCreated");
 
         _this3.$Progress.finish();
       }).catch(function () {
-        swal.fire("Fail!", "Something Wrong", "warning");
+        swal.fire("Gagal!", "Ada yang salah cek kembali form", "warning");
 
         _this3.$Progress.fail();
       });
@@ -8086,20 +8317,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       swal.fire({
         title: "Anda yakin Menghapus Data ini?",
-        text: "You won't be able to revert this!",
         type: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!"
+        confirmButtonText: "Ya, Hapus!"
       }).then(function (result) {
         //send request to the server
         if (result.value) {
           _this4.form.delete("api/employee/" + id).then(function () {
-            swal.fire("Deleted!", "Your file has been deleted.", "success");
+            swal.fire("Terhapus!", "Data Karyawan Berhasil Dihapus.", "success");
             Fire.$emit("AfterCreated");
           }).catch(function () {
-            swal.fire("Fail!", "Something Wrong", "warning");
+            swal.fire("Gagal!", "Ada yang salah", "warning");
           });
         }
       });
@@ -8762,7 +8992,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         swal.fire({
           type: "error",
           title: "Oops...",
-          text: "You are uploading a large file"
+          text: "ukuran file terlalu besar"
         });
         return false;
       }
@@ -8784,7 +9014,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         swal.fire({
           type: "error",
           title: "Oops...",
-          text: "You are uploading a large file"
+          text: "ukuran file terlalu besar"
         });
         return false;
       }
@@ -8806,7 +9036,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         swal.fire({
           type: "error",
           title: "Oops...",
-          text: "You are uploading a large file"
+          text: "ukuran file terlalu besar"
         });
         return false;
       }
@@ -8828,7 +9058,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         swal.fire({
           type: "error",
           title: "Oops...",
-          text: "You are uploading a large file"
+          text: "ukuran file terlalu besar"
         });
         return false;
       }
@@ -8854,7 +9084,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }).catch(function () {
         toast.fire({
           type: "error",
-          title: "Something wrong when update profile"
+          title: "ada yang salah ketika mengubah profile"
         });
       });
     }
@@ -8862,7 +9092,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   created: function created() {
     var _this7 = this;
 
-    this.loaduserAuth();
+    this.loaduserAuth(); //tampil profile
+
     axios.get("api/profile_lksa").then(function (response) {
       _this7.form.fill(response.data.about[0]);
     });
@@ -9164,12 +9395,12 @@ __webpack_require__.r(__webpack_exports__);
       this.$Progress.start();
       this.form.put("api/user/" + this.form.id).then(function () {
         $("#addNew").modal("hide");
-        swal.fire("Updated!", "Your file has been Updated.", "success");
+        swal.fire("Diubah!", "Data Pengguna berhasil diubah.", "success");
         Fire.$emit("AfterCreated");
 
         _this2.$Progress.finish();
       }).catch(function () {
-        swal.fire("Fail!", "Something Wrong", "warning");
+        swal.fire("Gagal!", "Ada yang salah cek kembali form", "warning");
 
         _this2.$Progress.fail();
       });
@@ -9190,20 +9421,19 @@ __webpack_require__.r(__webpack_exports__);
 
       swal.fire({
         title: "Anda yakin Menghapus Data ini?",
-        text: "You won't be able to revert this!",
         type: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!"
+        confirmButtonText: "Ya, Hapus!"
       }).then(function (result) {
         //send request to the server
         if (result.value) {
           _this3.form.delete("api/user/" + id).then(function () {
-            swal.fire("Deleted!", "Your file has been deleted.", "success");
+            swal.fire("Terhapus!", "Data berhasil dihapus.", "success");
             Fire.$emit("AfterCreated");
           }).catch(function () {
-            swal.fire("Fail!", "Something Wrong", "warning");
+            swal.fire("Gagal!", "Ada yang salah", "warning");
           });
         }
       });
@@ -9217,14 +9447,14 @@ __webpack_require__.r(__webpack_exports__);
         $("#addNew").modal("hide");
         toast.fire({
           type: "success",
-          title: "User created successfully"
+          title: "User berhasil ditambahkan"
         });
 
         _this4.$Progress.finish();
       }).catch(function () {
         toast.fire({
           type: "error",
-          title: "Something wrong"
+          title: "ada yang salah cek kembali form"
         });
       });
     }
@@ -101077,7 +101307,9 @@ var render = function() {
                       on: {
                         submit: function($event) {
                           $event.preventDefault()
-                          _vm.editmode ? _vm.updatePhoto() : _vm.createPhoto()
+                          _vm.editmode
+                            ? _vm.updatePhotoGaleri()
+                            : _vm.createPhoto()
                         }
                       }
                     },
@@ -101360,13 +101592,10 @@ var render = function() {
                 _c(
                   "div",
                   { staticClass: "row" },
-                  _vm._l(_vm.galeri, function(photo) {
+                  _vm._l(_vm.galeri, function(gal) {
                     return _c(
                       "div",
-                      {
-                        key: photo.id,
-                        staticClass: "col-md-3 col-sm-6 col-12"
-                      },
+                      { key: gal.id, staticClass: "col-md-3 col-sm-6 col-12" },
                       [
                         _c("div", { staticClass: "info-box" }, [
                           _vm._m(0, true),
@@ -101376,12 +101605,40 @@ var render = function() {
                             { staticClass: "info-box-content" },
                             [
                               _c("span", { staticClass: "info-box-text" }, [
-                                _vm._v(_vm._s(photo.Kegiatan))
+                                _vm._v(_vm._s(gal.Kegiatan))
                               ]),
                               _vm._v(" "),
                               _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-success btn-sm",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.editModal(gal)
+                                    }
+                                  }
+                                },
+                                [_c("i", { staticClass: "fa fa-edit" })]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-danger btn-sm",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.deleteGaleri(gal.id)
+                                    }
+                                  }
+                                },
+                                [_c("i", { staticClass: "fa fa-trash" })]
+                              ),
+                              _vm._v(" "),
+                              _c(
                                 "router-link",
-                                { attrs: { to: "detail-galery" + photo.id } },
+                                { attrs: { to: "detail-galery" + gal.id } },
                                 [
                                   _c(
                                     "button",
@@ -101406,7 +101663,183 @@ var render = function() {
               ])
             ])
           ])
-        ])
+        ]),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass: "modal fade",
+            attrs: {
+              id: "addNew",
+              tabindex: "-1",
+              role: "dialog",
+              "aria-labelledby": "addNewLabel",
+              "aria-hidden": "true"
+            }
+          },
+          [
+            _c(
+              "div",
+              {
+                staticClass: "modal-dialog modal-lg modal-dialog-centered",
+                attrs: { role: "document" }
+              },
+              [
+                _c("div", { staticClass: "modal-content" }, [
+                  _c("div", { staticClass: "modal-header" }, [
+                    _c(
+                      "h5",
+                      {
+                        directives: [
+                          {
+                            name: "show",
+                            rawName: "v-show",
+                            value: !_vm.editmode,
+                            expression: "!editmode"
+                          }
+                        ],
+                        staticClass: "modal-title",
+                        attrs: { id: "addNewLabel" }
+                      },
+                      [_vm._v("Tambah Galeri")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "h5",
+                      {
+                        directives: [
+                          {
+                            name: "show",
+                            rawName: "v-show",
+                            value: _vm.editmode,
+                            expression: "editmode"
+                          }
+                        ],
+                        staticClass: "modal-title",
+                        attrs: { id: "addNewLabel" }
+                      },
+                      [_vm._v("Edit Nama Galeri")]
+                    ),
+                    _vm._v(" "),
+                    _vm._m(1)
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "form",
+                    {
+                      on: {
+                        submit: function($event) {
+                          $event.preventDefault()
+                          _vm.editmode ? _vm.updateGaleri() : _vm.createGaleri()
+                        }
+                      }
+                    },
+                    [
+                      _c("div", { staticClass: "modal-body" }, [
+                        _c("div", { staticClass: "form-group" }, [
+                          _c("label", { attrs: { for: "inputnama" } }, [
+                            _vm._v("Nama Galeri")
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            { staticClass: "input-group" },
+                            [
+                              _vm._m(2),
+                              _vm._v(" "),
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.form.Kegiatan,
+                                    expression: "form.Kegiatan"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                class: {
+                                  "is-invalid": _vm.form.errors.has("kegiatan")
+                                },
+                                attrs: {
+                                  type: "text",
+                                  name: "kegiatan",
+                                  placeholder: "Nama Galeri"
+                                },
+                                domProps: { value: _vm.form.Kegiatan },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.$set(
+                                      _vm.form,
+                                      "Kegiatan",
+                                      $event.target.value
+                                    )
+                                  }
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c("has-error", {
+                                attrs: { form: _vm.form, field: "kegiatan" }
+                              })
+                            ],
+                            1
+                          )
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "modal-footer" }, [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-danger",
+                            attrs: { type: "button", "data-dismiss": "modal" }
+                          },
+                          [_vm._v("Tutup")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            directives: [
+                              {
+                                name: "show",
+                                rawName: "v-show",
+                                value: _vm.editmode,
+                                expression: "editmode"
+                              }
+                            ],
+                            staticClass: "btn btn-success",
+                            attrs: { type: "submit" }
+                          },
+                          [_vm._v("Ubah")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            directives: [
+                              {
+                                name: "show",
+                                rawName: "v-show",
+                                value: !_vm.editmode,
+                                expression: "!editmode"
+                              }
+                            ],
+                            staticClass: "btn btn-primary",
+                            attrs: { type: "submit" }
+                          },
+                          [_vm._v("Tambah")]
+                        )
+                      ])
+                    ]
+                  )
+                ])
+              ]
+            )
+          ]
+        )
       ])
     ])
   ])
@@ -101418,6 +101851,38 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("span", { staticClass: "info-box-icon bg-success" }, [
       _c("i", { staticClass: "fas fa-image" })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      {
+        staticClass: "close",
+        attrs: {
+          type: "button",
+          "data-dismiss": "modal",
+          "aria-label": "Close"
+        }
+      },
+      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "input-group-prepend" }, [
+      _c(
+        "span",
+        {
+          staticClass: "input-group-text",
+          attrs: { id: "validationTooltipUsernamePrepend" }
+        },
+        [_c("i", { staticClass: "fas fa-image" })]
+      )
     ])
   }
 ]
@@ -104820,7 +105285,7 @@ var render = function() {
                                           selected: ""
                                         }
                                       },
-                                      [_vm._v("Select Karyawan")]
+                                      [_vm._v("Pilih Karyawan")]
                                     ),
                                     _vm._v(" "),
                                     _vm._l(_vm.getEmployee, function(
@@ -104919,7 +105384,7 @@ var render = function() {
                                           selected: ""
                                         }
                                       },
-                                      [_vm._v("Select User Role")]
+                                      [_vm._v("Pilih Role Pengguna")]
                                     ),
                                     _vm._v(" "),
                                     _c(
@@ -105159,7 +105624,7 @@ var render = function() {
                           staticClass: "btn btn-danger",
                           attrs: { type: "button", "data-dismiss": "modal" }
                         },
-                        [_vm._v("Close")]
+                        [_vm._v("Tutup")]
                       ),
                       _vm._v(" "),
                       _c(
@@ -105176,7 +105641,7 @@ var render = function() {
                           staticClass: "btn btn-success",
                           attrs: { type: "submit" }
                         },
-                        [_vm._v("Update")]
+                        [_vm._v("Ubah")]
                       ),
                       _vm._v(" "),
                       _c(
@@ -105193,7 +105658,7 @@ var render = function() {
                           staticClass: "btn btn-primary",
                           attrs: { type: "submit" }
                         },
-                        [_vm._v("Create")]
+                        [_vm._v("Tambah")]
                       )
                     ])
                   ]
@@ -122360,6 +122825,7 @@ Vue.component('passport-authorized-clients', __webpack_require__(/*! ./component
 Vue.component('passport-personal-access-tokens', __webpack_require__(/*! ./components/passport/PersonalAccessTokens.vue */ "./resources/js/components/passport/PersonalAccessTokens.vue").default);
 Vue.component('Bar-Chart', __webpack_require__(/*! ./components/Chart/BarChart_Panti.vue */ "./resources/js/components/Chart/BarChart_Panti.vue").default);
 Vue.component('Pie-Chart', __webpack_require__(/*! ./components/Chart/PieChart_Panti.vue */ "./resources/js/components/Chart/PieChart_Panti.vue").default);
+Vue.component('Doughnut-Chart', __webpack_require__(/*! ./components/Chart/PieChart_Inventaris.vue */ "./resources/js/components/Chart/PieChart_Inventaris.vue").default);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -122481,6 +122947,56 @@ component.options.__file = "resources/js/components/Chart/BarChart_Panti.vue"
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_BarChart_Panti_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./BarChart_Panti.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Chart/BarChart_Panti.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_BarChart_Panti_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/Chart/PieChart_Inventaris.vue":
+/*!***************************************************************!*\
+  !*** ./resources/js/components/Chart/PieChart_Inventaris.vue ***!
+  \***************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _PieChart_Inventaris_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PieChart_Inventaris.vue?vue&type=script&lang=js& */ "./resources/js/components/Chart/PieChart_Inventaris.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+var render, staticRenderFns
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__["default"])(
+  _PieChart_Inventaris_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"],
+  render,
+  staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/Chart/PieChart_Inventaris.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/Chart/PieChart_Inventaris.vue?vue&type=script&lang=js&":
+/*!****************************************************************************************!*\
+  !*** ./resources/js/components/Chart/PieChart_Inventaris.vue?vue&type=script&lang=js& ***!
+  \****************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PieChart_Inventaris_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./PieChart_Inventaris.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Chart/PieChart_Inventaris.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PieChart_Inventaris_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 

@@ -85,7 +85,7 @@
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
-              <form @submit.prevent="editmode ? updatePhoto() :createPhoto()">
+              <form @submit.prevent="editmode ? updatePhotoGaleri() :createPhoto()">
                 <div class="modal-body">
                   <div class="form-group">
                     <label for="photo" class="control-label">Foto Galeri</label>
@@ -203,7 +203,27 @@ export default {
         .catch(() => {
           toast.fire({
             type: "error",
-            title: "Something wrong"
+            title: "Ada yang salah"
+          });
+        });
+    },
+    updatePhotoGaleri() {
+      this.$Progress.start();
+      this.form
+        .put("api/detail_galeri/" + this.form.id)
+        .then(() => {
+          Fire.$emit("AfterCreated");
+          $("#addNew").modal("hide");
+          toast.fire({
+            type: "success",
+            title: "Photo berhasil diubah"
+          });
+          this.$Progress.finish();
+        })
+        .catch(() => {
+          toast.fire({
+            type: "error",
+            title: "Ada yang salah"
           });
         });
     },

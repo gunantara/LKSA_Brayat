@@ -1574,7 +1574,7 @@ export default {
         .then(() => {
           toast.fire({
             type: "success",
-            title: "Data Anak Update successfully"
+            title: "Data Anak Berhasil diubah"
           });
           this.$router.push("data-anak");
           this.$Progress.finish();
@@ -1582,7 +1582,7 @@ export default {
         .catch(() => {
           toast.fire({
             type: "error",
-            title: "Something wrong when update Data Anak"
+            title: "Ada yang salah cek kembai form"
           });
         });
     },
@@ -1601,7 +1601,7 @@ export default {
         swal.fire({
           type: "error",
           title: "Oops...",
-          text: "You are uploading a large file"
+          text: "File terlalu besar pilih yang lain"
         });
         return false;
       }
@@ -1657,12 +1657,16 @@ export default {
         .put("api/children_education/" + this.form_education.id)
         .then(() => {
           $("#addNewPendidikan").modal("hide");
-          swal.fire("Updated!", "Your file has been Updated.", "success");
+          swal.fire(
+            "Diubah!",
+            "Riwayat Pendidikan berhasil diubah.",
+            "success"
+          );
           Fire.$emit("AfterCreated");
           this.$Progress.finish();
         })
         .catch(() => {
-          swal.fire("Fail!", "Something Wrong", "warning");
+          swal.fire("Gagal!", "Ada yang salah cek kembali form", "warning");
           this.$Progress.fail();
         });
     },
@@ -1693,7 +1697,7 @@ export default {
         });
     },
     loadSaudaraAnak() {
-      if (this.$gate.isAdminOrUser()){
+      if (this.$gate.isAdminOrUser()) {
         axios
           .get(`api/edit-anak/${this.$route.params.idanak}`)
           .then(
@@ -1811,7 +1815,7 @@ export default {
         swal.fire({
           type: "error",
           title: "Oops...",
-          text: "You are uploading a large file"
+          text: "File terlalu besar"
         });
         return false;
       }

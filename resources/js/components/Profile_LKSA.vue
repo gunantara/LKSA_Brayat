@@ -396,7 +396,7 @@ export default {
         swal.fire({
           type: "error",
           title: "Oops...",
-          text: "You are uploading a large file"
+          text: "ukuran file terlalu besar"
         });
         return false;
       }
@@ -413,7 +413,7 @@ export default {
         swal.fire({
           type: "error",
           title: "Oops...",
-          text: "You are uploading a large file"
+          text: "ukuran file terlalu besar"
         });
         return false;
       }
@@ -430,7 +430,7 @@ export default {
         swal.fire({
           type: "error",
           title: "Oops...",
-          text: "You are uploading a large file"
+          text: "ukuran file terlalu besar"
         });
         return false;
       }
@@ -447,7 +447,7 @@ export default {
         swal.fire({
           type: "error",
           title: "Oops...",
-          text: "You are uploading a large file"
+          text: "ukuran file terlalu besar"
         });
         return false;
       }
@@ -471,13 +471,14 @@ export default {
         .catch(() => {
           toast.fire({
             type: "error",
-            title: "Something wrong when update profile"
+            title: "ada yang salah ketika mengubah profile"
           });
         });
     }
   },
   created() {
     this.loaduserAuth();
+    //tampil profile
     axios.get("api/profile_lksa").then(response => {
       this.form.fill(response.data.about[0]);
     });

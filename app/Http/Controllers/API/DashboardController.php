@@ -95,6 +95,31 @@ class DashboardController extends Controller
         }
     }
 
+    public function tampil_inventaris()
+    {
+        if (\Gate::allows('isAdmin') || \Gate::allows('isUser') || \Gate::allows('isKepala')) {
+
+            $tampil_inventaris = DB::table('inventories')
+                ->select(
+                    DB::raw('(CASE 
+                    WHEN Kondisi <= 25 THEN "<= 25%" 
+                    WHEN Kondisi BETWEEN 25 AND 55 THEN "26% - 54%" 
+                    WHEN Kondisi BETWEEN 54 AND 75 THEN "55 - 74%"
+                    WHEN Kondisi BETWEEN 74 AND 100 THEN "75 - 100%"
+                    END) as Kondisi'),
+                    DB::raw('count(*) as jumlah')
+                )
+                ->where('deleted_at', '=', null)
+                ->orderBy('id', 'ASC')
+                ->groupBy('Kondisi')
+                ->get();
+
+            return response()->json([
+                'kondisi_inventaris' => $tampil_inventaris
+            ], 200);
+        }
+    }
+
     public function tampil_anak()
     {
         if (\Gate::allows('isAdmin') || \Gate::allows('isUser') || \Gate::allows('isKepala')) {
@@ -104,32 +129,9 @@ class DashboardController extends Controller
                 ->orderBy('Tgl_masuk_PA', 'ASC')
                 ->groupBy(DB::raw('year(Tgl_masuk_PA)'))
                 ->get()->toArray();
-
-            $anak_panti_perbulan = Children::select(DB::raw('month(Tgl_masuk_PA) as month'), DB::raw('COUNT(id) as count'))
-                ->where('deleted_at', '=', null)
-                ->orderBy(DB::raw('month(Tgl_masuk_PA)'), 'ASC')
-                ->groupBy(DB::raw('month(Tgl_masuk_PA)'))
-                ->get()->toArray();
-
             return response()->json([
                 'anak_panti' => $anak_panti_pertahun,
-                'perbulan' => $anak_panti_perbulan
-            ], 200);
-        }
-    }
 
-    public function tampil_anak_perbulan($filter)
-    {
-        if (\Gate::allows('isAdmin') || \Gate::allows('isUser') || \Gate::allows('isKepala')) {
-            $anak_panti_perbulan = Children::select(DB::raw('month(Tgl_masuk_PA) as month'), DB::raw('COUNT(id) as count'))
-                ->where('deleted_at', '=', null)
-                ->where(DB::raw('year(Tgl_masuk_PA)'), '=', $filter)
-                ->orderBy(DB::raw('month(Tgl_masuk_PA)'), 'ASC')
-                ->groupBy(DB::raw('month(Tgl_masuk_PA)'))
-                ->get()->toArray();
-
-            return response()->json([
-                'perbulan' => $anak_panti_perbulan
             ], 200);
         }
     }

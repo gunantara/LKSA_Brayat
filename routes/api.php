@@ -38,7 +38,8 @@ Route::get('banyak_anak', 'API\DashboardController@banyak_anak');
 Route::get('banyak_inventaris', 'API\DashboardController@banyak_inventaris');
 Route::get('tampil_umur', 'API\DashboardController@tampil_umur');
 Route::get('tampil_anak', 'API\DashboardController@tampil_anak');
-Route::get('/anak-perbulan/{filter}', 'API\DashboardController@tampil_anak_perbulan');
+Route::get('tampil_inventaris', 'API\DashboardController@tampil_inventaris');
+
 
 //api for user profile
 Route::get('profile', 'API\UserController@profile');

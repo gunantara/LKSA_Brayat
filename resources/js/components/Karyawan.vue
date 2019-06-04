@@ -402,7 +402,7 @@ export default {
         .catch(() => {
           toast.fire({
             type: "error",
-            title: "Something wrong"
+            title: "Ada yang salah cek kembali form"
           });
         });
     },
@@ -413,12 +413,12 @@ export default {
         .put("api/employee/" + this.form.id)
         .then(() => {
           $("#addNew").modal("hide");
-          swal.fire("Updated!", "Your file has been Updated.", "success");
+          swal.fire("Diubah!", "Data Karyawan Berhasih Diubah.", "success");
           Fire.$emit("AfterCreated");
           this.$Progress.finish();
         })
         .catch(() => {
-          swal.fire("Fail!", "Something Wrong", "warning");
+          swal.fire("Gagal!", "Ada yang salah cek kembali form", "warning");
           this.$Progress.fail();
         });
     },
@@ -426,12 +426,11 @@ export default {
       swal
         .fire({
           title: "Anda yakin Menghapus Data ini?",
-          text: "You won't be able to revert this!",
           type: "warning",
           showCancelButton: true,
           confirmButtonColor: "#3085d6",
           cancelButtonColor: "#d33",
-          confirmButtonText: "Yes, delete it!"
+          confirmButtonText: "Ya, Hapus!"
         })
         .then(result => {
           //send request to the server
@@ -439,11 +438,15 @@ export default {
             this.form
               .delete("api/employee/" + id)
               .then(() => {
-                swal.fire("Deleted!", "Your file has been deleted.", "success");
+                swal.fire(
+                  "Terhapus!",
+                  "Data Karyawan Berhasil Dihapus.",
+                  "success"
+                );
                 Fire.$emit("AfterCreated");
               })
               .catch(() => {
-                swal.fire("Fail!", "Something Wrong", "warning");
+                swal.fire("Gagal!", "Ada yang salah", "warning");
               });
           }
         });

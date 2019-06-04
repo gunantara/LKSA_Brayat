@@ -49,8 +49,6 @@ class Document_Controller extends Controller
             'Asli_Fotocopy' => 'required|string|max:191',
             'Keterangan' => 'required|string|max:191',
         ]);
-
-
         $children_document = new Children_detail_document();
         $children_document->id_children = $request->input("id_children");
         $currentDoc = $children_document->Document;

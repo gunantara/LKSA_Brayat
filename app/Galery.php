@@ -11,7 +11,7 @@ class Galery extends Model
 {
     protected $fillable = [
         'id_user',
-        'kegiatan',
+        'Kegiatan',
     ];
 
     public static function boot()

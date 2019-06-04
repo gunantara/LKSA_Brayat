@@ -1035,7 +1035,7 @@ export default {
         .then(() => {
           toast.fire({
             type: "success",
-            title: "Data Anak created successfully"
+            title: "Data Anak berhasil ditambahkan"
           });
           this.$router.push("data-anak");
           this.$Progress.finish();
@@ -1043,7 +1043,7 @@ export default {
         .catch(() => {
           toast.fire({
             type: "error",
-            title: "Something wrong when create a Data Anak"
+            title: "Ada yang salah cek kembali form"
           });
         });
     },
@@ -1062,7 +1062,7 @@ export default {
         swal.fire({
           type: "error",
           title: "Oops...",
-          text: "You are uploading a large file"
+          text: "File terlalu besar pilih yang lain"
         });
         return false;
       }

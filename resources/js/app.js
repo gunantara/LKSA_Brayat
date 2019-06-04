@@ -140,6 +140,10 @@ Vue.component(
     'Pie-Chart',
     require('./components/Chart/PieChart_Panti.vue').default
 );
+Vue.component(
+    'Doughnut-Chart',
+    require('./components/Chart/PieChart_Inventaris.vue').default
+);
 
 
 /**
